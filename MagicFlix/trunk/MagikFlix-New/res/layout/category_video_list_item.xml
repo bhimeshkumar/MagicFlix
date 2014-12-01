@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <ImageView
+        android:id="@+id/cat_video_thumbnail_iv"
+        android:layout_width="140dp"
+        android:layout_height="100dp"
+        android:layout_centerInParent="true"
+        android:layout_marginLeft="7dp"
+        android:layout_marginTop="7dp"
+        android:adjustViewBounds="true"
+        android:scaleType="fitXY"
+        android:src="@android:color/darker_gray" />
+
+    <TextView
+        android:id="@+id/name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:visibility="gone" />
+
+    <FrameLayout
+        android:id="@+id/personal"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_alignRight="@+id/cat_video_thumbnail_iv"
+        android:layout_alignTop="@+id/cat_video_thumbnail_iv"
+        android:layout_marginRight="3dp"
+        android:foregroundGravity="right|center" >
+
+        <com.magicflix.goog.customviews.MFlixVideoFavourite
+            android:id="@+id/favourite"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textOff=""
+            android:textOn=""
+            android:background="@drawable/btn_tile_favourite"
+             />
+
+        <ImageView
+            android:id="@+id/locked"
+            android:contentDescription="@string/imagedescription"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            android:background="@drawable/img_tile_actions_locked"
+            />
+    </FrameLayout>
+
+</RelativeLayout>
