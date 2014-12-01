@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animation-list xmlns:android="http://schemas.android.com/apk/res/android"
+    android:oneshot="false" >
+
+    <item
+        android:drawable="@drawable/blux_appareance_skew5"
+        android:duration="100"/>
+    <item
+        android:drawable="@drawable/blux_appareance_skew6"
+        android:duration="100"/>
+    <item
+        android:drawable="@drawable/blux_appareance_skew7"
+        android:duration="100"/>
+    <item
+        android:drawable="@drawable/blux_appareance_skew8"
+        android:duration="100"/>
+    <item
+        android:drawable="@drawable/blux_appareance_skew9"
+        android:duration="100"/>
+    <item
+        android:drawable="@drawable/blux_appareance_skew10"
+        android:duration="100"/>
+    <item
+        android:drawable="@drawable/blux_appareance_skew11"
+        android:duration="100"/>
+    <item
+        android:drawable="@drawable/blux_appareance_skew12"
+        android:duration="100"/>
+    <item
+        android:drawable="@drawable/blux_appareance_skew13"
+        android:duration="100"/>
+    <item
+        android:drawable="@drawable/blux_appareance_skew14"
+        android:duration="100"/>
+    <item
+        android:drawable="@drawable/blux_appareance_skew15"
+        android:duration="100"/>
+    <item
+        android:drawable="@drawable/blux_appareance_skew16"
+        android:duration="100"/>
+    <item
+        android:drawable="@drawable/blux_appareance_skew17"
+        android:duration="100"/>
+    <item
+        android:drawable="@drawable/blux_appareance_skew18"
+        android:duration="100"/>
+    <item
+        android:drawable="@drawable/blux_appareance_skew19"
+        android:duration="100"/>
+    <item
+        android:drawable="@drawable/blux_appareance_skew20"
+        android:duration="100"/>
+
+</animation-list>

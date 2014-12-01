@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/app_bg"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="@dimen/activity_terms_use_marginRight"
+        android:layout_marginTop="@dimen/activity_terms_use_marginTop"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/terms_of_use_wellcome_tv"
+            android:layout_width="@dimen/terms_of_use_wellcome_tv_width"
+            android:layout_height="wrap_content"
+            android:lineSpacingExtra="@dimen/paddingMedium"
+            android:text="@string/terms_of_use_welcome_msg"
+            android:textColor="@color/white"
+            android:textSize="@dimen/textSizeMedium"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/baloon_iv"
+            android:layout_width="@dimen/baloon_iv_width"
+            android:layout_height="@dimen/baloon_iv_height"
+            android:layout_marginTop="@dimen/marginMediumPlus"
+            android:scaleType="fitXY"
+            android:src="@drawable/register_email_baloon" />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/terms_of_use_avatar"
+        android:layout_width="@dimen/terms_of_use_avatar_width"
+        android:layout_height="@dimen/terms_of_use_avatar_height"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/age_selection_avatar"
+        android:scaleType="fitXY" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/terms_of_use_avatar"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:weightSum="1" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="0.15"
+            android:text="@string/terms_of_use_tv_text"
+            android:textColor="@color/white"
+            android:textSize="@dimen/textSizeLarge" />
+
+        <WebView
+            android:id="@+id/terms_of_use_wv"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="@dimen/marginMediumExtraPlus"
+            android:layout_weight="0.79"
+            android:background="@color/white"
+            android:padding="@dimen/paddingMedium"
+            android:text="@string/terms_of_use_wv_text"
+            android:textColor="@color/black_gray"
+            android:textSize="@dimen/textSizeMedium" />
+
+        <TextView
+            android:id="@+id/terms_of_use_secret_code_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_gravity="right"
+            android:layout_marginBottom="@dimen/marginMediumPlus"
+            android:layout_marginRight="@dimen/marginMediumExtraPlus"
+            android:layout_weight="0.11"
+            android:textColor="@color/white"
+            android:textSize="@dimen/textSizeSmall" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/terms_of_use_ok_btn"
+        android:layout_width="@dimen/terms_of_use_ok_btn_width"
+        android:layout_height="@dimen/terms_of_use_ok_btn_height"
+        android:layout_alignParentLeft="true"
+        android:layout_margin="@dimen/marginMediumPlus"
+        android:background="@drawable/circle_with_white_border"
+        android:gravity="center"
+        android:text="@string/terms_of_use_ok_btn_text"
+        android:textColor="@color/white"
+        android:textSize="@dimen/textSizeLargePlus"
+        android:textStyle="bold" >
+    </Button>
+
+</RelativeLayout>

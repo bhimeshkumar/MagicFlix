@@ -1,0 +1,55 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="5dp"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:weightSum="1" >
+
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.15" >
+
+        <ImageView
+            android:id="@+id/category_thumbnail"
+            android:layout_width="85dp"
+            android:layout_height="70dp"
+            android:layout_margin="8dp"
+            android:contentDescription="@string/imagedescription"
+            android:scaleType="fitXY"
+            android:src="@drawable/logo_titlebar" />
+
+        <TextView
+            android:id="@+id/category_name_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/category_thumbnail"
+            android:gravity="center"
+            android:textColor="@color/light_red"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:layout_weight="0.85" >
+
+        <it.sephiroth.android.library.widget.HListView
+            android:id="@+id/home_fragmet_category_video_listview"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:background="#11000000" />
+
+        <TextView
+            android:id="@+id/no_videos_available_tv"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:gravity="center"
+            android:text="@string/category_videos_not_available_txt"
+            android:visibility="gone"/>
+    </RelativeLayout>
+
+</LinearLayout>
