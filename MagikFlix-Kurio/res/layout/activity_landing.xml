@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/org.taptwo.android.widget.viewflow.example"
+    xmlns:app1="http://schemas.android.com/apk/res/com.magikflix.kurio"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/landing_screen_bg"
+    android:orientation="vertical" >
+
+    <org.taptwo.android.widget.CircleFlowIndicator
+        android:id="@+id/viewflowindic"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center|bottom"
+        android:padding="10dip"
+        android:visibility="gone"
+        app1:radius="6dp"
+        app1:spacing="5dp" />
+
+    <org.taptwo.android.widget.ViewFlow
+        android:id="@+id/viewflow"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" >
+    </org.taptwo.android.widget.ViewFlow>
+
+    <ProgressBar
+        android:id="@+id/landing_screen_pb"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="@dimen/progressbar_height_width"
+        android:layout_height="@dimen/progressbar_height_width"
+        android:layout_gravity="center"
+        android:layout_centerInParent="true" />
+
+</FrameLayout>

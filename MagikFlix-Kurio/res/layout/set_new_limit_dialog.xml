@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:HListView="http://schemas.android.com/apk/res-auto"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@android:color/white" >
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="top"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/timer_set_limit"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/fpp_tile_margin"
+            android:layout_marginTop="@dimen/fpp_tile_margin"
+            android:gravity="center"
+            android:text="@string/timer_set_limit"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/timer_set_note"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/timer_set_note"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp"
+            android:background="@color/light_gray"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/timer_set_value"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="20dp"
+                android:gravity="center"
+                android:text="@string/timer_set_value"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textStyle="bold" />
+
+            <SeekBar
+                android:id="@+id/timer_set_bar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="10dp"
+                android:progressDrawable="@drawable/red_scrubber_progress"
+                android:thumb="@drawable/red_scrubber_control" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/timer_set"
+            android:paddingLeft="50dp"
+            android:paddingRight="50dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="@dimen/fpp_tile_margin"
+            android:background="@drawable/btn_fpp_green"
+            android:gravity="center"
+            android:text="@string/timer_set"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@android:color/white" />
+    </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/dialog_close"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:background="@android:color/white"
+        android:contentDescription="@string/app_name"
+        android:src="@drawable/btn_dialog_close" />
+
+</RelativeLayout>

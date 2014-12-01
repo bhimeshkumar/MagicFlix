@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:layout_gravity="center"
+    android:background="@android:color/white"
+    android:gravity="center"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/offline_heading"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/fpp_tile_margin"
+        android:layout_marginTop="@dimen/fpp_tile_margin"
+        android:gravity="center"
+        android:text="@string/offline_heading"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/offline_message"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/fpp_tile_margin"
+        android:layout_marginTop="@dimen/fpp_tile_margin"
+        android:gravity="center"
+        android:text="@string/offline_message"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textStyle="bold" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="80dp"
+        android:layout_marginBottom="@dimen/fpp_tile_margin"
+        android:layout_marginTop="@dimen/fpp_tile_margin"
+        android:contentDescription="@string/app_name"
+        android:gravity="center"
+        android:src="@drawable/dialog_offline" />
+
+    <Button
+        android:id="@+id/offline_retry"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="@dimen/fpp_tile_margin"
+        android:layout_marginTop="@dimen/fpp_tile_margin"
+        android:background="@drawable/btn_fpp_green"
+        android:gravity="center"
+        android:text="@string/offline_retry"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@android:color/white" />
+
+</LinearLayout>

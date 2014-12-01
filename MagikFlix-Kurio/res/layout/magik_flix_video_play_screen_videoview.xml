@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+     >
+
+    <RelativeLayout
+        android:id="@+id/seekbar_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="@android:color/black" >
+
+        <com.magikflix.kurio.app.views.CustomVideoView
+            android:id="@+id/video_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerHorizontal="true" >
+        </com.magikflix.kurio.app.views.CustomVideoView>
+
+        <ProgressBar
+            android:id="@+id/video_play_screen_pb"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_centerInParent="true" />
+    </RelativeLayout>
+    
+      <RelativeLayout
+        android:id="@+id/transparent_root_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#8C000000"
+        android:visibility="gone" >
+
+        <ImageView
+            android:id="@+id/back_to_main_gallery_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/marginMedium"
+            android:layout_marginRight="@dimen/marginMedium"
+            android:scaleType="fitXY"
+            android:src="@drawable/back_to_main_gallery" />
+
+        <ImageView
+            android:id="@+id/play_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:scaleType="fitXY"
+            android:src="@drawable/icon_play" />
+
+        <ImageView
+            android:id="@+id/favourite_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginBottom="@dimen/marginMediumPlus"
+            android:layout_marginRight="@dimen/marginMediumPlus"
+            android:scaleType="fitXY"
+            android:src="@drawable/icon_outline_favorites" />
+    </RelativeLayout>
+
+</RelativeLayout>

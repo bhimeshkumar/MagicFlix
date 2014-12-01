@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+     >
+
+    <ImageView
+        android:id="@+id/background"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_centerInParent="true"
+        android:layout_marginLeft="7dp"
+        android:layout_marginTop="7dp"
+        android:adjustViewBounds="true"
+        android:scaleType="fitXY" />
+
+    <TextView
+        android:id="@+id/name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:visibility="gone" />
+
+    <FrameLayout
+        android:id="@+id/personal"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_alignRight="@+id/background"
+        android:layout_alignTop="@+id/background"
+        android:layout_marginRight="-4dp"
+        android:layout_marginTop="-2dp"
+        android:foregroundGravity="right|center" >
+
+        <com.magikflix.kurio.customviews.MFlixVideoFavourite
+            android:id="@+id/favourite"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            android:textOff=""
+            android:textOn=""
+             />
+
+        <ImageView
+            android:id="@+id/locked"
+            android:layout_width="25dp"
+            android:layout_height="30dp"
+            android:background="@drawable/img_tile_actions_locked"
+            android:visibility="gone" />
+    </FrameLayout>
+
+
+
+</RelativeLayout>

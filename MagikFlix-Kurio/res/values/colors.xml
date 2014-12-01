@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="actionbar_bg_gray">#F8F8F8</color>
+    <color name="white_gray">#CFCFCF</color>
+    <color name="white">#FFFFFF</color>
+    <color name="light_gray">#DFDFDF</color>
+    <color name="dark_gray">#907F7F7F</color>
+    <color name="kindof_gray">#6a6a6a</color>
+    <color name="black_gray">#3F3F3F</color>
+    <color name="light_blue">#3B5998</color>
+    <color name="mid_blue">#3B5998</color>
+    <color name="dark_blue">#193A7F</color>
+    <color name="steel_blue">#5CACEE</color>
+    <color name="yellow">#FFC125</color>
+    <color name="yellow2">#ffB014</color>
+    <color name="transparent">#00000000</color>
+    <color name="transparent_black">#90000000</color>
+    <color name="transparent_gray">#E4000000</color>
+    <color name="slate_old">#064477</color>
+    <color name="slate">#E4000000</color>
+    <color name="blue_gray">#13558d</color>
+    <color name="gray">#808080</color>
+    <color name="kindof_skyblue">#99FFFF</color>
+    <color name="light_green">#33FFCC</color>
+    <color name="light_orange">#FF9966</color>
+    <color name="list_row_selected">#CEE5EC</color>
+    <color name="timestamp_color">#707070</color>
+    <color name="red">#FF0000</color>
+    <color name="light_red"> #FA5858</color>
+    <color name="silver">#C0C0C0</color>
+    <color name="nav_drawer_list_item_color">#585858</color>
+    <color name="nav_drawer_list_section_color">#2E2E2E</color>
+    <color name="category_item_highlight">#FFE97227</color>
+    <color name="btn_unlock_back">#FF2AAD6C</color>
+    <color name="btn_unlock_triangle">#FF28A67A</color>
+    <color name="slide_menu_item_selection">#f15e4a</color>
+    <color name="video_cc_bg_color">#E06B12</color>
+    <color name="actionbar_bg">#EE281C</color>
+    <color name="category_disable_color">#F1961C</color>
+    <color name="activity_bg">#E0E0E0</color>
+    
+    <color name="app_bg">#1F3350</color>
+    <color name="landing_screen_bg">#657995</color>
+    
+    
+    
+    
+
+</resources>
