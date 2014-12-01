@@ -1,0 +1,121 @@
+<resources>
+
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="fpp_drawer_width">250dp</dimen>
+    <dimen name="fpp_back_width">45dp</dimen>
+    <dimen name="fpp_back_left_margin">140dp</dimen>
+    <dimen name="fpp_category_name_bottom_margin">6dp</dimen>
+
+    <!-- List -->
+    <dimen name="fpp_margin_top">6dp</dimen>
+    <dimen name="fpp_margin_right">6dp</dimen>
+    <dimen name="fpp_margin_bottom">0dp</dimen>
+    <dimen name="fpp_margin_left">70dp</dimen>
+
+    <!-- VIDEO Row -->
+    <dimen name="fpp_video_list_height">99dp</dimen>
+    <dimen name="fpp_video_controls_height">30dp</dimen>
+    <dimen name="fpp_video_controls_bottom_margin">102dp</dimen>
+    <dimen name="fpp_video_bottom_margin">132dp</dimen>
+
+    <!-- TILES Row -->
+    <dimen name="fpp_row_width">522dp</dimen>
+    <dimen name="fpp_row_height">345dp</dimen>
+    <!-- TILES Each -->
+    <dimen name="fpp_tile_margin">10dp</dimen>
+    <dimen name="fpp_tile_margin_correct">10dp</dimen>
+    <dimen name="fpp_tile_big_width">256dp</dimen>
+    <dimen name="fpp_tile_big_height">167dp</dimen>
+    <dimen name="fpp_tile_medium_width">167dp</dimen>
+    <dimen name="fpp_tile_medium_height">167dp</dimen>
+    <dimen name="fpp_tile_small_width">79dp</dimen>
+    <dimen name="fpp_tile_small_height">79dp</dimen>
+    <dimen name="progressbar_height_width">50dp</dimen>
+    <dimen name="paddingMedium">5dp</dimen>
+    <dimen name="paddingMediumPlus">10dp</dimen>
+    <dimen name="paddingMediumExtraPlus">15dp</dimen>
+    <dimen name="paddingMediumExtraPlusPlus">20dp</dimen>
+    <dimen name="textSizeLarge">16sp</dimen>
+    <dimen name="textSizeMedium">16sp</dimen>
+    <dimen name="textSizeSmall">12sp</dimen>
+    <dimen name="textSizeLargePlus">16sp</dimen>
+    <dimen name="marginMedium">5dp</dimen>
+    <dimen name="marginMediumPlus">10dp</dimen>
+    <dimen name="marginMediumExtraPlus">15dp</dimen>
+    <dimen name="marginMediumExtraPlusPlus">20dp</dimen>
+    <dimen name="marginLarge">30dp</dimen>
+    <dimen name="marginExtraLarge">40dp</dimen>
+    <dimen name="sizeOfEighty">80dp</dimen>
+
+    <!-- age_selection_screen_dimentions -->
+
+    <dimen name="age_selection_wellcome_tv_width">250dp</dimen>
+    <dimen name="age_screen_register_email_tv_width">190dp</dimen>
+    <dimen name="age_screen_register_email_tv_marginRight">20dp</dimen>
+    <dimen name="age_screen_register_email_tv_marginTop">115dp</dimen>
+    <dimen name="baloon_top_iv_width">230dp</dimen>
+    <dimen name="baloon_top_iv_height">40dp</dimen>
+    <dimen name="baloon_bottom_iv_width">190dp</dimen>
+    <dimen name="baloon_bottom_iv_height">40dp</dimen>
+    <dimen name="baloon_bottom_iv_marginright">20dp</dimen>
+    <dimen name="age_selection_screen_ok_btn_width">70dp</dimen>
+    <dimen name="age_selection_screen_ok_btn_height">70dp</dimen>
+    <dimen name="age_selection_screen_ok_btn_layout_margin">10dp</dimen>
+    <dimen name="age_avatar_iv_width">245dp</dimen>
+    <dimen name="age_avatar_iv_height">275dp</dimen>
+    <dimen name="age_avatar_iv_marginLeft">30dp</dimen>
+    <dimen name="vertical_seekbar_layout_marginBottom">10dp</dimen>
+    <dimen name="vertical_seekbar_layout_marginLeft">10dp</dimen>
+    <dimen name="vertical_seekbar_layout_marginTop">10dp</dimen>
+    <dimen name="slider_linearlayout_marginLeft">10dp</dimen>
+    <dimen name="slider_linearlayout_Ten_labeltv_width">180dp</dimen>
+    <dimen name="slider_linearlayout_Ten_labeltv_height">1dp</dimen>
+    <dimen name="slider_linearlayout_labeltv_textSize">16dp</dimen>
+    <dimen name="slider_linearlayout_valuetv_width">180dp</dimen>
+    <dimen name="slider_linearlayout_valuetv_height">1dp</dimen>
+    <dimen name="slider_linearlayout_valuetv_marginLeft">10dp</dimen>
+    <dimen name="vertical_Seekbar_marginLeft">45dp</dimen>
+
+    <!-- image_item_layout_dimentions -->
+
+    <dimen name="email_avatar_iv_width">250dp</dimen>
+    <dimen name="email_avatar_iv_height">300dp</dimen>
+    <dimen name="email_avatar_iv_paddingTop">100sp</dimen>
+    <dimen name="email_screen_register_email_tv_width">200dp</dimen>
+    <dimen name="email_screen_register_email_tv_marginBottom">2dp</dimen>
+    <dimen name="email_screen_register_email_tv_marginLeft">180dp</dimen>
+    <dimen name="email_screen_register_email_tv_marginTop">10dp</dimen>
+    <dimen name="email_baloon_iv_width">200dp</dimen>
+    <dimen name="email_baloon_iv_height">40dp</dimen>
+    <dimen name="email_baloon_iv_marginLeft">180dp</dimen>
+    <dimen name="email_send_screen_skip_btn_width">70dp</dimen>
+    <dimen name="email_send_screen_skip_btn_height">70dp</dimen>
+    <dimen name="email_send_screen_skip_btn_layout_margin">10dp</dimen>
+    <dimen name="email_send_screen_ok_btn_width">70dp</dimen>
+    <dimen name="email_send_screen_ok_btn_height">70dp</dimen>
+    <dimen name="email_send_screen_ok_btn_layout_margin">10dp</dimen>
+    <dimen name="terms_of_use_ok_btn_width">70dp</dimen>
+    <dimen name="terms_of_use_ok_btn_height">70dp</dimen>
+
+    <!-- acitvity_terms_of_use_dimentions -->
+
+    <dimen name="activity_terms_use_marginRight">15dp</dimen>
+    <dimen name="activity_terms_use_marginTop">15dp</dimen>
+    <dimen name="terms_of_use_ok_btn_width">70dp</dimen>
+    <dimen name="terms_of_use_ok_btn_height">70dp</dimen>
+    <dimen name="terms_of_use_wellcome_tv_width">280dp</dimen>
+    <dimen name="baloon_iv_width">260dp</dimen>
+    <dimen name="baloon_iv_height">35dp</dimen>
+    <dimen name="terms_of_use_avatar_width">300dp</dimen>
+    <dimen name="terms_of_use_avatar_height">220dp</dimen>
+    <dimen name="terms_of_use_avatar_margintop">25dp</dimen>
+
+    <!-- main_activity_play_list_item_dimentions -->
+
+    <dimen name="play_list_item_width">150dp</dimen>
+    <dimen name="play_list_item_height">75dp</dimen>
+    <dimen name="play_list_item_marginRight">10dp</dimen>
+
+</resources>

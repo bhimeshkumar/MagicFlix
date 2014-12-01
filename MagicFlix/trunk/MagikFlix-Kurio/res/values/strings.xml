@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">MagicFlix</string>
+    <string name="imagedescription">imagedescription</string>
+    <string name="flurry_api_key">6YKH2ZN4SVFF8B2C3V2R</string>
+
+    <!-- Title for error alert when a video cannot be played. -->
+    <string name="VideoView_error_title">Cannot play video</string>
+    <!-- Text for error alert when a video container is not valid for progressive download/playback. -->
+    <string name="VideoView_error_text_invalid_progressive_playback">Sorry, this video is not valid for streaming to this device.</string>
+    <!-- Text for error alert when a video cannot be played. it can be used by any app. -->
+    <string name="VideoView_error_text_unknown">Sorry, this video cannot be played.</string>
+    <!-- Button to close error alert when a video cannot be played -->
+    <string name="VideoView_error_button">OK</string>
+
+    <!-- Dialog : Timer Set -->
+    <string name="timer_set_limit">Set New Limit</string>
+    <string name="timer_set_note">Drag the circle to set a time limit for each session</string>
+    <string name="timer_set_value">20 minutes</string>
+    <string name="timer_set">Set</string>
+
+    <!-- Dialog : Timer Expired -->
+    <string name="timer_expired_thanks">Thanks for Watching</string>
+    <string name="timer_expired_message">You\'ve watched THRESHOLD of videos this session.\nCome back later for more!</string>
+    <string name="timer_expired_parent">Parents,restart the app to start a new session</string>
+    <string name="favourites_static_txt">Favourites</string>
+    <string name="recent_static_txt">Recent</string>
+    <string name="timer_off_static_txt">Timer OFF</string>
+
+    <!-- Dialog : Offline -->
+    <string name="offline_heading">No Connection</string>
+    <string name="offline_message">An internet connection is needed to use this app</string>
+    <string name="offline_retry">Retry Connection</string>
+
+    <!-- Dialog : Free -->
+    <string name="free_heading">This video is free for a limited time. Yeah!</string>
+    <string name="free_watch">Watch Now</string>
+    <string name="category_videos_not_available_txt">No video currently available in this category.Check back for more, later.</string>
+    <string name="favorires_videos_not_found_txt">Tap on a star to make your favorite playlist</string>
+    <string name="no_recent_videos_found_txt">Find your recent videos here.</string>
+
+    <!-- Settings : popup -->
+    <string name="settings_about_this_app_txt">About this app</string>
+    <string name="settings_terms_of_use_txt">Terms of use</string>
+    <string name="settings_time_left_txt">Time Left</string>
+    <string name="settings_filter_by_age">Filter By Age</string>
+    <string name="settings_all_ages_txt">All Ages</string>
+    <string name="settings_age_3_6_txt">Age 3-6</string>
+    <string name="settings_age_7_12_txt">Age 7-12</string>
+    <string name="age_txt">Age</string>
+    <string name="settings_more_txt">More</string>
+
+    <!-- Video  : Error Msgs -->
+    <string name="youtube_player_initialization_error_msg">There was an error initializing the YouTubePlayer</string>
+    <string name="video_play_error_msg">Oops, video couldn\'t play, on to the next!</string>
+    <string name="facebook_app_id">688395307918500</string>
+    <string name="register_email_message">Magicflix will send you personalized reports.You can skip this step and register later in the Family Setup Menu</string>
+    <string name="terms_of_use_info"></string>
+    <string name="terms_of_use_welcome_msg">Magicflix is a positively safe video service for kids to play and learn!</string>
+    <string name="category_header">Category</string>
+
+    <!-- age_selection_screen_dimentions -->
+
+    <string name="age_screen_register_email_tv_text">Pick the age to get the videos </string>
+    <string name="slider_linearlayout_Nine_labeltv_text">9</string>
+    <string name="slider_linearlayout_Eight_labeltv_text">8</string>
+    <string name="slider_linearlayout_Seven_labeltv_text">7</string>
+    <string name="slider_linearlayout_Six_labeltv_text">6</string>
+    <string name="slider_linearlayout_Five_labeltv_text">5</string>
+    <string name="slider_linearlayout_Four_labeltv_text">4</string>
+    <string name="slider_linearlayout_Three_labeltv_text">3</string>
+    <string name="slider_linearlayout_Two_labeltv_text">2</string>
+    <string name="slider_linearlayout_One_labeltv_text">1</string>
+
+    <!-- image_item_layout_dimentions -->
+
+    <string name="email_screen_email_et_hint">youremail@gmail.com</string>
+    <string name="email_screen_register_email_tv_text">Do you want to register your family account ?</string>
+    <string name="email_send_screen_skip_btn_text">SKIP</string>
+    <string name="email_send_screen_ok_btn_text">OK</string>
+    <string name="terms_of_use_ok_btn_text">OK</string>
+
+    <!-- acitvity_terms_of_use_dimentions -->
+    <string name="terms_of_use_ok_btn_text">OK</string>
+    <string name="terms_of_use_tv_text">MagicFlix Terms Of Use</string>
+    <string name="terms_of_use_wv_text">MagicFlix Terms Of Use</string>
+
+</resources>

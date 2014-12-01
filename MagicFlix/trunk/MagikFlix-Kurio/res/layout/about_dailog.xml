@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:HListView="http://schemas.android.com/apk/res-auto"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:gravity="center_horizontal"
+    android:background="@android:color/white" >
+
+    
+     <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:layout_marginBottom="60dp"
+        android:fillViewport="true" >
+
+        <TextView
+            android:id="@+id/body_tv"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="70dp"
+            android:layout_marginLeft="@dimen/fpp_tile_margin"
+            android:layout_marginRight="@dimen/fpp_tile_margin"
+            android:layout_marginTop="@dimen/fpp_tile_margin"
+            android:padding="5dp"
+            android:textSize="18sp" />
+    </ScrollView>
+    
+    <WebView
+        android:id="@+id/body"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_centerInParent="true"
+        android:layout_marginBottom="100dp"
+        android:layout_marginLeft="@dimen/fpp_tile_margin"
+        android:layout_marginRight="@dimen/fpp_tile_margin"/>
+  
+    
+    <ImageView
+        android:id="@+id/about_logo_iv"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:background="@android:color/transparent"
+        android:contentDescription="@string/app_name"
+        android:gravity="center"
+        android:paddingBottom="5dp"
+        android:src="@drawable/img_logo_powered_by_magikflix" />
+
+    <ImageButton
+        android:id="@+id/dialog_close"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@+id/body"
+        android:background="@drawable/btn_dialog_close"
+        android:contentDescription="@string/app_name" />
+      <TextView android:id="@+id/app_id_tv"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:visibility="gone"
+        android:layout_above="@id/about_logo_iv"
+         android:layout_alignParentBottom="true"
+        android:text="com.magikflix.goog"
+        android:layout_centerHorizontal="true"/>
+
+</RelativeLayout>

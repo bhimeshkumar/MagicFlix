@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:isScrollContainer="true"
+    android:scrollbarAlwaysDrawVerticalTrack="true"
+    android:scrollbars="vertical" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="@dimen/marginLarge"
+        android:background="@color/landing_screen_bg" >
+
+        <ImageView
+            android:id="@+id/email_avatar_iv"
+            android:layout_width="@dimen/email_avatar_iv_width"
+            android:layout_height="@dimen/email_avatar_iv_height"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:adjustViewBounds="true"
+            android:background="@drawable/page_email"
+            android:paddingTop="@dimen/email_avatar_iv_paddingTop"
+            android:scaleType="fitXY" />
+
+        <TextView
+            android:id="@+id/email_screen_register_email_tv"
+            android:layout_width="@dimen/email_screen_register_email_tv_width"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/email_screen_register_email_tv_marginBottom"
+            android:layout_marginLeft="@dimen/email_screen_register_email_tv_marginLeft"
+            android:layout_marginTop="@dimen/email_screen_register_email_tv_marginTop"
+            android:gravity="center"
+            android:lineSpacingExtra="@dimen/paddingMedium"
+            android:text="@string/email_screen_register_email_tv_text"
+            android:textColor="@color/white"
+            android:textSize="@dimen/textSizeLargePlus"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/email_baloon_iv"
+            android:layout_width="@dimen/email_baloon_iv_width"
+            android:layout_height="@dimen/email_baloon_iv_height"
+            android:layout_below="@id/email_screen_register_email_tv"
+            android:layout_marginLeft="@dimen/email_baloon_iv_marginLeft"
+            android:adjustViewBounds="true"
+            android:scaleType="fitXY"
+            android:src="@drawable/register_email_baloon" />
+
+        <EditText
+            android:id="@+id/email_screen_email_et"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/email_baloon_iv"
+            android:layout_marginRight="@dimen/paddingMediumExtraPlus"
+            android:layout_toRightOf="@id/email_avatar_iv"
+            android:background="@drawable/rounded_corner"
+            android:gravity="center"
+            android:hint="@string/email_screen_email_et_hint"
+            android:paddingBottom="@dimen/paddingMediumPlus"
+            android:paddingLeft="@dimen/paddingMediumExtraPlusPlus"
+            android:paddingRight="@dimen/paddingMediumExtraPlusPlus"
+            android:paddingTop="@dimen/paddingMediumPlus"
+            android:textColor="@color/white"
+            android:textColorHint="@color/white"
+            android:singleLine="true"
+            android:textSize="@dimen/textSizeLargePlus"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/email_screen_email_et"
+            android:layout_marginRight="@dimen/paddingMediumExtraPlus"
+            android:layout_marginTop="@dimen/paddingMediumExtraPlusPlus"
+            android:layout_toRightOf="@id/email_avatar_iv"
+            android:gravity="center|left"
+            android:lineSpacingExtra="@dimen/paddingMedium"
+            android:text="@string/register_email_message"
+            android:textColor="@color/white"
+            android:textSize="@dimen/textSizeLargePlus"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/email_send_screen_ok_btn"
+            android:layout_width="@dimen/email_send_screen_ok_btn_width"
+            android:layout_height="@dimen/email_send_screen_ok_btn_height"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_gravity="bottom|right"
+            android:layout_margin="@dimen/email_send_screen_ok_btn_layout_margin"
+            android:background="@drawable/circle_with_white_border"
+            android:gravity="center"
+            android:text="@string/email_send_screen_ok_btn_text"
+            android:textColor="@color/white" />
+
+        <Button
+            android:id="@+id/email_send_screen_skip_btn"
+            android:layout_width="@dimen/email_send_screen_skip_btn_width"
+            android:layout_height="@dimen/email_send_screen_skip_btn_height"
+            android:layout_alignParentBottom="true"
+            android:layout_gravity="bottom|right"
+            android:layout_margin="@dimen/email_send_screen_skip_btn_layout_margin"
+            android:layout_toLeftOf="@id/email_send_screen_ok_btn"
+            android:background="@drawable/circle_with_white_border"
+            android:gravity="center"
+            android:text="@string/email_send_screen_skip_btn_text"
+            android:textColor="@color/white" />
+    </RelativeLayout>
+    
+    <ProgressBar
+        android:id="@+id/email_set_screen_pb"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="@dimen/progressbar_height_width"
+        android:layout_height="@dimen/progressbar_height_width"
+        android:layout_gravity="center"
+        android:layout_centerInParent="true" />
+
+</LinearLayout>
