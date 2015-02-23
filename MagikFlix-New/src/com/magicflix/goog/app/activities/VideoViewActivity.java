@@ -61,7 +61,6 @@ import com.magicflix.goog.app.api.results.Videos;
 import com.magicflix.goog.app.asyntasks.DataApiAsyncTask;
 import com.magicflix.goog.app.utils.Constants;
 import com.magicflix.goog.app.views.CustomVideoView;
-import com.magicflix.goog.app.views.CustomVideoView.MediaControllerEventListener;
 import com.magicflix.goog.app.views.CustomVideoView.PlayPauseListener;
 import com.magicflix.goog.medialplayer.CustomMediaController;
 
@@ -81,6 +80,9 @@ public class VideoViewActivity extends BaseActivity implements PlayPauseListener
 	private int mVideoPausedPosition = 0;
 	private RelativeLayout mTransparentLayout;
 	private ImageView mPlayIV,mBackToGalleryIV,mFavIV;
+	private TimerTask videoTimerTask;
+	
+	private boolean mVideoIsStarted = false, mIsBackbtnPressed = false;;
 
 	@Override
 	protected void onCreate(Bundle arg0) {
@@ -104,7 +106,7 @@ public class VideoViewActivity extends BaseActivity implements PlayPauseListener
 		}else{
 			mFavIV.setBackground(null);
 		}
-		
+
 		VideoId lYouTubeId = new VideoId(mVideoId);
 		new ProcesYouTubeTask().execute(lYouTubeId);
 
@@ -144,18 +146,18 @@ public class VideoViewActivity extends BaseActivity implements PlayPauseListener
 		mBackToGalleryIV.setOnClickListener(this);
 		mFavIV.setOnClickListener(this);
 		mVideoView.setOnClickListener(this);
-//		mVideoView.setMediaContrllerListener(new MediaControllerEventListener() {
-//
-//			@Override
-//			public void controllerVisible() {
-//				//	showActionBar();
-//			}
-//
-//			@Override
-//			public void controllerHiden() {
-//				//hideActionBar();
-//			}
-//		});
+		//		mVideoView.setMediaContrllerListener(new MediaControllerEventListener() {
+		//
+		//			@Override
+		//			public void controllerVisible() {
+		//				//	showActionBar();
+		//			}
+		//
+		//			@Override
+		//			public void controllerHiden() {
+		//				//hideActionBar();
+		//			}
+		//		});
 	}
 
 	private void showActionBar(){
@@ -190,6 +192,10 @@ public class VideoViewActivity extends BaseActivity implements PlayPauseListener
 		switch (view.getId()) {
 		case R.id.play_btn:
 			if(mVideoView != null){
+				if(((MagikFlix)getApplicationContext()).isTrialPeriodExpired()){
+					showTrialExpiredPopUp();
+					return;
+				}
 				mTransparentLayout.setVisibility(View.GONE);
 				mVideoView.start();
 			}
@@ -312,18 +318,28 @@ public class VideoViewActivity extends BaseActivity implements PlayPauseListener
 			videoTimer = new Timer();
 			final int delayTime = 1000;
 			int period = 1000;
-			TimerTask videoTimerTask = new TimerTask()
-			{
+			videoTimerTask = new TimerTask(){
 				int videoPlayedSecs = 0;
-				public void run()
-				{
-
-					try
-					{
+				public void run(){
+					try{
 						videoPlayedSecs++;
 						if(videoPlayedSecs == 10){
 							postRecentVideos(mVideoId);
 						}
+
+						MagikFlix app = (MagikFlix)getApplicationContext();
+						if(mVideoView != null && mVideoView.isPlaying()){
+							app.setVideoPlayTime(app.getVideoPlayTime()+1);
+						}
+
+//						int trialPeriod = Constants.TIMERLIMIT;
+//						int trialPeriodinSecs = trialPeriod * 60;
+//						if(app.getVideoPlayTime() >= trialPeriodinSecs){
+//							app.setIsTrialPeriod(true);
+//							this.cancel();
+//							Intent intnet = new Intent("com.magikflic.goog.TRIALEXPIRED");
+//							sendBroadcast(intnet);
+//						}
 						//						mVideoSeekBar.setProgress(mVideoView.getCurrentPosition());
 					}
 					catch (Exception e)
@@ -376,9 +392,7 @@ public class VideoViewActivity extends BaseActivity implements PlayPauseListener
 	};
 
 	private void processRecentVideoResults(DataResult<String> obj) {
-		//		if(obj.entity != null && obj.entity != null ){
 		try{
-			//				System.out.println("Recent Result ::---->"+obj.entity);
 			Videos mRecentVideo = null;
 			for (Videos videos : videosList) {
 				if(mRecentVideoId.equalsIgnoreCase(videos.videoId)){
@@ -387,9 +401,6 @@ public class VideoViewActivity extends BaseActivity implements PlayPauseListener
 				}
 
 			}
-
-			//			HomeFragment homeFragment = ((MainActivity)this).getHomeFragment();
-			//			homeFragment.updateRecentVideosAdapter(mRecentVideo);
 
 		}catch (Exception e) {
 			Log.e(TAG,"Exception :: processRecentVideoResults"+e);
@@ -468,7 +479,6 @@ public class VideoViewActivity extends BaseActivity implements PlayPauseListener
 
 	@Override
 	public void onStop() {
-		System.out.println("===ON DESTROY====");
 		postLoggingOnBackButtonPress();
 		//		stopVideoPlay();
 		super.onStop();
@@ -506,14 +516,14 @@ public class VideoViewActivity extends BaseActivity implements PlayPauseListener
 
 	@Override
 	public void onVideoPlay() {
-		System.out.println("=====ON START=====::"+"=====TYPE :: 0=====");
-		System.out.println("=====TOTAL DURATION=====::"+mVideoView.getDuration()/1000);
+		mVideoIsStarted = true;
 		Timestamp timeStamp = new Timestamp(new Date().getTime());
 		VideoInfo videoInfo = new VideoInfo();
 		videoInfo.type = 0;
 		videoInfo.video_id = mVideoId;
 		videoInfo.watched_time = 0;
-		videoInfo.isComplete = false;
+		//		videoInfo.isComplete = false;
+		videoInfo.user_id = ((MagikFlix)getApplicationContext()).getUserId();
 		videoInfo.time_stamp = (timeStamp.getTime()/1000);
 		postCustomLogging(videoInfo);
 
@@ -521,13 +531,12 @@ public class VideoViewActivity extends BaseActivity implements PlayPauseListener
 
 	@Override
 	public void onVideoPause() {
-		System.out.println("======ON VIDEO PAUSE======"+ "=====TYPE :: 1====");
 		Timestamp timeStamp = new Timestamp(new Date().getTime());
 		VideoInfo videoInfo = new VideoInfo();
 		videoInfo.type = 1;
 		videoInfo.video_id = mVideoId;
-		videoInfo.isComplete = false;
-		System.out.println("paused position ::--->"+mVideoPausedPosition);
+		//		videoInfo.isComplete = false;
+		videoInfo.user_id = ((MagikFlix)getApplicationContext()).getUserId();
 		if(mVideoPausedPosition > 0)
 			videoInfo.watched_time = (mVideoView.getCurrentPosition()/1000 - mVideoPausedPosition);
 		else
@@ -535,11 +544,9 @@ public class VideoViewActivity extends BaseActivity implements PlayPauseListener
 
 		mVideoPausedPosition = (mVideoView.getCurrentPosition()/1000);
 
-		System.out.println("current position--->"+mVideoPausedPosition);
-
-		System.out.println("Watched Time--->"+videoInfo.watched_time);
 		videoInfo.time_stamp = (timeStamp.getTime()/1000);
-		postCustomLogging(videoInfo);
+		if(videoInfo.watched_time > 0 && mVideoIsStarted)
+			postCustomLogging(videoInfo);
 
 	}
 
@@ -552,12 +559,13 @@ public class VideoViewActivity extends BaseActivity implements PlayPauseListener
 
 
 	private void postLoggingOnVideoPlayerError() {
-		System.out.println("=====ON ERROR=====::"+"=====TYPE :: 0=====");
+		mVideoIsStarted = false;
 		Timestamp timeStamp = new Timestamp(new Date().getTime());
 		VideoInfo videoInfo = new VideoInfo();
 		videoInfo.type = 4;
 		videoInfo.video_id = mVideoId;
-		videoInfo.isComplete = false;
+		//		videoInfo.isComplete = false;
+		videoInfo.user_id = ((MagikFlix)getApplicationContext()).getUserId();
 		videoInfo.watched_time =0;
 		videoInfo.time_stamp = (timeStamp.getTime()/1000);
 		mVideoPausedPosition = 0;
@@ -570,14 +578,12 @@ public class VideoViewActivity extends BaseActivity implements PlayPauseListener
 
 	@Override
 	public void onCompletion(MediaPlayer arg0) {
-		System.out.println("=====ON COMPLETE=====::"+"=====TYPE :: 2=====");
+		mVideoIsStarted = false;
 		Timestamp timeStamp = new Timestamp(new Date().getTime());
 		VideoInfo videoInfo = new VideoInfo();
 		videoInfo.type = 2;
 		videoInfo.video_id = mVideoId;
 		int totalTimeWatched = 0;
-		System.out.println("paused position--->"+mVideoPausedPosition);
-		System.out.println("current position-->"+(mVideoView.getDuration()/1000));
 		if(mVideoPausedPosition > 0){
 			totalTimeWatched = (mVideoView.getDuration()/1000 )-mVideoPausedPosition;
 		}else{
@@ -586,7 +592,8 @@ public class VideoViewActivity extends BaseActivity implements PlayPauseListener
 		mVideoPausedPosition = 0;
 		videoInfo.watched_time = totalTimeWatched;
 		videoInfo.time_stamp = (timeStamp.getTime()/1000);
-		videoInfo.isComplete = true;
+		//		videoInfo.isComplete = true;
+		videoInfo.user_id = ((MagikFlix)getApplicationContext()).getUserId();
 		postCustomLogging(videoInfo);
 		selecetNextVideoToPlay();
 		VideoId lYouTubeId = new VideoId(mVideoId);
@@ -594,14 +601,13 @@ public class VideoViewActivity extends BaseActivity implements PlayPauseListener
 	}
 
 	private void postLoggingOnBackButtonPress() {
-		System.out.println("======ON BACK PRESS====="+ "====TYEPE 3=====");
+		if(mVideoIsStarted && mIsBackbtnPressed ){
 		Timestamp timeStamp = new Timestamp(new Date().getTime());
 		VideoInfo videoInfo = new VideoInfo();
 		videoInfo.type = 3;
 		videoInfo.video_id = mVideoId;
-		videoInfo.isComplete = false;
-		System.out.println("paused position--->"+mVideoPausedPosition);
-		System.out.println("current position-->"+(mVideoView.getCurrentPosition()/1000));
+		//		videoInfo.isComplete = false;
+		videoInfo.user_id = ((MagikFlix)getApplicationContext()).getUserId();
 		if(mVideoPausedPosition > 0)
 			videoInfo.watched_time = (mVideoView.getCurrentPosition()/1000) - mVideoPausedPosition;
 		else
@@ -609,12 +615,15 @@ public class VideoViewActivity extends BaseActivity implements PlayPauseListener
 
 		videoInfo.time_stamp = (timeStamp.getTime()/1000);
 		postCustomLogging(videoInfo);
+		}
+		mIsBackbtnPressed = false;
+		mVideoIsStarted = false;
 	}
 
 
 	@Override
 	public void onBackPressed() {
-		System.out.println("onBackbutton pressed-------");
+		mIsBackbtnPressed = true;
 		Intent returnIntent = new Intent();
 		returnIntent.putExtra("recentVideoId",mRecentVideoId);
 		setResult(RESULT_OK,returnIntent);
@@ -632,13 +641,10 @@ public class VideoViewActivity extends BaseActivity implements PlayPauseListener
 		VideoInfo videoInfo = new VideoInfo();
 		videoInfo.type = 3;
 		videoInfo.video_id = mVideoId;
-		System.out.println("paused position--->"+mVideoPausedPosition);
-		System.out.println("current position-->"+(mVideoView.getCurrentPosition()/1000));
 		if(mVideoPausedPosition > 0)
 			videoInfo.watched_time = (mVideoView.getCurrentPosition()/1000) - mVideoPausedPosition;
 		else
 			videoInfo.watched_time = (mVideoView.getCurrentPosition()/1000);
-		System.out.println("Watched time---->"+videoInfo.watched_time);
 		videoInfo.time_stamp = (timeStamp.getTime()/1000);
 		videoInfo.isComplete = false;
 		postCustomLogging(videoInfo);
@@ -716,6 +722,14 @@ public class VideoViewActivity extends BaseActivity implements PlayPauseListener
 				video.isFavorite = isFavorite;
 			}	
 		}
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		if(videoTimerTask != null)
+			videoTimerTask.cancel();
+
 	}
 
 }

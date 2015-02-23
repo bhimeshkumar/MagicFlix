@@ -16,6 +16,7 @@ import at.technikum.mti.fancycoverflow.FancyCoverFlowAdapter;
 
 import com.magicflix.goog.R;
 import com.magicflix.goog.app.api.results.Videos;
+import com.magicflix.goog.app.utils.Constants;
 import com.magicflix.goog.utils.CompatibilityUtil;
 import com.squareup.picasso.Picasso;
 
@@ -62,6 +63,7 @@ public class MovieAdapter extends FancyCoverFlowAdapter{
             	  customViewGroup.setLayoutParams(new FancyCoverFlow.LayoutParams(dpToPx(220), FancyCoverFlow.LayoutParams.MATCH_PARENT));
           }
 
+          customViewGroup.getDurationTextView().setText(Constants.formatDuration(mVideosList.get(position).duration));
           if(mVideosList.get(position).thumbnailUrl != null)
         	  Picasso.with(mContext).load(mVideosList.get(position).thumbnailUrl).placeholder(mContext.getResources().getDrawable(R.drawable.image_loading_icon)).into(customViewGroup.getImageView());
           else
@@ -113,7 +115,7 @@ public class MovieAdapter extends FancyCoverFlowAdapter{
 	}
 
 	static class ViewHolder {
-		public TextView movieNameTV;
+		public TextView durationTV;
 		public ImageView movieThumbnailTV;
 	}
 	
@@ -123,8 +125,7 @@ public class MovieAdapter extends FancyCoverFlowAdapter{
 	        // Child views
 	        // =============================================================================
 
-//	        private TextView textView;
-
+	        private TextView duartionTextView;
 	        private ImageView imageView;
 
 //	        private Button button;
@@ -141,7 +142,10 @@ public class MovieAdapter extends FancyCoverFlowAdapter{
 			      ViewHolder viewHolder = new ViewHolder();
 			      viewHolder.movieThumbnailTV = (ImageView) rowView
 			          .findViewById(R.id.movie_list_thumbnail_iv);
+			      viewHolder.durationTV = (TextView) rowView
+				          .findViewById(R.id.movie_list_duration_tv);
 			      imageView = viewHolder.movieThumbnailTV ;
+			      duartionTextView = viewHolder.durationTV;
 			      rowView.setTag(viewHolder);
 	           
 
@@ -183,6 +187,10 @@ public class MovieAdapter extends FancyCoverFlowAdapter{
 
 	        private ImageView getImageView() {
 	            return imageView;
+	        }
+	        
+	        private TextView getDurationTextView() {
+	            return duartionTextView;
 	        }
 	    }
 

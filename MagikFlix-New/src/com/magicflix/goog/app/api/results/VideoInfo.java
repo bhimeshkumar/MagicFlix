@@ -8,7 +8,8 @@ public class VideoInfo extends AbstractDataRequest{
 	public String video_id;
 	public int watched_time;
 	public long time_stamp;
-	public boolean isComplete;
+	public String user_id;
+//	public boolean isComplete;
 	
 //	@Override
 //	public String toString() {

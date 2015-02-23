@@ -7,6 +7,7 @@ public class VideoResult {
 	public UserParent userParent;
 	public Playlists[] playlists;
 	public Videos[] videos;
+	public Subscriptions[] subscriptions;
 	
 	public String name;
 	public Categories[] categories;

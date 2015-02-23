@@ -1,9 +1,11 @@
 package com.magicflix.goog.app.api;
 
+import com.magicflix.goog.app.api.requests.AddSubscriptionrequest;
 import com.magicflix.goog.app.api.requests.CustomLogginRequest;
 import com.magicflix.goog.app.api.requests.FavourireVideoRequest;
 import com.magicflix.goog.app.api.requests.GuestRequest;
 import com.magicflix.goog.app.api.requests.RecentVideoRequest;
+import com.magicflix.goog.app.api.requests.RedeemCodeRequest;
 import com.magicflix.goog.app.api.requests.RegisterEmailRequest;
 import com.magicflix.goog.app.api.requests.SecretCodeRequest;
 import com.magicflix.goog.app.api.requests.VideoRequest;
@@ -11,8 +13,8 @@ import com.magicflix.goog.app.api.requests.VideoRequest;
 
 public class MFlixUrlBuilder {
 
-//	private static String cloudUrl = "http://magikflixtest.cloudapp.net";
-	private static String cloudUrl = "http://mflixsvc.cloudapp.net/";
+	private static String cloudUrl = "http://magikflixtest.cloudapp.net/"; //Development
+//	private static String cloudUrl = "http://mflixsvc.cloudapp.net/";      // Production
 
 	public static String getVideosURL(VideoRequest request) {
 		return String.format("%s/api/v2/Application/InitialData?appid=%s&appversion=%s&token=%s", cloudUrl,request.appid,request.appversion, request.token);
@@ -49,6 +51,22 @@ public class MFlixUrlBuilder {
 	public static String removeFavVideoURL(FavourireVideoRequest dataRequest) {
 		 return String.format("%sapi/v2/User/FavoriteVideo?Token=%s&VideoId=%s",cloudUrl,dataRequest.token,dataRequest.videoId);
 	}
+	
+	public static String getPromotionCodeURL(RedeemCodeRequest dataRequest){
+		return String.format("%sapi/v2/Promotion/Redeem?token=%s",cloudUrl,dataRequest.token);
+	}
+	
+	public static String getAddSubcriptionURL(AddSubscriptionrequest dataRequest){
+		return String.format("%sapi/v2/Subscription/Add?token=%s",cloudUrl,dataRequest.token);
+	}
+	
+	public static String getSubcriptionURL(AddSubscriptionrequest dataRequest){
+		return String.format("%sapi/v2/User/Subscription?token=%s",cloudUrl,dataRequest.token);
+	}
+	
+//	http://magikflixtest.cloudapp.net/api/v2/Subscription/Add?token=469a06a57ea7b43444bbefcff894722125eb41aa8e355716782b738c84cbede9
+	
+//	http://magikflixtest.cloudapp.net/api/v2/Promotion/Redeem?token=469a06a57ea7b43444bbefcff894722125eb41aa8e355716782b738c84cbede9&code=123ABC
 	 
 	
 //	http://mflixsvc.cloudapp.net/api/v2/User/SecretCode?Token=469a06a57ea7b43444bbefcff894722125eb41aa8e355716782b738c84cbede9

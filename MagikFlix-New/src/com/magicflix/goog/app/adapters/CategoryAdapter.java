@@ -1,5 +1,7 @@
 package com.magicflix.goog.app.adapters;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Vector;
 
 import android.app.Activity;
@@ -13,22 +15,32 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.localytics.android.LocalyticsAmpSession;
+import com.magicflix.goog.MagikFlix;
 import com.magicflix.goog.R;
 import com.magicflix.goog.app.activities.HomeActivity;
+import com.magicflix.goog.app.activities.VideoPlayingActivity;
 import com.magicflix.goog.app.api.results.Playlists;
+import com.magicflix.goog.app.utils.Constants;
 import com.magicflix.goog.utils.CompatibilityUtil;
+import com.magicflix.goog.utils.MLogger;
 import com.squareup.picasso.Picasso;
 
 public class CategoryAdapter extends BaseAdapter{
 
+	private static String TAG = CategoryAdapter.class.getName();
 	private Activity mContext;
 	private String[] mList;
 	int m_w, m_h;
 	protected Vector<Boolean> selectedStates;
 	private Playlists[] mPlayLists;
+	private LocalyticsAmpSession mLocalyticsSession;
+	private Map<String, String> mCategorySelectorEvent ;
 
 	public CategoryAdapter(Activity context, Playlists[] playLists) {
+		mCategorySelectorEvent = new HashMap<String, String>();
 		mContext = context;
+		mLocalyticsSession = ((MagikFlix)mContext.getApplicationContext()).getLocatyticsSession();
 		selectedStates = new Vector<Boolean>();
 		mPlayLists = playLists;
 		clearSelectedState();
@@ -63,8 +75,8 @@ public class CategoryAdapter extends BaseAdapter{
 			viewHolder.category_title_tv = (TextView) rowView
 					.findViewById(R.id.category_title_tv);
 
-//			viewHolder.mOuterCircleLayout = (RelativeLayout) rowView
-//					.findViewById(R.id.category_outline_layout);
+			//			viewHolder.mOuterCircleLayout = (RelativeLayout) rowView
+			//					.findViewById(R.id.category_outline_layout);
 			viewHolder.mInnerCircleLayout = (RelativeLayout) rowView
 					.findViewById(R.id.category_inline_layout);
 			rowView.setTag(viewHolder);
@@ -78,10 +90,10 @@ public class CategoryAdapter extends BaseAdapter{
 			@Override
 			public void onClick(View v) {
 				clearSelectedState();
+				sendLocalyticsForCategory(position);
 				selectedStates.set(position, new Boolean(true));
 				((HomeActivity)mContext).setPlayList(position);
 				CategoryAdapter.this.notifyDataSetChanged();
-
 			}
 		});
 
@@ -123,7 +135,7 @@ public class CategoryAdapter extends BaseAdapter{
 				holder.mInnerCircleLayout .getLayoutParams().height = dpToPx(60);
 				holder.mInnerCircleLayout .getLayoutParams().width = dpToPx(60);
 			}
-			
+
 			holder.mInnerCircleLayout.setBackground(mContext.getResources().getDrawable(R.drawable.icon_outline_color_unselected));
 		}
 		holder.category_title_tv.setVisibility(View.GONE);
@@ -143,7 +155,7 @@ public class CategoryAdapter extends BaseAdapter{
 		public TextView category_title_tv;
 		public TextView movieNameTV;
 		public ImageView movieThumbnailTV;
-//		public RelativeLayout mOuterCircleLayout;
+		//		public RelativeLayout mOuterCircleLayout;
 		public RelativeLayout mInnerCircleLayout;
 	}
 
@@ -164,6 +176,15 @@ public class CategoryAdapter extends BaseAdapter{
 		DisplayMetrics displayMetrics =mContext.getResources().getDisplayMetrics();
 		int px = Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));       
 		return px;
+	}
+	
+	private void sendLocalyticsForCategory(final int position) {
+		MLogger.logInfo(TAG, "Category name :: "+mPlayLists[position].name);
+		mCategorySelectorEvent.clear();
+		mCategorySelectorEvent.put(Constants.CATEGORY, mPlayLists[position].name);
+		mCategorySelectorEvent.put(Constants.INDEX, String.valueOf(position));
+		if(mLocalyticsSession != null)
+			mLocalyticsSession.tagEvent(Constants.CATEGORY_SELECTOR_EVENT, mCategorySelectorEvent);
 	}
 
 

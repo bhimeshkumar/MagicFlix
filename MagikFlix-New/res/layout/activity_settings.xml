@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/app_bg"
+     >
+    
+    <TextView
+        android:id="@+id/settings_screen_title_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Minutes to watch"
+        android:textColor="@color/white"
+        android:layout_centerInParent="true"
+        android:layout_alignParentTop="true"
+        android:paddingTop="@dimen/paddingMediumExtraPlus"
+        android:textSize="@dimen/textSizeSubscriptionTitle"
+         />
+
+    <Button
+        android:id="@+id/settings_screen_ok_btn"
+        android:layout_width="@dimen/subscription_btn_width"
+        android:layout_height="@dimen/subscription_btn_width"
+        android:background="@drawable/button_selector"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:text="OK"
+        android:layout_marginLeft="@dimen/marginMediumExtraPlusPlus"
+        android:textColor="@color/white"
+        android:textSize="@dimen/textSizeSubscriptionTitle" />
+
+    <com.magicflix.goog.app.views.CircularSeekBar
+        android:id="@+id/settings_circular_sb"
+        android:layout_below="@id/settings_screen_title_tv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        app:max="60"
+        android:layout_marginTop="@dimen/marginLargeSubscription"
+        android:layout_marginBottom="@dimen/marginLargeSubscription"
+        app:pointer_color="@color/white"
+        app:pointer_halo_color="@color/white"
+        app:pointer_size="30"
+        app:text_color="@color/white"
+        app:text_size="65"
+        app:wheel_active_color="#EF661B"
+        app:wheel_unactive_color="@color/white" >
+    </com.magicflix.goog.app.views.CircularSeekBar>
+
+</RelativeLayout>

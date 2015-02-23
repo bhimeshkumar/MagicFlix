@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#A6000000"
+    android:orientation="vertical" >
+
+    <ImageView
+        android:id="@+id/time_up_avatar"
+        android:layout_width="@dimen/timesPopUpAvatarWidth"
+        android:layout_height="@dimen/timesPopUpAvatarWidth"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:src="@drawable/page_email" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/time_up_avatar"
+        android:layout_marginLeft="@dimen/marginTimesPopUpBalloon"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/times_up_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/times_up_txt"
+            android:layout_gravity="center_horizontal"
+            android:textColor="@color/white"
+            android:textSize="@dimen/textSizeTimesUp" />
+
+        <ImageView
+            android:layout_width="@dimen/timesPopUpBalloonWidth"
+            android:layout_height="@dimen/timesPopUpBalloonHeight"
+            android:src="@drawable/magicflix_baloon_three" />
+    </LinearLayout>
+
+</RelativeLayout>

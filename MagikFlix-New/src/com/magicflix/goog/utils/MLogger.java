@@ -9,10 +9,10 @@ import android.util.Log;
  * 
  */
 public class MLogger {
-	public static final String LOG_TAG = "MagikFlix-ChangeMe";
+	public static final String LOG_TAG = "Magicflix";
 	
 	private static boolean inTestMode(){
-		return true;
+		return false;
 	}
 	
 	public static void logInfo(String tag, String msg) {
@@ -20,7 +20,7 @@ public class MLogger {
 			logForTestMode(tag, msg);
 			return;
 		}
-		Log.d(tag, msg);
+//		Log.d(tag, msg);
 	}
 
 	private static void logForTestMode(String tag, String msg, Exception... optional) {

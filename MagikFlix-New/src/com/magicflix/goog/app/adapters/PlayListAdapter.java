@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.magicflix.goog.R;
 import com.magicflix.goog.app.api.results.Videos;
+import com.magicflix.goog.app.utils.Constants;
 import com.squareup.picasso.Picasso;
 
 public class PlayListAdapter extends BaseAdapter{
@@ -48,17 +49,20 @@ public class PlayListAdapter extends BaseAdapter{
 		      ViewHolder viewHolder = new ViewHolder();
 		      viewHolder.movieThumbnailTV = (ImageView) rowView
 		          .findViewById(R.id.play_list_thumbnail_iv);
+		      viewHolder.mVideoDurationTV = (TextView) rowView
+			          .findViewById(R.id.play_list_duration_tv);
 		      rowView.setTag(viewHolder);
 		    }
 		    // fill data
 		    ViewHolder holder = (ViewHolder) rowView.getTag();
+		    holder.mVideoDurationTV.setText(Constants.formatDuration(mVideosList.get(position).duration));
 		    Picasso.with(mContext).load(mVideosList.get(position).thumbnailUrl).placeholder(mContext.getResources().getDrawable(R.drawable.image_loading_icon)).into(holder.movieThumbnailTV);
 		return rowView;
 	}
 
 	
 	static class ViewHolder {
-		public TextView movieNameTV;
+		public TextView mVideoDurationTV;
 		public ImageView movieThumbnailTV;
 	}
 

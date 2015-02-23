@@ -1,21 +1,29 @@
 package com.magicflix.goog.app.api;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.google.gson.Gson;
 import com.magicflix.goog.api.data.AbstractDataRequest;
 import com.magicflix.goog.api.data.DataResult;
 import com.magicflix.goog.api.data.IDataRequestType;
 import com.magicflix.goog.api.http.HttpResult;
+import com.magicflix.goog.app.api.requests.AddSubscriptionrequest;
 import com.magicflix.goog.app.api.requests.CustomLogginRequest;
-import com.magicflix.goog.app.api.requests.FavoriteJsonRequest;
 import com.magicflix.goog.app.api.requests.FavourireVideoRequest;
 import com.magicflix.goog.app.api.requests.GuestRequest;
 import com.magicflix.goog.app.api.requests.RecentVideoRequest;
+import com.magicflix.goog.app.api.requests.RedeemCodeRequest;
 import com.magicflix.goog.app.api.requests.RegisterEmailRequest;
 import com.magicflix.goog.app.api.requests.SecretCodeRequest;
 import com.magicflix.goog.app.api.requests.VideoRequest;
+import com.magicflix.goog.app.api.results.AddSubscriptionResult;
 import com.magicflix.goog.app.api.results.AppConfigResult;
+import com.magicflix.goog.app.api.results.EmaiResult;
 import com.magicflix.goog.app.api.results.GuestResult;
+import com.magicflix.goog.app.api.results.PromoCodeResult;
 import com.magicflix.goog.app.api.results.SecretCodeResult;
+import com.magicflix.goog.app.api.results.SubscriptionResult;
 import com.magicflix.goog.app.api.results.VideoResult;
 import com.magicflix.goog.app.utils.Constants;
 import com.magicflix.goog.builders.BaseBuilder;
@@ -47,6 +55,12 @@ public class MFlixJsonBuilder extends BaseBuilder {
 			return (DataResult<T>) registerUserEmail((RegisterEmailRequest)dataRequest);
 		case GET_SECRET_CODE :
 			return (DataResult<T>) getSecretCode((SecretCodeRequest)dataRequest);
+		case ADD_SUBSCRIPTION :
+			return (DataResult<T>) addSubscription((AddSubscriptionrequest)dataRequest);
+		case GET_USER_SUBSCRIPTION :
+			return (DataResult<T>) getSubscription((AddSubscriptionrequest)dataRequest);
+		case VERIFY_REDEEM :
+			return (DataResult<T>) verifyPromoCode((RedeemCodeRequest)dataRequest);
 		default:
 			return null;
 		}
@@ -126,15 +140,14 @@ public class MFlixJsonBuilder extends BaseBuilder {
 		return result;
 	}
 
-	private DataResult<String> registerUserEmail(RegisterEmailRequest dataRequest) {
+	private DataResult<EmaiResult> registerUserEmail(RegisterEmailRequest dataRequest) {
 
 		Gson gson = new Gson();
 		String json = "{"+"email:"+gson.toJson(dataRequest.email)+"}";
-		System.out.println("Json email-->"+json);
 		HttpResult httpResult = httpHelper.putString(MFlixUrlBuilder.getEmailRegisterURL(dataRequest), json);
-		DataResult<String> result= new DataResult<String>();
+		DataResult<EmaiResult> result= new DataResult<EmaiResult>();
 		result.successful = isResultSuccesfull(httpResult);
-		result.entity = (isResultSuccesfull(httpResult) ?new CommonJsonBuilder().getEntityForJson(httpResult.result, String.class) : null);
+		result.entity = (isResultSuccesfull(httpResult) ?new CommonJsonBuilder().getEntityForJson(httpResult.result, EmaiResult.class) : null);
 		return result;
 	}
 
@@ -146,9 +159,75 @@ public class MFlixJsonBuilder extends BaseBuilder {
 		return result;
 	}
 
+	private DataResult<AddSubscriptionResult> addSubscription(AddSubscriptionrequest dataRequest) {
+
+		Gson gson = new Gson();
+		String json = gson.toJson(dataRequest.subscriptionModel);
+		System.out.println("Json subscription-->"+json);
+		HttpResult httpResult = httpHelper.postString(MFlixUrlBuilder.getAddSubcriptionURL(dataRequest), json,Constants.AUTH_KEY);
+		DataResult<AddSubscriptionResult> result= new DataResult<AddSubscriptionResult>();
+		result.successful = isResultSuccesfull(httpResult);
+		result.entity = (isResultSuccesfull(httpResult) ?new CommonJsonBuilder().getEntityForJson(httpResult.result, AddSubscriptionResult.class) : null);
+		return result;
+	}
+
+	private DataResult<SubscriptionResult> getSubscription(AddSubscriptionrequest dataRequest) {
+		HttpResult httpResult = httpHelper.getString(MFlixUrlBuilder.getSubcriptionURL(dataRequest));
+		DataResult<SubscriptionResult> result= new DataResult<SubscriptionResult>();
+		result.successful = isResultSuccesfull(httpResult);
+		result.entity = (isResultSuccesfull(httpResult) ?new CommonJsonBuilder().getEntityForJson(httpResult.result, SubscriptionResult.class) : null);
+		return result;
+	}
+
+	private DataResult<PromoCodeResult> verifyPromoCode(RedeemCodeRequest dataRequest) {
+
+		Gson gson = new Gson();
+		String json = gson.toJson(dataRequest.promoCodeRequest);
+		HttpResult httpResult = httpHelper.postString(MFlixUrlBuilder.getPromotionCodeURL(dataRequest), json,Constants.AUTH_KEY);
+		DataResult<PromoCodeResult> result= new DataResult<PromoCodeResult>();
+		result.successful = isResultSuccesfull(httpResult);
+		PromoCodeResult promoCodeResult = null ;
+		if((httpResult != null)){
+			promoCodeResult = new PromoCodeResult();
+			if(!(httpResult.statusCode == 200)){
+				try {
+					JSONObject jsonObject = new JSONObject(httpResult.result);
+					promoCodeResult.isSuccess= jsonObject.getBoolean("isSuccess");
+					promoCodeResult.message= jsonObject.getString("message");
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+			}else{
+				try {
+					JSONObject jsonObject = new JSONObject(httpResult.result);
+					promoCodeResult.id = jsonObject.getString("id");
+					promoCodeResult.Name = jsonObject.getString("Name");
+					promoCodeResult.platform = jsonObject.getString("platform");
+					promoCodeResult.message= jsonObject.getString("Name");
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		//		System.out.println("result======>"+result.successful);
+		//		
+		//		if(result.successful){
+		//			try {
+		//				JSONObject jsonObject = new JSONObject(httpResult.result);
+		//				promoCodeResult.isSuccess= jsonObject.getBoolean("isSuccess");
+		//				promoCodeResult.message= jsonObject.getString("message");
+		//			} catch (JSONException e) {
+		//				e.printStackTrace();
+		//			}
+		//		}
+		result.entity = promoCodeResult;
+		//				result.entity = (true ?new CommonJsonBuilder().getEntityForJson(httpResult.result, PromoCodeResult.class) : null);
+		return result;
+	}
 
 	public static enum WebRequestType implements IDataRequestType{
-		GET_VIDEOS, GET_FAVOURITE_VIDEOS, GET_RECENT_VIDEOS,POST_RECENT_VIDEOS,POST_FAV_VIDEOS, DO_GUEST_LOGIN, POST_VIDEO_LOGGING, DO_EMAIL_REGISTER, GET_APP_CONFIG,GET_SECRET_CODE;
+		GET_VIDEOS, GET_FAVOURITE_VIDEOS, GET_RECENT_VIDEOS,POST_RECENT_VIDEOS,POST_FAV_VIDEOS, DO_GUEST_LOGIN, POST_VIDEO_LOGGING, DO_EMAIL_REGISTER, 
+		GET_APP_CONFIG,GET_SECRET_CODE, ADD_SUBSCRIPTION,VERIFY_REDEEM,GET_USER_SUBSCRIPTION;
 	}
 
 	private DataResult<SecretCodeResult> getSecretCode(SecretCodeRequest dataRequest) {

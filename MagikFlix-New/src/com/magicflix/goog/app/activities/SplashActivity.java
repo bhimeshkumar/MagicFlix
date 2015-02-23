@@ -20,38 +20,38 @@ import com.magicflix.goog.app.utils.Constants;
 public class SplashActivity extends Activity implements  OnAnimationStoppedListener{
 
 	private ImageView mAnimatedImageView;
-	private FasterAnimationsContainer mFasterAnimationsContainer;
+	private boolean mIsBackPressed = false;
+//	private FasterAnimationsContainer mFasterAnimationsContainer;
 	private static final int ANIMATION_INTERVAL = 2;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setUpScreen();
-		new SetupAsyncTask(this).execute();
-		//		startAnimation();
+		setUpApp();
+//		startAnimation();
 		mAnimatedImageView = (ImageView) findViewById(R.id.magikflix_logo);
 		mAnimatedImageView.setImageDrawable(this.getResources().getDrawable(R.drawable.blux_appear_26));
-
 	}
 
 	/**
 	 * To setup application such as checking the connections and creating DB
 	 */
-	/*private void setUpApp() {
+	private void setUpApp() {
 
 		new SetupAsyncTask(this).execute();
-	}*/
-
-	private void startAnimation() {
-		mAnimatedImageView = (ImageView) findViewById(R.id.magikflix_logo);
-		mFasterAnimationsContainer = null;
-		mFasterAnimationsContainer = FasterAnimationsContainer
-				.getInstance(mAnimatedImageView);
-		mFasterAnimationsContainer.addAllFrames(Constants.SPLASH_IMAGE_RESOURCES,
-				ANIMATION_INTERVAL);
-		mFasterAnimationsContainer.setOnAnimationStoppedListener(this);
-		mFasterAnimationsContainer.start();
 	}
+
+//	private void startAnimation() {
+//		mAnimatedImageView = (ImageView) findViewById(R.id.magikflix_logo);
+//		mFasterAnimationsContainer = null;
+//		mFasterAnimationsContainer = FasterAnimationsContainer
+//				.getInstance(mAnimatedImageView);
+//		mFasterAnimationsContainer.addAllFrames(Constants.SPLASH_IMAGE_RESOURCES,
+//				ANIMATION_INTERVAL);
+//		mFasterAnimationsContainer.setOnAnimationStoppedListener(this);
+//		mFasterAnimationsContainer.start();
+//	}
 
 
 	/**
@@ -64,11 +64,13 @@ public class SplashActivity extends Activity implements  OnAnimationStoppedListe
 	}
 
 	public void goToNextScreen() {
-		new CountDownTimer(4000, 1000) {
+		new CountDownTimer(3000, 1000) {
 			@Override
 			public void onFinish() {
-
-				navigateToHome();
+				if(!mIsBackPressed)
+					navigateToHome();
+				else
+					finish();
 			}
 
 			@Override
@@ -103,10 +105,8 @@ public class SplashActivity extends Activity implements  OnAnimationStoppedListe
 		new CountDownTimer(4000, 1000) {
 			@Override
 			public void onFinish() {
-
 				finish();
 			}
-
 			@Override
 			public void onTick(long millisUntilFinished) {
 			}
@@ -117,13 +117,13 @@ public class SplashActivity extends Activity implements  OnAnimationStoppedListe
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		//				mFasterAnimationsContainer.stop();
-		//				mFasterAnimationsContainer.clearInstance();
+//		mFasterAnimationsContainer.stop();
+//		mFasterAnimationsContainer.clearInstance();
 	}
 
 	@Override
 	public void onBackPressed() {
-		this.finish();
+		mIsBackPressed = true;
 		super.onBackPressed();
 	}
 
@@ -143,5 +143,4 @@ public class SplashActivity extends Activity implements  OnAnimationStoppedListe
 			}
 		}.start();
 	}
-
 }

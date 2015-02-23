@@ -7,7 +7,9 @@ import it.sephiroth.android.library.widget.HListView;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 import android.app.ActionBar;
 import android.content.BroadcastReceiver;
@@ -19,6 +21,7 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
@@ -28,6 +31,7 @@ import at.technikum.mti.fancycoverflow.FancyCoverFlow;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.localytics.android.LocalyticsAmpSession;
 import com.magicflix.goog.MagikFlix;
 import com.magicflix.goog.R;
 import com.magicflix.goog.api.data.DataResult;
@@ -42,6 +46,8 @@ import com.magicflix.goog.app.api.results.VideoResult;
 import com.magicflix.goog.app.api.results.Videos;
 import com.magicflix.goog.app.asyntasks.DataApiAsyncTask;
 import com.magicflix.goog.app.utils.Constants;
+import com.magicflix.goog.app.utils.Utils;
+import com.magicflix.goog.broadcasts.FavouriteChangeListner;
 
 public class HomeActivity extends BaseActivity implements OnItemSelectedListener, OnItemClickListener,  OnClickListener, android.widget.AdapterView.OnItemClickListener {
 
@@ -55,8 +61,14 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 	private String mRecentVideoId = null;
 	private ArrayList<Videos> filteredVideoList;
 	private ActionBar mActionBar;
-	private ImageView mTermsOfUseIV ;
-	private TextView mCategoryNameTv;
+	private ImageView mTermsOfUseIV;
+	private TextView mCategoryNameTv , mNoVideoFoundTV;
+	private FavouriteChangeListner mFavouriteChangeListner;
+	private IntentFilter mFavIntentFilter; 
+	private LocalyticsAmpSession mLocalyticsSession; 
+	private Map<String, String> mLocaliticsAttributes ;
+	private String mSelectedCategoryName;
+	private int mSelectedCategoryPosition;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -67,13 +79,23 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 		setIdsToViews();
 		setListnersToViews();
 		getVideos(((MagikFlix)getApplicationContext()).getToken());
-
 	}
 
 	private void init() {
+		mLocalyticsSession = ((MagikFlix)getApplication()).getLocatyticsSession();
+		mLocaliticsAttributes = new HashMap<String, String>();
 		this.fancyCoverFlow = (FancyCoverFlow) this.findViewById(R.id.mainActivity_movie_list);
 		filteredVideoList = new ArrayList<Videos>();
 		filteredVideoList.clear();
+		mFavIntentFilter = new IntentFilter("com.magikflic.goog.FAVOURITE_CHANGE");
+		mFavouriteChangeListner = new FavouriteChangeListner() {
+			@Override
+			protected void onFavoritedChange() {
+				if(((MagikFlix)getApplicationContext()).getVideoResult() != null && mCategoryPlayLists !=null ){
+					setPlayList(Constants.CATEGORY_SELECTED_POSITION);
+				}
+			}
+		};
 	}
 
 	private void setUpActionBar() {
@@ -89,6 +111,7 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 		mTermsOfUseIV.setOnClickListener(this);
 	}
 
+	@SuppressWarnings("deprecation")
 	private void setMovieAdapter() {
 		movieVideos = new ArrayList<Videos>();
 		movieVideos.clear();
@@ -127,6 +150,7 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 		mPlayListListView = (HListView)findViewById(R.id.main_screen_play_list);
 		mProgressBar = (ProgressBar)findViewById(R.id.home_screen_pb);
 		mTermsOfUseIV = (ImageView)mActionBar.getCustomView().findViewById(R.id.actionBar_terms_of_use_iv);
+		mNoVideoFoundTV = (TextView)findViewById(R.id.main_screen_no_videos_tv);
 	}
 
 
@@ -139,8 +163,12 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 	public void onItemClick(
 			it.sephiroth.android.library.widget.AdapterView<?> parent,
 			View view, int position, long id) {
+		mLocaliticsAttributes.clear();
+		mLocaliticsAttributes.put(Constants.CATEGORY, mSelectedCategoryName);
+		mLocaliticsAttributes.put(Constants.INDEX, String.valueOf(position));
+		mLocaliticsAttributes.put(Constants.VIDEO_ID, videosList.get(position).videoId);
+		mLocalyticsSession.tagEvent(Constants.CATEGORY_VIDEO, mLocaliticsAttributes);
 		checkYouTubAppAvailability(position,videosList);
-
 	}
 
 	private void checkYouTubAppAvailability(int position, ArrayList<Videos> videosList) {
@@ -169,7 +197,6 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 
 
 	private void navigateToVideoPlayScreen(int position, ArrayList<Videos> videoList) {
-
 		Intent intent = new Intent(this,VideoPlayingActivity.class);
 		Bundle bundle = new Bundle();
 		bundle.putSerializable("videosList", videoList);
@@ -191,7 +218,6 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 		startActivityForResult(intent, 1);
 	}
 
-
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
@@ -200,7 +226,6 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 				mRecentVideoId =data.getStringExtra("recentVideoId");
 				getRecentPlayList("Recent Videos");
 			}
-			
 		}
 	}
 
@@ -209,11 +234,10 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 		VideoRequest  loginRequest = new VideoRequest();
 		loginRequest.appid = getPackageName();
 		loginRequest.token = token;
-		loginRequest.appversion = Constants.APP_VERSION;
+		loginRequest.appversion = Utils.getAppVersion(this);
 		loginRequest.requestDelegate = new MFlixJsonBuilder();
 		loginRequest.requestType =  WebRequestType.GET_VIDEOS;	
 		new DataApiAsyncTask(true, this, videosHandler, null).execute(loginRequest);
-
 	}
 
 	private Handler videosHandler = new Handler(){
@@ -229,15 +253,14 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 		if(obj.entity != null ){
 			Playlists[] playLists = obj.entity.playlists;
 			ArrayList<Playlists> categoriesList = new ArrayList<Playlists>();
+
 			for (Playlists playList : playLists) {
 				if(playList.playlistType.equalsIgnoreCase(this.getResources().getString(R.string.category_header))){
 					categoriesList.add(playList);
 				}
-
 			}
 			mCategoryPlayLists = categoriesList.toArray(new Playlists[categoriesList.size()]);
-			
-		    ((MagikFlix)getApplicationContext()).setVideosResult(obj.entity);
+			((MagikFlix)getApplicationContext()).setVideosResult(obj.entity);
 			setCategoryAdapter();
 			setFavoriteVideos();
 		}
@@ -248,7 +271,6 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 		setPlayList(3);
 		setMovieAdapter();
 		mProgressBar.setVisibility(View.GONE);
-
 	}
 
 	public void setPlayList(int position) {
@@ -256,6 +278,7 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 		videosList.clear();
 		String categoryName = mCategoryPlayLists[position].name;
 		Constants.CATEGORY_SELECTED_POSITION = position;
+		mSelectedCategoryName = categoryName;
 		mCategoryNameTv.setText(categoryName);
 		if(categoryName.equalsIgnoreCase("Recent Videos")){
 			videosList = getRecentPlayList(categoryName);
@@ -264,7 +287,6 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 		}else if(categoryName.equalsIgnoreCase("Favorite Videos")){
 			videosList = getFavoriteVideos();
 		}else{
-
 			for (Videos video : ((MagikFlix)getApplicationContext()).getVideoResult().videos) {
 				if(video.category.equalsIgnoreCase(categoryName)){
 					videosList.add(video);
@@ -272,7 +294,15 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 			}
 		}
 
-		mPlayListListView.setAdapter(new PlayListAdapter(this,videosList));
+		if(videosList.size() > 0){
+			mNoVideoFoundTV.setVisibility(View.GONE);
+			mPlayListListView.setVisibility(View.VISIBLE);
+			mPlayListListView.setAdapter(new PlayListAdapter(this,videosList));
+		}else{
+			mPlayListListView.setVisibility(View.GONE);
+			mNoVideoFoundTV.setVisibility(View.VISIBLE);
+		}
+
 	}
 
 	private void setFavoriteVideos() {
@@ -293,10 +323,10 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 	private ArrayList<Videos> getFavoriteVideos(){
 		ArrayList<Videos> favVideosList = new ArrayList<Videos>();
 		for (Videos videos : ((MagikFlix)getApplicationContext()).getVideoResult().videos) {
-				if(videos.isFavorite){
-					videos.isFavorite = true;
-					favVideosList.add(videos);
-				}
+			if(videos.isFavorite){
+				videos.isFavorite = true;
+				favVideosList.add(videos);
+			}
 		}
 		HashSet<Videos> hashSet = new HashSet<Videos>(favVideosList);
 		return new ArrayList<Videos>(hashSet);
@@ -331,14 +361,25 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 	@Override
 	public void onItemClick(android.widget.AdapterView<?> arg0, View arg1,
 			int position, long arg3) {
+		mLocaliticsAttributes.clear();
+		mLocaliticsAttributes.put(Constants.INDEX, String.valueOf(position));
+		mLocaliticsAttributes.put(Constants.VIDEO_ID, movieVideos.get(position).videoId);
+		mLocalyticsSession.tagEvent(Constants.RECOMMENDED_VIDEO, mLocaliticsAttributes);
 		checkYouTubAppAvailability(position,movieVideos);
-
 	}
 
 	@Override
 	public void onClick(View view) {
-		startActivity(new Intent(this,TermsOfUseActivity.class));
-
+		switch (view.getId()) {
+		case R.id.actionBar_terms_of_use_iv:
+			startActivity(new Intent(this,TermsOfUseActivity.class));
+			break;
+		case R.id.actionBar_timer_value_tv:
+			startActivity(new Intent(this,SettingsActivity.class));
+			break;
+		default:
+			break;
+		}
 	}
 
 	@Override
@@ -349,18 +390,14 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 	@Override
 	protected void onResume() {
 		super.onResume();
+		registerReceiver(mFavouriteChangeListner, mFavIntentFilter);
 		registerReceiver(mConnReceiver,  new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
-
 	}
 
 	@Override
 	protected void onRestart() {
 		super.onRestart();
-		if(((MagikFlix)getApplicationContext()).getVideoResult() != null ){
-			setPlayList(Constants.CATEGORY_SELECTED_POSITION);
-		}
 	}
-
 
 	@Override
 	protected void onPause() {
@@ -370,10 +407,10 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 
 	private BroadcastReceiver mConnReceiver = new BroadcastReceiver() {
 		public void onReceive(Context context, Intent intent) {
-
 			NetworkInfo currentNetworkInfo = (NetworkInfo) intent.getParcelableExtra(ConnectivityManager.EXTRA_NETWORK_INFO);
 			if(!currentNetworkInfo.isConnected()){
 				mProgressBar.setVisibility(View.GONE);
+				showLongToast(context.getString(R.string.internet_failure_msg));
 			}else{
 				if(((MagikFlix)getApplicationContext()).getVideoResult() == null){
 					mProgressBar.setVisibility(View.VISIBLE);
@@ -383,4 +420,15 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 		}
 	};
 
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.main, menu);
+		return true;
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		unregisterReceiver(mFavouriteChangeListner);
+	}
 }

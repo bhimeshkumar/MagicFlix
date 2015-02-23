@@ -16,7 +16,6 @@ import android.widget.LinearLayout;
 import com.magicflix.goog.R;
 import com.magicflix.goog.app.api.results.Videos;
 import com.magicflix.goog.utils.CompatibilityUtil;
-import com.squareup.picasso.Picasso;
 
 public class VideoPlayBackAdapter extends BaseAdapter implements OnClickListener{
 

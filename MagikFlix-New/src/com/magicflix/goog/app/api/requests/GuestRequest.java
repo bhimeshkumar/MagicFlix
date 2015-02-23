@@ -7,5 +7,7 @@ public class GuestRequest extends AbstractDataRequest{
 	public String appid;
 	public String appversion;
 	public String locale;
+	public String device;
+	public int platform;
 
 }

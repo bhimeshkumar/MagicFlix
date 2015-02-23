@@ -1,6 +1,8 @@
 package com.magicflix.goog.app.adapters;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import android.accounts.Account;
@@ -31,6 +33,7 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
+import com.localytics.android.LocalyticsAmpSession;
 import com.magicflix.goog.MagikFlix;
 import com.magicflix.goog.R;
 import com.magicflix.goog.api.data.DataResult;
@@ -39,22 +42,29 @@ import com.magicflix.goog.app.activities.LandingScreen;
 import com.magicflix.goog.app.api.MFlixJsonBuilder;
 import com.magicflix.goog.app.api.MFlixJsonBuilder.WebRequestType;
 import com.magicflix.goog.app.api.requests.RegisterEmailRequest;
-import com.magicflix.goog.app.api.results.GuestResult;
+import com.magicflix.goog.app.api.results.EmaiResult;
 import com.magicflix.goog.app.asyntasks.DataApiAsyncTask;
+import com.magicflix.goog.app.utils.Constants;
 import com.magicflix.goog.seekbar.VerticalSeekBar;
+import com.magicflix.goog.utils.MLogger;
 
-public class ImageAdapter extends BaseAdapter {
+public class LandingScreenAdapter extends BaseAdapter {
 
+	private static String TAG = LandingScreenAdapter.class.getName();
 	private LayoutInflater mInflater;
 	private PopupWindow mAccountsPopupWindow;
 	private int age;
-
 	private Context mContext;
 	private ProgressBar mProgressBar;
 	private EditText mEmailEt;
-	public ImageAdapter(Context context) {
+	private String mUserEmail;
+	private LocalyticsAmpSession mLocalyticsSession;
+	private Map<String, String> mLocalyticsAttributes ;
+	public LandingScreenAdapter(Context context) {
+		mLocalyticsAttributes = new HashMap<String, String>();
 		mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		mContext = context;
+		mLocalyticsSession = ((MagikFlix)mContext.getApplicationContext()).getLocatyticsSession();
 		MagikFlix app  =  (MagikFlix)mContext.getApplicationContext();
 		age = Integer.parseInt(app.getDefaultAge());
 
@@ -116,10 +126,20 @@ public class ImageAdapter extends BaseAdapter {
 
 				@Override
 				public void onClick(View v) {
-					MagikFlix app  =  (MagikFlix)mContext.getApplicationContext();
-					app.setDefaultAge(String.valueOf(age));
-					((LandingScreen)mContext).setAdapterToViewFlow();
-
+					if(age > 0){
+						MagikFlix app  =  (MagikFlix)mContext.getApplicationContext();
+						app.setDefaultAge(String.valueOf(age));
+						
+						MLogger.logInfo(TAG, "Selected Age :: "+age);
+						mLocalyticsAttributes.clear();
+						mLocalyticsAttributes.put(Constants.AGE, String.valueOf(age));
+						if(mLocalyticsSession != null)
+							mLocalyticsSession.tagEvent(Constants.AGE_IS_SELECTED, mLocalyticsAttributes);
+						
+						((LandingScreen)mContext).setAdapterToViewFlow();
+					}else{
+						((BaseActivity)mContext).showInvalidDateDialog();
+					}
 				}
 			});
 		}
@@ -165,6 +185,7 @@ public class ImageAdapter extends BaseAdapter {
 				@Override
 				public void onClick(View v) {
 					String email = emailET.getText().toString();
+					
 					((LandingScreen)mContext).navigateToHomeScreen();
 
 				}
@@ -189,8 +210,12 @@ public class ImageAdapter extends BaseAdapter {
 			Boolean isValidEmail = email.matches(EMAIL_REGEX);
 
 			if(isValidEmail){
+				if(mLocalyticsSession != null)
+					mLocalyticsSession.tagEvent(Constants.EMAIL_IS_VALID);
 				registerEmail(email);
 			}else{
+				if(mLocalyticsSession != null)
+					mLocalyticsSession.tagEvent(Constants.EMAIL_INVALID);
 				((BaseActivity)mContext).showShortToast("Please enter valid email address");
 			}
 		}else{
@@ -207,7 +232,7 @@ public class ImageAdapter extends BaseAdapter {
 		emailRequest.email = email;
 		emailRequest.requestDelegate = new MFlixJsonBuilder();
 		emailRequest.requestType =  WebRequestType.DO_EMAIL_REGISTER;
-		app.setEmail(email);
+		mUserEmail = email;
 		new DataApiAsyncTask(true, mContext, emailHandler, ((BaseActivity)mContext).getProgressDialog()).execute(emailRequest);
 	}
 
@@ -216,12 +241,18 @@ public class ImageAdapter extends BaseAdapter {
 		@Override
 		public void handleMessage(Message msg) {
 			super.handleMessage(msg);
-			processEmailResults((DataResult<GuestResult>) msg.obj);
+			processEmailResults((DataResult<EmaiResult>) msg.obj);
 		}
 	};
 
-	private void processEmailResults(DataResult<GuestResult> obj) {
+	private void processEmailResults(DataResult<EmaiResult> obj) {
 		mProgressBar.setVisibility(View.GONE);
+		if(obj.entity != null && obj.entity.isSubscriptionRestored){
+			((MagikFlix)mContext.getApplicationContext()).setIsSubscriptionRestored(obj.entity.isSubscriptionRestored);
+		
+		}
+		MagikFlix app = (MagikFlix)mContext.getApplicationContext();
+		app.setEmail(mUserEmail);
 		((LandingScreen)mContext).navigateToHomeScreen();
 
 	}
@@ -264,7 +295,6 @@ public class ImageAdapter extends BaseAdapter {
 				listItem.setTextColor(Color.BLACK);
 				listItem.setBackgroundColor(Color.WHITE);
 				listItem.setOnClickListener(new OnClickListener() {
-
 					@Override
 					public void onClick(View v) {
 						emailEt.setText(listItem.getText().toString());

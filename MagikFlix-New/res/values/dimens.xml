@@ -34,6 +34,7 @@
     <dimen name="fpp_tile_small_height">79dp</dimen>
     <dimen name="progressbar_height_width">50dp</dimen>
     <dimen name="paddingMedium">5dp</dimen>
+    <dimen name="paddingMicro">1dp</dimen>
     <dimen name="paddingMediumPlus">10dp</dimen>
     <dimen name="paddingMediumExtraPlus">15dp</dimen>
     <dimen name="paddingMediumExtraPlusPlus">20dp</dimen>
@@ -41,6 +42,9 @@
     <dimen name="textSizeMedium">16sp</dimen>
     <dimen name="textSizeSmall">12sp</dimen>
     <dimen name="textSizeLargePlus">16sp</dimen>
+    <dimen name="textSizeExtrsLarge">18sp</dimen>
+    <dimen name="textSizeExtrsLargePlus">20sp</dimen>
+    <dimen name="textSizeExtrsLargePlusPlus">22sp</dimen>
     <dimen name="marginMedium">5dp</dimen>
     <dimen name="marginMediumPlus">10dp</dimen>
     <dimen name="marginMediumExtraPlus">15dp</dimen>
@@ -117,4 +121,33 @@
     <dimen name="play_list_item_height">75dp</dimen>
     <dimen name="play_list_item_marginRight">10dp</dimen>
 
+     <!-- Movie adapter dimens -->
+    
+     <dimen name="movie_list_item_width">220dp</dimen>
+     <dimen name="movie_list_item_height">190dp</dimen>
+     <dimen name="sizeOfEighty">60dp</dimen>
+     
+     
+     <!-- Subscription screen dimens -->
+     
+     <dimen name="textSizeSubscriptionTitle">20sp</dimen>
+     <dimen name="marginMediumPlusSubscription">7dp</dimen>
+     <dimen name="marginLargeSubscription">20dp</dimen>
+     <dimen name="marginMediumPlusSubscription">7dp</dimen>
+     <dimen name="textSizeExtrsLargePlusSubscription">18sp</dimen>
+     <dimen name="subscription_btn_width">60dp</dimen>
+    <dimen name="subscription_btn_width">60dp</dimen>
+    <dimen name="textSizeLargeSubscriptionBtn">14sp</dimen>
+    <dimen name="textSizeLargeSubscriptionBuyBtn">16sp</dimen>
+    
+    
+     <!-- Times up popup dimens -->
+
+    <dimen name="timesPopUpAvatarWidth">200dp</dimen>
+    <dimen name="timesPopUpAvatarHeight">200dp</dimen>
+    <dimen name="timesPopUpBalloonWidth">100dp</dimen>
+    <dimen name="timesPopUpBalloonHeight">40dp</dimen>
+    <dimen name="marginTimesPopUpBalloon">150dp</dimen>
+    <dimen name="textSizeTimesUp">20sp</dimen>
+    
 </resources>

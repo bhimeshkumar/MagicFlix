@@ -85,5 +85,20 @@
     <string name="terms_of_use_ok_btn_text">OK</string>
     <string name="terms_of_use_tv_text">MagicFlix Terms Of Use</string>
     <string name="terms_of_use_wv_text">MagicFlix Terms Of Use</string>
+    <string name="info_no_videos_found">No Videos Found</string>
+    <string name="subscription_promo_code_apply_btn_txt">APPLY</string>
+    <string name="subscription_popup_buy_btn_txt">BUY</string>
+    <string name="susbscription_popup_cancel_btn">CANCEL</string>
+    <string name="magicflix_auto_renewable_subscription_msg">Magicflix premium monthly\nsubscription</string>
+    <string name="subscription_cancel_anytime_txt">Cancel Anytime!</string>
+    <string name="subscription_promo_code_txt">Promo Code</string>
+    <string name="subscription_unlock_content_txt">Your Magicflix subscription unlocks unlimited videos!</string>
+    <string name="free_trail_msg">Enjoy your free trial of 20 mins today.</string>
+    <string name="free_trial_dialog_title">Free Trial</string>
+    <string name="invalid_age_dialog_title">Invalid age</string>
+    <string name="times_up_txt">Time\'s up!</string>
+    <string name="internet_failure_msg">Please check network connection.</string>
+    <string name="localitics_app_key">8de53e6ecca3c615c37a2f7-59ec36c4-b7f2-11e4-a934-005cf8cbabd8</string>
+    
 
 </resources>

@@ -7,15 +7,14 @@
     android:gravity="center_vertical"
     tools:ignore="ContentDescription" >
 
-        <ImageView
+    <ImageView
         android:id="@+id/magikflix_logo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:scaleType="fitXY"
-         />
-    
-    <!--  
+        android:scaleType="fitXY" />
+
+    <!--
     <ImageView
         android:id="@+id/magikflix_logo"
         android:layout_width="wrap_content"
@@ -36,5 +35,6 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/magikflix_logo"
         android:layout_centerHorizontal="true" />
--->
+    -->
+
 </RelativeLayout>

@@ -2,16 +2,26 @@ package com.magicflix.goog.app.activities;
 
 import java.io.IOException;
 
+import android.annotation.SuppressLint;
 import android.app.ActionBar;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup.LayoutParams;
+import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.PopupWindow;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.youtube.player.YouTubeBaseActivity;
@@ -53,7 +63,7 @@ public class BaseActivity extends YouTubeBaseActivity{
 
 
 	
-	public ActionBar setUpCustomActionBar(boolean homeButtonEnabled) throws IOException{
+	@SuppressLint("InflateParams") public ActionBar setUpCustomActionBar(boolean homeButtonEnabled) throws IOException{
 		ActionBar actionBar = getActionBar();
 		actionBar.setDisplayShowCustomEnabled(true);
 		actionBar.setDisplayShowTitleEnabled(false);
@@ -74,6 +84,66 @@ public class BaseActivity extends YouTubeBaseActivity{
 	public void showLongToast(String message) {
 		Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
 		
+	}
+	
+	@SuppressLint("InflateParams") @SuppressWarnings("deprecation")
+	public void showTrialExpiredPopUp(){
+		LayoutInflater layoutInflater = (LayoutInflater)getBaseContext().getSystemService(LAYOUT_INFLATER_SERVICE);  
+		View popupView = layoutInflater.inflate(R.layout.time_up_pop_up, null);  
+		final PopupWindow popupMessage = new PopupWindow(popupView, LayoutParams.MATCH_PARENT,
+				LayoutParams.MATCH_PARENT);
+		popupMessage.setContentView(popupView);
+		popupMessage.setTouchable(true);
+		popupMessage.setFocusable(true);
+		popupMessage.setBackgroundDrawable(new BitmapDrawable());
+		popupMessage.setOutsideTouchable(true);
+		popupMessage.showAtLocation(popupView, Gravity.CENTER, 0, 0);
+		popupMessage.getContentView().setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+				popupMessage.dismiss();
+				
+			}
+		});
+//		String title = "Trial Expired!";
+//		String message = "Your trial period expired , please subscribe";
+//		AlertDialog.Builder timerBuilder = new AlertDialog.Builder(this);
+//		timerBuilder.setTitle(title);
+//		timerBuilder.setCancelable(false);
+//		timerBuilder.setMessage(message);
+//		timerBuilder.setPositiveButton("OK",
+//				new DialogInterface.OnClickListener() {
+//			public void onClick(DialogInterface dialog, int id) {
+//				dialog.cancel();
+//			}
+//		});
+//
+//		AlertDialog timerAlert = timerBuilder.create();
+//		timerAlert.show();
+		
+		
+	}
+	
+	public void showInvalidDateDialog(){
+
+		LayoutInflater layoutInflater = (LayoutInflater)getBaseContext().getSystemService(LAYOUT_INFLATER_SERVICE);  
+		View popupView = layoutInflater.inflate(R.layout.free_trail_dialog, null);  
+		final Dialog trailDialog = new Dialog(this);
+		trailDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+		trailDialog.setContentView(popupView);
+		Button okBtn = (Button)popupView.findViewById(R.id.trial_popup_ok_btn);
+		TextView trialValue = (TextView)popupView.findViewById(R.id.trial_popup_trial_value_tv);
+		trialValue.setText("Please select valid age");
+		okBtn.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
+				trailDialog.dismiss();
+			}
+		});
+		trailDialog.setCancelable(false);
+		trailDialog.show();
 	}
 
 

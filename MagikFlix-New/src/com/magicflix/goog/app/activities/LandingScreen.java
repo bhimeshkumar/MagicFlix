@@ -17,7 +17,7 @@ import com.flurry.android.FlurryAgent;
 import com.magicflix.goog.MagikFlix;
 import com.magicflix.goog.R;
 import com.magicflix.goog.api.data.DataResult;
-import com.magicflix.goog.app.adapters.ImageAdapter;
+import com.magicflix.goog.app.adapters.LandingScreenAdapter;
 import com.magicflix.goog.app.api.MFlixJsonBuilder;
 import com.magicflix.goog.app.api.MFlixJsonBuilder.WebRequestType;
 import com.magicflix.goog.app.api.requests.GuestRequest;
@@ -25,21 +25,34 @@ import com.magicflix.goog.app.api.results.AppConfigResult;
 import com.magicflix.goog.app.api.results.GuestResult;
 import com.magicflix.goog.app.asyntasks.DataApiAsyncTask;
 import com.magicflix.goog.app.utils.Constants;
+import com.magicflix.goog.app.utils.Utils;
 
 public class LandingScreen extends BaseActivity{
 
 	private ViewFlow mViewFlow;
 	private ProgressBar mProgressBar;
 	private CircleFlowIndicator mCicularIndicator;
+	private String APP_VERSION ;
 
 	@Override
 	protected void onCreate(Bundle arg0) {
 		super.onCreate(arg0);
 		setContentView(R.layout.activity_landing);
+		init();
+		setAppIsInstalled();
 		setIdsToViews();
 		getActionBar().hide();
 		getAppConfiguration();
 
+	}
+	private void init() {
+		APP_VERSION = Utils.getAppVersion(this);
+		
+	}
+	private void setAppIsInstalled() {
+		MagikFlix app = ((MagikFlix)getApplicationContext());
+		app.setIsAppInstalled(true);
+		
 	}
 	private void setIdsToViews() {
 		mProgressBar = (ProgressBar)findViewById(R.id.landing_screen_pb);
@@ -60,7 +73,7 @@ public class LandingScreen extends BaseActivity{
 	}
 
 	public void setAdapterToViewFlow() {
-		mViewFlow.setAdapter(new ImageAdapter(this), 1);
+		mViewFlow.setAdapter(new LandingScreenAdapter(this), 1);
 	}
 
 	private void getUserIdAndToken(){
@@ -74,7 +87,7 @@ public class LandingScreen extends BaseActivity{
 			int page = TextUtils.isEmpty(age)?0:1;
 			mProgressBar.setVisibility(View.GONE);
 			mCicularIndicator.setVisibility(View.VISIBLE);
-			mViewFlow.setAdapter(new ImageAdapter(this), page);
+			mViewFlow.setAdapter(new LandingScreenAdapter(this), page);
 			mViewFlow.setFlowIndicator(mCicularIndicator);
 		}
 	}
@@ -82,8 +95,10 @@ public class LandingScreen extends BaseActivity{
 	private void createGuestUser() {
 		GuestRequest  guestRequest = new GuestRequest();
 		guestRequest.appid = getPackageName();
-		guestRequest.appversion = Constants.APP_VERSION;
+		guestRequest.appversion = APP_VERSION;
 		guestRequest.locale = "en_US";
+		guestRequest.platform = Constants.PLATFORM;
+		guestRequest.device = Constants.getDeviceName();
 		guestRequest.requestDelegate = new MFlixJsonBuilder();
 		guestRequest.requestType =  WebRequestType.DO_GUEST_LOGIN;	
 		new DataApiAsyncTask(true, this, guestHandler, null).execute(guestRequest);
@@ -103,7 +118,7 @@ public class LandingScreen extends BaseActivity{
 			String userId = obj.entity.user;
 			String token = obj.entity.token;
 			saveUserIdAndToken(userId,token);
-			mViewFlow.setAdapter(new ImageAdapter(this), 0);
+			mViewFlow.setAdapter(new LandingScreenAdapter(this), 0);
 			mViewFlow.setFlowIndicator(mCicularIndicator);
 			mCicularIndicator.setVisibility(View.VISIBLE);
 			mProgressBar.setVisibility(View.GONE);
@@ -121,7 +136,8 @@ public class LandingScreen extends BaseActivity{
 		mProgressBar.setVisibility(View.VISIBLE);
 		GuestRequest  guestRequest = new GuestRequest();
 		guestRequest.appid = getPackageName();
-		guestRequest.appversion = Constants.APP_VERSION;
+		guestRequest.appversion = APP_VERSION;
+		
 		guestRequest.requestDelegate = new MFlixJsonBuilder();
 		guestRequest.requestType =  WebRequestType.GET_APP_CONFIG;	
 		new DataApiAsyncTask(true, this, appConfigHandler, null).execute(guestRequest);
