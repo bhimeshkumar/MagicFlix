@@ -82,7 +82,6 @@ public class LandingScreen extends BaseActivity{
 		if( token.length() <= 0){
 			createGuestUser();
 		}else{
-
 			String  age = app.getDefaultAge();
 			int page = TextUtils.isEmpty(age)?0:1;
 			mProgressBar.setVisibility(View.GONE);

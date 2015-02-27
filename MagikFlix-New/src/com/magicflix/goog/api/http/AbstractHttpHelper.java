@@ -56,11 +56,14 @@ public abstract class AbstractHttpHelper {
 		try {
 			MLogger.logInfo(MLogger.LOG_TAG, String.format("%s  URL is = %s  ", this.getClass().getName(), url));
 			request.setURI(URI.create(url.trim()));
+			if(data != null){
 			StringEntity entity = new StringEntity(data);
 			//			 entity.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE,"text/plain;charset=UTF-8"));
 			entity.setContentType("application/json;charset=UTF-8");//text/plain;charset=UTF-8
 			entity.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE,"application/json;charset=UTF-8"));
 			request.setEntity(entity);
+			
+			}
 			setupRequest(request);
 			MLogger.logInfo(MLogger.LOG_TAG, String.format("%S Data Sent to Server:  %s" , this.getClass().getName(), data));
 			httpResult = getHttpResult(client.execute(request));

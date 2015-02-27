@@ -68,7 +68,6 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 	private LocalyticsAmpSession mLocalyticsSession; 
 	private Map<String, String> mLocaliticsAttributes ;
 	private String mSelectedCategoryName;
-	private int mSelectedCategoryPosition;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {

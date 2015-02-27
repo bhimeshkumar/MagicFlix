@@ -42,9 +42,7 @@
     
     <color name="app_bg">#1F3350</color>
     <color name="landing_screen_bg">#657995</color>
-    
-    
-    
+     <color name="colorRoundBtnPressed">#46BCEA</color>
     
 
 </resources>

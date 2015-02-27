@@ -149,6 +149,15 @@
     <dimen name="timesPopUpBalloonWidth">180dp</dimen>
     <dimen name="timesPopUpBalloonHeight">100dp</dimen>
     <dimen name="marginTimesPopUpBalloon">300dp</dimen>
-     <dimen name="textSizeTimesUp">30sp</dimen>
+    <dimen name="textSizeTimesUp">30sp</dimen>
+    <dimen name="marginTopOnBoarding">40dp</dimen>
+    <dimen name="onBoardingAvatarWidth">400dp</dimen>
+    <dimen name="onBoardingAvatarHeight">400dp</dimen>
+    <dimen name="parentControlButtonWidth">250dp</dimen>
+    <dimen name="parentControlButtonHeight">250dp</dimen>
+    <dimen name="textSizeOnBoarding">25sp</dimen>
+    <dimen name="onBoardingBallonHeight">90dp</dimen>
+     <dimen name="marginTopAgeSelection">60dp</dimen>
+      <dimen name="ageSelectionSeekBarWidth">400dp</dimen>
 
 </resources>

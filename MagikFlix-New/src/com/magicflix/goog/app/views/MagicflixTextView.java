@@ -8,20 +8,20 @@ import android.widget.TextView;
 
 import com.magicflix.goog.R;
 
-public class MFlixTextView extends TextView {
+public class MagicflixTextView extends TextView {
 
-	public MFlixTextView(Context context, AttributeSet attrs, int defStyle) {
+	public MagicflixTextView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
 		init(attrs);
 	}
 	
-	public MFlixTextView(Context context, AttributeSet attrs) {
+	public MagicflixTextView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		init(attrs);
 		
 	}
 	
-	public MFlixTextView(Context context) {
+	public MagicflixTextView(Context context) {
 		super(context);
 		init(null);
 	}

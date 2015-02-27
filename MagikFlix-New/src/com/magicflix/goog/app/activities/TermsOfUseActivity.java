@@ -3,9 +3,9 @@ package com.magicflix.goog.app.activities;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -21,7 +21,7 @@ import com.magicflix.goog.app.asyntasks.DataApiAsyncTask;
 public class TermsOfUseActivity extends BaseActivity implements OnClickListener{
 
 	private TextView mSecretCodeTV;
-	private WebView mWebView;
+	private TextView mTermsOfUseTV;
 	private Button mOkButton;
 
 	@Override
@@ -31,27 +31,22 @@ public class TermsOfUseActivity extends BaseActivity implements OnClickListener{
 		getActionBar().hide();
 		setIdsToViews();
 		setListnersToViews();
-		loadTermsOfUseText();
 		getSecretCode();
 	} 
 
 	private void setIdsToViews() {
-		mWebView = (WebView)findViewById(R.id.terms_of_use_wv);
+		mTermsOfUseTV = (TextView)findViewById(R.id.terms_of_use_tv);
 		mSecretCodeTV = (TextView)findViewById(R.id.terms_of_use_secret_code_tv);
 		mOkButton = (Button)findViewById(R.id.terms_of_use_ok_btn);
+//		mTermsOfUseTV.setMovementMethod(new ScrollingMovementMethod());
 	}
-	
+
 
 	private void setListnersToViews() {
 		mOkButton.setOnClickListener(this);
-		
+
 	}
 
-	
-	private void loadTermsOfUseText() {
-		mWebView.loadUrl("file:///android_asset/terms.html");
-		mWebView.getSettings().setJavaScriptEnabled(true);
-	}
 
 	private void getSecretCode() {
 		SecretCodeRequest  secretCodeRequest = new SecretCodeRequest();
@@ -80,7 +75,7 @@ public class TermsOfUseActivity extends BaseActivity implements OnClickListener{
 	@Override
 	public void onClick(View view) {
 		this.finish();
-		
+
 	}
 
 }

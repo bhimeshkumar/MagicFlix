@@ -192,4 +192,14 @@ public class MagikFlix  extends Application {
 		return PrefManager.getInt(getApplicationContext(), "appActive", 0);
 		
 	}
+
+	public void setAgeIsSelected(boolean selectedAge) {
+		PrefManager.saveBool(getApplicationContext(), "isAgeSelected", selectedAge);
+		
+	}
+	
+	public boolean isAgeSelected() {
+		return PrefManager.getBool(getApplicationContext(), "isAgeSelected", false);
+		
+	}
 }

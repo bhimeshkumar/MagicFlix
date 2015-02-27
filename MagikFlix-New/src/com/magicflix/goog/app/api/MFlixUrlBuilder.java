@@ -1,6 +1,7 @@
 package com.magicflix.goog.app.api;
 
 import com.magicflix.goog.app.api.requests.AddSubscriptionrequest;
+import com.magicflix.goog.app.api.requests.AgeRequest;
 import com.magicflix.goog.app.api.requests.CustomLogginRequest;
 import com.magicflix.goog.app.api.requests.FavourireVideoRequest;
 import com.magicflix.goog.app.api.requests.GuestRequest;
@@ -33,7 +34,8 @@ public class MFlixUrlBuilder {
 	}
 	
 	public static String getCustomLogginURL(CustomLogginRequest dataRequest) {
-		return String.format("%s/api/v2/diagnostics/log?Token=%s",cloudUrl,dataRequest.token);
+//		return String.format("%s/api/v2/diagnostics/log?Token=%s",cloudUrl,dataRequest.token);
+		return String.format("%s/api/v2/Events/log?Token=%s",cloudUrl,dataRequest.token);
 	}
 
 	public static String getEmailRegisterURL(RegisterEmailRequest dataRequest) {
@@ -63,6 +65,11 @@ public class MFlixUrlBuilder {
 	public static String getSubcriptionURL(AddSubscriptionrequest dataRequest){
 		return String.format("%sapi/v2/User/Subscription?token=%s",cloudUrl,dataRequest.token);
 	}
+	
+	public static String getUpdateAgeURL(AgeRequest dataRequest){
+		return String.format("%sapi/v2/User/Age?token=%s&age=%s",cloudUrl,dataRequest.token,dataRequest.age);
+	}
+	
 	
 //	http://magikflixtest.cloudapp.net/api/v2/Subscription/Add?token=469a06a57ea7b43444bbefcff894722125eb41aa8e355716782b738c84cbede9
 	

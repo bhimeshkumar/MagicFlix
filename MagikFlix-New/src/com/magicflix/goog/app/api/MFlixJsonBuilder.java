@@ -9,6 +9,7 @@ import com.magicflix.goog.api.data.DataResult;
 import com.magicflix.goog.api.data.IDataRequestType;
 import com.magicflix.goog.api.http.HttpResult;
 import com.magicflix.goog.app.api.requests.AddSubscriptionrequest;
+import com.magicflix.goog.app.api.requests.AgeRequest;
 import com.magicflix.goog.app.api.requests.CustomLogginRequest;
 import com.magicflix.goog.app.api.requests.FavourireVideoRequest;
 import com.magicflix.goog.app.api.requests.GuestRequest;
@@ -61,6 +62,8 @@ public class MFlixJsonBuilder extends BaseBuilder {
 			return (DataResult<T>) getSubscription((AddSubscriptionrequest)dataRequest);
 		case VERIFY_REDEEM :
 			return (DataResult<T>) verifyPromoCode((RedeemCodeRequest)dataRequest);
+		case SET_AGE :
+			return (DataResult<T>) setAge((AgeRequest)dataRequest);
 		default:
 			return null;
 		}
@@ -69,7 +72,7 @@ public class MFlixJsonBuilder extends BaseBuilder {
 
 	private DataResult<String> postCustomLoggging(CustomLogginRequest dataRequest) {
 		Gson gson = new Gson();
-		String json = "["+gson.toJson(dataRequest.videoInfo)+"]";
+		String json = gson.toJson(dataRequest.videoInfo);
 		//		String json = dataRequest.videoInfo.toString();
 		HttpResult httpResult = httpHelper.postString(MFlixUrlBuilder.getCustomLogginURL(dataRequest), json);
 		DataResult<String> result= new DataResult<String>();
@@ -150,6 +153,15 @@ public class MFlixJsonBuilder extends BaseBuilder {
 		result.entity = (isResultSuccesfull(httpResult) ?new CommonJsonBuilder().getEntityForJson(httpResult.result, EmaiResult.class) : null);
 		return result;
 	}
+	
+	private DataResult<String> setAge(AgeRequest dataRequest) {
+
+		HttpResult httpResult = httpHelper.putString(MFlixUrlBuilder.getUpdateAgeURL(dataRequest), null);
+		DataResult<String> result= new DataResult<String>();
+		result.successful = isResultSuccesfull(httpResult);
+		result.entity = (isResultSuccesfull(httpResult) ?new CommonJsonBuilder().getEntityForJson(httpResult.result, String.class) : null);
+		return result;
+	}
 
 	private DataResult<AppConfigResult> getAppConfig(GuestRequest dataRequest) {
 		HttpResult httpResult = httpHelper.getString(MFlixUrlBuilder.getAppConfigURL(dataRequest));
@@ -227,7 +239,7 @@ public class MFlixJsonBuilder extends BaseBuilder {
 
 	public static enum WebRequestType implements IDataRequestType{
 		GET_VIDEOS, GET_FAVOURITE_VIDEOS, GET_RECENT_VIDEOS,POST_RECENT_VIDEOS,POST_FAV_VIDEOS, DO_GUEST_LOGIN, POST_VIDEO_LOGGING, DO_EMAIL_REGISTER, 
-		GET_APP_CONFIG,GET_SECRET_CODE, ADD_SUBSCRIPTION,VERIFY_REDEEM,GET_USER_SUBSCRIPTION;
+		GET_APP_CONFIG,GET_SECRET_CODE, ADD_SUBSCRIPTION,VERIFY_REDEEM,GET_USER_SUBSCRIPTION, SET_AGE;
 	}
 
 	private DataResult<SecretCodeResult> getSecretCode(SecretCodeRequest dataRequest) {

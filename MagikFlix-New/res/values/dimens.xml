@@ -121,27 +121,25 @@
     <dimen name="play_list_item_height">75dp</dimen>
     <dimen name="play_list_item_marginRight">10dp</dimen>
 
-     <!-- Movie adapter dimens -->
-    
-     <dimen name="movie_list_item_width">220dp</dimen>
-     <dimen name="movie_list_item_height">190dp</dimen>
-     <dimen name="sizeOfEighty">60dp</dimen>
-     
-     
-     <!-- Subscription screen dimens -->
-     
-     <dimen name="textSizeSubscriptionTitle">20sp</dimen>
-     <dimen name="marginMediumPlusSubscription">7dp</dimen>
-     <dimen name="marginLargeSubscription">20dp</dimen>
-     <dimen name="marginMediumPlusSubscription">7dp</dimen>
-     <dimen name="textSizeExtrsLargePlusSubscription">18sp</dimen>
-     <dimen name="subscription_btn_width">60dp</dimen>
+    <!-- Movie adapter dimens -->
+
+    <dimen name="movie_list_item_width">220dp</dimen>
+    <dimen name="movie_list_item_height">190dp</dimen>
+    <dimen name="sizeOfEighty">60dp</dimen>
+
+    <!-- Subscription screen dimens -->
+
+    <dimen name="textSizeSubscriptionTitle">20sp</dimen>
+    <dimen name="marginMediumPlusSubscription">7dp</dimen>
+    <dimen name="marginLargeSubscription">20dp</dimen>
+    <dimen name="marginMediumPlusSubscription">7dp</dimen>
+    <dimen name="textSizeExtrsLargePlusSubscription">18sp</dimen>
+    <dimen name="subscription_btn_width">60dp</dimen>
     <dimen name="subscription_btn_width">60dp</dimen>
     <dimen name="textSizeLargeSubscriptionBtn">14sp</dimen>
     <dimen name="textSizeLargeSubscriptionBuyBtn">16sp</dimen>
-    
-    
-     <!-- Times up popup dimens -->
+
+    <!-- Times up popup dimens -->
 
     <dimen name="timesPopUpAvatarWidth">200dp</dimen>
     <dimen name="timesPopUpAvatarHeight">200dp</dimen>
@@ -149,5 +147,18 @@
     <dimen name="timesPopUpBalloonHeight">40dp</dimen>
     <dimen name="marginTimesPopUpBalloon">150dp</dimen>
     <dimen name="textSizeTimesUp">20sp</dimen>
+    <dimen name="marginTopOnBoarding">10dp</dimen>
+    <dimen name="onBoardingAvatarWidth">300dp</dimen>
+    <dimen name="onBoardingAvatarHeight">300dp</dimen>
+    <dimen name="parentControlButtonWidth">150dp</dimen>
+    <dimen name="parentControlButtonHeight">150dp</dimen>
+     <dimen name="textSizeOnBoarding">19sp</dimen>
+      <dimen name="onBoardingBallonHeight">70dp</dimen>
+      <dimen name="marginTopAgeSelection">30dp</dimen>
+      <dimen name="ageSelectionSeekBarWidth">300dp</dimen>
+      
+     
     
+    
+
 </resources>

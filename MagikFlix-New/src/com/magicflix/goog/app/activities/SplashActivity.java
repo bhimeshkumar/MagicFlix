@@ -86,7 +86,9 @@ public class SplashActivity extends Activity implements  OnAnimationStoppedListe
 		String token = app.getToken();
 
 		if( token.length() <= 0 || (!app.isEmailOptional() && TextUtils.isEmpty(app.getEmail())) ){
-			startActivity(new Intent(getApplicationContext(), LandingScreen.class));
+			startActivity(new Intent(getApplicationContext(), OnBoardingScreen.class));
+		}else if( token.length() <= 0 || !(app.isAgeSelected())){
+			startActivity(new Intent(getApplicationContext(), AgeSelectionActivity.class));
 		}else{
 			startActivity(new Intent(getApplicationContext(), HomeActivity.class));
 		}

@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <declare-styleable name="MFlixTextView">
-        <attr name="fontName" format="string" />
-    </declare-styleable>
+    
     <declare-styleable name="CircularImageView">
         <attr name="border" format="boolean"></attr>
         <attr name="border_width" format="dimension"></attr>
@@ -38,4 +36,17 @@
         <attr name="text_color" format="string"></attr>
     </declare-styleable>
 
+     <declare-styleable name="MflixTextView">
+        <attr name="fontName" format="string" />
+    </declare-styleable>
+    
+     <declare-styleable name="CustomSeekBar">
+		<attr name="dsb_minValue" format="integer|reference" />
+		<attr name="dsb_maxValue" format="integer|reference" />
+		<attr name="dsb_minTitle" format="string|reference" />
+		<attr name="dsb_maxTitle" format="string|reference" />
+		<attr name="dsb_units" format="string|reference" />
+		<attr name="dsb_hasMaxSeekBar" format="boolean" />
+		<attr name="dsb_textSize" format="reference|dimension" />
+	</declare-styleable>
 </resources>

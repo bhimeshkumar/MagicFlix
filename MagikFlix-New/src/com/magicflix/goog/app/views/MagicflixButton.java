@@ -4,24 +4,25 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
-import android.widget.TextView;
+import android.widget.Button;
 
 import com.magicflix.goog.R;
 
-public class MFlixTextView extends TextView {
+public class MagicflixButton extends Button {
 
-	public MFlixTextView(Context context, AttributeSet attrs, int defStyle) {
+	public MagicflixButton(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
 		init(attrs);
 	}
 	
-	public MFlixTextView(Context context, AttributeSet attrs) {
+	public MagicflixButton(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		init(attrs);
 		
 	}
 	
-	public MFlixTextView(Context context) {
+	
+	public MagicflixButton(Context context) {
 		super(context);
 		init(null);
 	}
@@ -37,6 +38,8 @@ public class MFlixTextView extends TextView {
 			 a.recycle();
 		}
 	}
+	
+	
 
 }
 

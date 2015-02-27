@@ -56,7 +56,7 @@
     <string name="video_play_error_msg">Oops, video couldn\'t play, on to the next!</string>
     <string name="facebook_app_id">688395307918500</string>
     <string name="register_email_message">Magicflix will send you personalized reports.You can skip this step and register later in the Family Setup Menu</string>
-    <string name="terms_of_use_info"></string>
+    
     <string name="terms_of_use_welcome_msg">Magicflix is a positively safe video service for kids to play and learn!</string>
     <string name="category_header">Category</string>
 
@@ -99,6 +99,12 @@
     <string name="times_up_txt">Time\'s up!</string>
     <string name="internet_failure_msg">Please check network connection.</string>
     <string name="localitics_app_key">8de53e6ecca3c615c37a2f7-59ec36c4-b7f2-11e4-a934-005cf8cbabd8</string>
-    
+    <string name="parent_control_txt">Are you a grown-up?\nTap here and hold for\n5 seconds</string>
+    <string name="email_help_txt">Tap here to enter your email</string>
+    <string name="magicflix_help_txt">Your Magicflix account allows you to customize video playlists for your family.New videos are added every week.Enjoy!</string>
+    <string name="age_selection_help_txt">Please enter your child\'s age.This helps us find the best videos for your child.</string>
+    <string name="min_age_label_txt">2</string>
+    <string name="max_age_label_txt">10+</string>
+     <string name="magicflix_app_info"> Magicflix is in no way affiliated with Youtube. All videos are the copyright of their respective owners. You can review the complete terms of use and privacy policy at http://magicflix.com/termsofuse and http://magicflix.com/privacy.</string>
 
 </resources>

@@ -89,6 +89,8 @@ public class Constants {
 	public static final String BUY_PRODUCT = "buyProduct";
 	public static final String EMAIL_INVALID = "emailInvalid";
 	public static final String VIDEO_ID = "videoId";
+	public static final String PARENT_GATE_OPEN = "parentGateOpen";
+	public static final String PARENT_GATE_PASSED = "parentGatePassed";
 	
 
 	public static String readTxt(Context context, boolean isAboutThisApp){
