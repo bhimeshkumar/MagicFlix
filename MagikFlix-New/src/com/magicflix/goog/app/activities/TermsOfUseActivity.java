@@ -1,22 +1,13 @@
 package com.magicflix.goog.app.activities;
 
-import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.Typeface;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.text.Spannable;
-import android.text.SpannableStringBuilder;
-import android.text.TextPaint;
 import android.text.method.LinkMovementMethod;
-import android.text.style.ClickableSpan;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.TextView.BufferType;
 
 import com.magicflix.goog.MagikFlix;
 import com.magicflix.goog.R;
@@ -32,7 +23,6 @@ public class TermsOfUseActivity extends BaseActivity implements OnClickListener{
 	private TextView mSecretCodeTV;
 	private TextView mTermsOfUseTV;
 	private Button mOkButton;
-	 MyCustomSpannable customSpannable;
 
 	@Override
 	protected void onCreate(Bundle arg0) {
@@ -86,30 +76,4 @@ public class TermsOfUseActivity extends BaseActivity implements OnClickListener{
 		this.finish();
 
 	}
-	
-	class MyCustomSpannable extends ClickableSpan
-	{
-	    String Url;
-	    public MyCustomSpannable(String Url) {
-	        this.Url = Url;
-	    }
-	    @Override
-	    public void updateDrawState(TextPaint ds) {
-	            // Customize your Text Look if required
-	        ds.setColor(Color.BLUE);
-	        ds.setFakeBoldText(true);
-	        ds.setStrikeThruText(true);
-	        ds.setTypeface(Typeface.SERIF);
-	        ds.setUnderlineText(true);
-	        ds.setShadowLayer(10, 1, 1, Color.WHITE);
-	        ds.setTextSize(15);
-	    }
-	    @Override
-	    public void onClick(View widget) {
-	    }
-	    public String getUrl() {
-	        return Url;
-	    }
-	}
-
 }
