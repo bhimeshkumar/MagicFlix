@@ -46,6 +46,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/terms_of_use_avatar"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
         android:gravity="center_horizontal"
         android:orientation="vertical"
         android:weightSum="1" >
@@ -61,22 +63,30 @@
             android:textSize="@dimen/textSizeLarge"
             app:fontName="avenirnext_medium_lt.otf" />
 
-        <com.magicflix.goog.app.views.MagicflixTextView
-            android:id="@+id/terms_of_use_tv"
-            android:layout_width="match_parent"
+        <LinearLayout
+            android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:layout_centerHorizontal="true"
-            android:layout_margin="@dimen/marginMediumExtraPlus"
-            android:layout_weight="0.79"
             android:background="@color/white"
-            android:padding="@dimen/paddingMedium"
-            android:text="@string/magicflix_app_info"
-            android:textColor="@android:color/black"
-            android:autoLink="web"
-            android:scrollbars="vertical"
-            android:lineSpacingExtra="3dp"
-            android:textSize="@dimen/textSizeExtrsLarge"
-            app:fontName="avenirnext_medium_lt.otf" />
+            android:layout_margin="@dimen/marginMediumExtraPlus"
+            android:layout_weight="0.79" >
+
+            <com.magicflix.goog.app.views.MagicflixTextView
+                android:id="@+id/terms_of_use_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:clickable="false"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:linksClickable="true"
+                android:padding="@dimen/paddingMedium"
+                android:scrollbars="vertical"
+                android:text="@string/magicflix_app_info"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/textSizeExtrsLarge"
+                app:fontName="avenirnext_medium_lt.otf" />
+        </LinearLayout>
 
         <com.magicflix.goog.app.views.MagicflixTextView
             android:id="@+id/terms_of_use_secret_code_tv"
@@ -102,8 +112,8 @@
         android:text="@string/terms_of_use_ok_btn_text"
         android:textColor="@color/white"
         android:textSize="@dimen/textSizeLargePlus"
-         app:fontName="avenirnext_medium_lt.otf"
-        android:textStyle="bold" >
+        android:textStyle="bold"
+        app:fontName="avenirnext_medium_lt.otf" >
     </com.magicflix.goog.app.views.MagicflixButton>
 
 </RelativeLayout>

@@ -29,8 +29,6 @@ import com.magicflix.goog.api.data.DataResult;
 import com.magicflix.goog.app.api.MFlixJsonBuilder;
 import com.magicflix.goog.app.api.MFlixJsonBuilder.WebRequestType;
 import com.magicflix.goog.app.api.requests.AgeRequest;
-import com.magicflix.goog.app.api.requests.GuestRequest;
-import com.magicflix.goog.app.api.results.AppConfigResult;
 import com.magicflix.goog.app.asyntasks.DataApiAsyncTask;
 import com.magicflix.goog.app.utils.Constants;
 
@@ -57,7 +55,6 @@ public class AgeSelectionActivity extends BaseActivity implements OnSeekBarChang
 		mSeekBar.setOnSeekBarChangeListener(this);
 		mOkBtn.setOnClickListener(this);
 		mSkipBtn.setOnClickListener(this);
-
 	}
 
 	private void setUpUI() {
@@ -108,7 +105,6 @@ public class AgeSelectionActivity extends BaseActivity implements OnSeekBarChang
 		mSelectedAge = String.valueOf(progress/10);
 
 	}
-
 
 
 	@Override

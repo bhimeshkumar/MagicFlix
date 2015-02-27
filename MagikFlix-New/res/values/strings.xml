@@ -56,7 +56,6 @@
     <string name="video_play_error_msg">Oops, video couldn\'t play, on to the next!</string>
     <string name="facebook_app_id">688395307918500</string>
     <string name="register_email_message">Magicflix will send you personalized reports.You can skip this step and register later in the Family Setup Menu</string>
-    
     <string name="terms_of_use_welcome_msg">Magicflix is a positively safe video service for kids to play and learn!</string>
     <string name="category_header">Category</string>
 
@@ -81,7 +80,7 @@
     <string name="email_send_screen_ok_btn_text">OK</string>
     <string name="terms_of_use_ok_btn_text">OK</string>
 
-    <!-- acitvity_terms_of_use_dimentions -->
+    <!-- acitvity_terms_of_use_strings -->
     <string name="terms_of_use_ok_btn_text">OK</string>
     <string name="terms_of_use_tv_text">MagicFlix Terms Of Use</string>
     <string name="terms_of_use_wv_text">MagicFlix Terms Of Use</string>
@@ -105,6 +104,6 @@
     <string name="age_selection_help_txt">Please enter your child\'s age.This helps us find the best videos for your child.</string>
     <string name="min_age_label_txt">2</string>
     <string name="max_age_label_txt">10+</string>
-     <string name="magicflix_app_info"> Magicflix is in no way affiliated with Youtube. All videos are the copyright of their respective owners. You can review the complete terms of use and privacy policy at http://magicflix.com/termsofuse and http://magicflix.com/privacy.</string>
+    <string name="magicflix_app_info">Magicflix is in no way affiliated with Youtube. All videos are the copyright of their respective owners. You can review the complete terms of use and privacy policy at <a STYLE="text-decoration:none" href="http://magicflix.com/termsofuse"><b>http://magicflix.com/termsofuse</b></a> and <a STYLE="text-decoration:none" href="http://magicflix.com/privacy"><b>http://magicflix.com/privacy</b></a></string>
 
 </resources>
