@@ -104,6 +104,6 @@
     <string name="age_selection_help_txt">Please enter your child\'s age.This helps us find the best videos for your child.</string>
     <string name="min_age_label_txt">2</string>
     <string name="max_age_label_txt">10+</string>
-    <string name="magicflix_app_info">Magicflix is in no way affiliated with Youtube. All videos are the copyright of their respective owners. You can review the complete terms of use and privacy policy at <a STYLE="text-decoration:none" href="http://magicflix.com/termsofuse"><b>http://magicflix.com/termsofuse</b></a> and <a STYLE="text-decoration:none" href="http://magicflix.com/privacy"><b>http://magicflix.com/privacy</b></a></string>
+    <string name="magicflix_app_info">Magicflix is in no way affiliated with Youtube. All videos are the copyright of their respective owners. You can review the complete terms of use and privacy policy at <a STYLE="text-decoration:none" href="http://magicflix.com/termsofuse"><b>http://magicflix.com/termsofuse</b></a> and <a STYLE="text-decoration:none" href="http://magicflix.com/privacy"><b>http://magicflix.com/privacy</b></a>.</string>
 
 </resources>

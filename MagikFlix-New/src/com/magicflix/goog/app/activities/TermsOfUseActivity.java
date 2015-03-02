@@ -74,6 +74,5 @@ public class TermsOfUseActivity extends BaseActivity implements OnClickListener{
 	@Override
 	public void onClick(View view) {
 		this.finish();
-
 	}
 }
