@@ -31,6 +31,7 @@ import com.magicflix.goog.app.api.MFlixJsonBuilder.WebRequestType;
 import com.magicflix.goog.app.api.requests.AgeRequest;
 import com.magicflix.goog.app.asyntasks.DataApiAsyncTask;
 import com.magicflix.goog.app.utils.Constants;
+import com.magicflix.goog.utils.MLogger;
 
 public class AgeSelectionActivity extends BaseActivity implements OnSeekBarChangeListener, OnClickListener{
 	private SeekBar mSeekBar;
@@ -121,7 +122,8 @@ public class AgeSelectionActivity extends BaseActivity implements OnSeekBarChang
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.on_board_age_screen_ok_btn:
-			setAge(mSelectedAge);
+			setLocalyticsAndNavigate();
+//			setAge(mSelectedAge);
 			break;
 		case R.id.on_board_age_screen_skip_btn:
 			navigateToMainScreen();
@@ -159,6 +161,10 @@ public class AgeSelectionActivity extends BaseActivity implements OnSeekBarChang
 	};
 
 	private void processAppConfigResults(DataResult<String> appConfigResult) {
+		setLocalyticsAndNavigate();
+	}
+
+	private void setLocalyticsAndNavigate() {
 		mLocalyticsAttributes.clear();
 		mLocalyticsAttributes.put(Constants.AGE, String.valueOf(mSelectedAge));
 		if(mLocalyticsSession != null)
