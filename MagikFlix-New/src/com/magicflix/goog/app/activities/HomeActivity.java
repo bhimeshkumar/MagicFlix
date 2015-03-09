@@ -11,24 +11,45 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import android.annotation.SuppressLint;
 import android.app.ActionBar;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
+import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Message;
+import android.os.RemoteException;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup.LayoutParams;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.PopupWindow;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import at.technikum.mti.fancycoverflow.FancyCoverFlow;
 
+import com.android.vending.billing.IInAppBillingService;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.localytics.android.LocalyticsAmpSession;
@@ -40,17 +61,30 @@ import com.magicflix.goog.app.adapters.MovieAdapter;
 import com.magicflix.goog.app.adapters.PlayListAdapter;
 import com.magicflix.goog.app.api.MFlixJsonBuilder;
 import com.magicflix.goog.app.api.MFlixJsonBuilder.WebRequestType;
+import com.magicflix.goog.app.api.requests.AddSubscriptionrequest;
+import com.magicflix.goog.app.api.requests.PromoCodeRequest;
+import com.magicflix.goog.app.api.requests.RedeemCodeRequest;
+import com.magicflix.goog.app.api.requests.SubscriptionModel;
 import com.magicflix.goog.app.api.requests.VideoRequest;
+import com.magicflix.goog.app.api.results.AddSubscriptionResult;
+import com.magicflix.goog.app.api.results.PayLoad;
 import com.magicflix.goog.app.api.results.Playlists;
+import com.magicflix.goog.app.api.results.PromoCodeResult;
+import com.magicflix.goog.app.api.results.SubscriptionResult;
 import com.magicflix.goog.app.api.results.VideoResult;
 import com.magicflix.goog.app.api.results.Videos;
 import com.magicflix.goog.app.asyntasks.DataApiAsyncTask;
 import com.magicflix.goog.app.utils.Constants;
 import com.magicflix.goog.app.utils.Utils;
 import com.magicflix.goog.broadcasts.FavouriteChangeListner;
+import com.magicflix.goog.subscription.IabHelper;
+import com.magicflix.goog.subscription.IabResult;
+import com.magicflix.goog.subscription.Purchase;
+import com.magicflix.goog.utils.MLogger;
 
 public class HomeActivity extends BaseActivity implements OnItemSelectedListener, OnItemClickListener,  OnClickListener, android.widget.AdapterView.OnItemClickListener {
 
+	private static String TAG = HomeActivity.class.getName();
 	private FancyCoverFlow fancyCoverFlow;
 	private HListView mCategoryListView;
 	private HListView mPlayListListView;
@@ -68,6 +102,19 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 	private LocalyticsAmpSession mLocalyticsSession; 
 	private Map<String, String> mLocaliticsAttributes ;
 	private String mSelectedCategoryName;
+	private String mPrice;
+
+	//susbcsription 
+
+	private IabHelper mHelper;
+	private static final String PRODUCT = "com.magicflix.monthly.auto.test"; //TODO : Change to actual Product ID 
+	private static final String FREE_PRODUCT = "com.magicflix.monthly.auto.freemonth.test";
+	private IInAppBillingService mService;
+	private boolean mIsUserSubscribed ;
+	private  PopupWindow mSubscriptionPopUp , mCustomPopUp; Dialog trailDialog ;
+	private  EditText promoCodeEt;
+	private Button mTimerValueTV;
+	private Button mActionBarSubscribeBtn ;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -77,7 +124,22 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 		init();
 		setIdsToViews();
 		setListnersToViews();
-		getVideos(((MagikFlix)getApplicationContext()).getToken());
+		if(Constants.IS_SUBSCRIPTION_ENABLED){
+			getUserSubscription();
+		}else{
+			getVideos(((MagikFlix)getApplicationContext()).getToken());
+		}
+	}
+
+	private void setUpUI() {
+		if(Constants.IS_SUBSCRIPTION_ENABLED){
+			mActionBarSubscribeBtn.setVisibility(View.VISIBLE);
+			mTimerValueTV.setVisibility(View.VISIBLE);
+		}else{
+			mActionBarSubscribeBtn.setVisibility(View.GONE);
+			mTimerValueTV.setVisibility(View.GONE);
+		}
+
 	}
 
 	private void init() {
@@ -95,6 +157,12 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 				}
 			}
 		};
+
+		if(Constants.IS_SUBSCRIPTION_ENABLED){
+			Intent serviceIntent = new Intent("com.android.vending.billing.InAppBillingService.BIND");
+			serviceIntent.setPackage("com.android.vending");
+			bindService(serviceIntent, mServiceConn, Context.BIND_AUTO_CREATE);
+		}
 	}
 
 	private void setUpActionBar() {
@@ -108,6 +176,8 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 	private void setListnersToViews() {
 		mPlayListListView.setOnItemClickListener(this);
 		mTermsOfUseIV.setOnClickListener(this);
+		mActionBarSubscribeBtn.setOnClickListener(this);
+		mTimerValueTV.setOnClickListener(this);
 	}
 
 	@SuppressWarnings("deprecation")
@@ -150,6 +220,9 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 		mProgressBar = (ProgressBar)findViewById(R.id.home_screen_pb);
 		mTermsOfUseIV = (ImageView)mActionBar.getCustomView().findViewById(R.id.actionBar_terms_of_use_iv);
 		mNoVideoFoundTV = (TextView)findViewById(R.id.main_screen_no_videos_tv);
+
+		mTimerValueTV = (Button)mActionBar.getCustomView().findViewById(R.id.actionBar_timer_value_tv);
+		mActionBarSubscribeBtn = (Button)mActionBar.getCustomView().findViewById(R.id.actionBar_subscribe_btn);
 	}
 
 
@@ -167,7 +240,21 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 		mLocaliticsAttributes.put(Constants.INDEX, String.valueOf(position));
 		mLocaliticsAttributes.put(Constants.VIDEO_ID, videosList.get(position).videoId);
 		mLocalyticsSession.tagEvent(Constants.CATEGORY_VIDEO, mLocaliticsAttributes);
-		checkYouTubAppAvailability(position,videosList);
+
+		checkSubscriptionAndNavigate(position,videosList);
+
+	}
+
+	private void checkSubscriptionAndNavigate(int position, ArrayList<Videos> videoList) {
+		MagikFlix app = ((MagikFlix)getApplicationContext());
+		if(Constants.IS_SUBSCRIPTION_ENABLED){
+			if(mIsUserSubscribed || !(app.isTrialPeriodExpired()) || app.isSubscriptionRestored())   // || videoResult.userParent.isPromotionSubscribed || videoResult.userParent.isSubscribed  || mIsSubscsriptionResored)
+				checkYouTubAppAvailability(position,videoList);
+			else
+				showTrialExpiredPopUp();
+		}else{
+			checkYouTubAppAvailability(position,videoList);
+		}
 	}
 
 	private void checkYouTubAppAvailability(int position, ArrayList<Videos> videosList) {
@@ -225,6 +312,25 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 				mRecentVideoId =data.getStringExtra("recentVideoId");
 				getRecentPlayList("Recent Videos");
 			}
+		}else if (requestCode == 10001) {           
+			String purchaseData = data.getStringExtra("INAPP_PURCHASE_DATA");
+			if (resultCode == RESULT_OK) {
+				try {
+					JSONObject jo = new JSONObject(purchaseData);
+					String product = jo.getString("productId");
+					String token = jo.getString("purchaseToken");
+					//					String productType = jo.getString("productType");
+					//String purchaseInfo = "Product ID :: "+sku + "\n"+"Token :: "+token +"\n" ;
+					//showAlertDialog(purchaseInfo);
+					if(token != null && token.length() > 0){
+						addSubscription(token,product);
+					}	
+				}
+				catch (JSONException e) {
+					System.out.println("Failed to parse purchase data.");
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 
@@ -262,6 +368,53 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 			((MagikFlix)getApplicationContext()).setVideosResult(obj.entity);
 			setCategoryAdapter();
 			setFavoriteVideos();
+
+			setUpUI();
+			if(Constants.IS_SUBSCRIPTION_ENABLED){
+				boolean isSubscriptionRestored = ((MagikFlix)getApplicationContext()).isSubscriptionRestored();
+				if (mTimerValueTV != null){
+					mTimerValueTV.setVisibility((mIsUserSubscribed || isSubscriptionRestored) ? View.GONE :View.VISIBLE);
+				}
+				if (mActionBarSubscribeBtn != null){
+					mActionBarSubscribeBtn.setVisibility((mIsUserSubscribed || isSubscriptionRestored) ? View.GONE :View.VISIBLE);
+				}
+
+				if(!mIsUserSubscribed || !(((MagikFlix)getApplicationContext()).isSubscriptionRestored())){
+					Constants.TIMERLIMIT = Integer.parseInt(obj.entity.appConfig.Settings[6].SettingValue);
+					MagikFlix app = (MagikFlix)getApplicationContext();
+					app.setFreeTrailPeriod(Constants.TIMERLIMIT);
+					if(app.isTrialPeriodExpired()){
+						showTrialExpiredPopUp();
+					}else{
+						mTimerValueTV.setVisibility(View.VISIBLE);
+						setFreeTrialValue();
+						showCustomAlert("Enjoy your free trial of " +Constants.TIMERLIMIT+" min(s) today.");
+					}
+				}
+			}
+		}
+	}
+
+	private void setFreeTrialValue() {
+		MagikFlix app = ((MagikFlix)getApplicationContext());
+		if(mTimerValueTV != null && (app.getFreeTrailPeriod() > 0) ){
+			if(app.isTrialPeriodExpired()){
+				mTimerValueTV.setTextColor(Color.RED);
+				mTimerValueTV.setText("0");
+				return;
+			}
+			int videoPlayTime = app.getVideoPlayTime();
+			if(videoPlayTime > 0 ){
+				int remianingVideoPlayTime = (Constants.TIMERLIMIT - (videoPlayTime/60));
+				mTimerValueTV.setText(String.valueOf(remianingVideoPlayTime));
+				if(remianingVideoPlayTime <=0){
+					mTimerValueTV.setTextColor(Color.RED);
+				}
+			}else{
+				mTimerValueTV.setText(String.valueOf(app.getFreeTrailPeriod()));
+			}
+		}else{
+			mTimerValueTV.setText(String.valueOf(Constants.TIMERLIMIT));
 		}
 	}
 
@@ -364,7 +517,7 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 		mLocaliticsAttributes.put(Constants.INDEX, String.valueOf(position));
 		mLocaliticsAttributes.put(Constants.VIDEO_ID, movieVideos.get(position).videoId);
 		mLocalyticsSession.tagEvent(Constants.RECOMMENDED_VIDEO, mLocaliticsAttributes);
-		checkYouTubAppAvailability(position,movieVideos);
+		checkSubscriptionAndNavigate(position,movieVideos);
 	}
 
 	@Override
@@ -373,8 +526,22 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 		case R.id.actionBar_terms_of_use_iv:
 			startActivity(new Intent(this,TermsOfUseActivity.class));
 			break;
+		case R.id.actionBar_subscribe_btn:
+			showSubscriptionPopUp();
+			break;
+		case R.id.subscription_popup_promo_code_cancel_btn:
+			if(mSubscriptionPopUp != null){
+				mSubscriptionPopUp.dismiss();
+			}
+			break;
+		case R.id.subscription_popup_promo_code_buy_btn:
+			if(mSubscriptionPopUp != null){
+				mSubscriptionPopUp.dismiss();
+			}
+			initIBapHelper(PRODUCT);
+			break;
 		case R.id.actionBar_timer_value_tv:
-			startActivity(new Intent(this,SettingsActivity.class));
+			//startActivity(new Intent(this,SettingsActivity.class));
 			break;
 		default:
 			break;
@@ -389,6 +556,9 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 	@Override
 	protected void onResume() {
 		super.onResume();
+		if(Constants.IS_SUBSCRIPTION_ENABLED)
+			setFreeTrialValue();
+
 		registerReceiver(mFavouriteChangeListner, mFavIntentFilter);
 		registerReceiver(mConnReceiver,  new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
 	}
@@ -413,7 +583,11 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 			}else{
 				if(((MagikFlix)getApplicationContext()).getVideoResult() == null){
 					mProgressBar.setVisibility(View.VISIBLE);
-					getVideos(((MagikFlix)getApplicationContext()).getToken());
+					if(Constants.IS_SUBSCRIPTION_ENABLED){
+						getUserSubscription();
+					}else{
+						getVideos(((MagikFlix)getApplicationContext()).getToken());
+					}
 				}
 			}
 		}
@@ -429,5 +603,284 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 	protected void onDestroy() {
 		super.onDestroy();
 		unregisterReceiver(mFavouriteChangeListner);
+		if (Constants.IS_SUBSCRIPTION_ENABLED && mService != null) {
+			unbindService(mServiceConn);
+		} 
 	}
+
+
+	ServiceConnection mServiceConn = new ServiceConnection() {
+		@Override
+		public void onServiceDisconnected(ComponentName name) {
+			mService = null;
+		}
+		@Override
+		public void onServiceConnected(ComponentName name, 
+				IBinder service) {
+			mService = IInAppBillingService.Stub.asInterface(service);
+			new GetProdcutDetails().execute();
+		}
+	};
+
+	private void getUserSubscription() {
+		AddSubscriptionrequest  request = new AddSubscriptionrequest();
+		request.token = ((MagikFlix)getApplicationContext()).getToken();
+		request.requestDelegate = new MFlixJsonBuilder();
+		request.requestType =  WebRequestType.GET_USER_SUBSCRIPTION;	
+		new DataApiAsyncTask(true, this, userSubscriptionHandler, null).execute(request);
+	}
+
+	private Handler userSubscriptionHandler = new Handler(){
+		@SuppressWarnings("unchecked")
+		@Override
+		public void handleMessage(Message msg) {
+			super.handleMessage(msg);
+			processUserSubscriptionResults((DataResult<SubscriptionResult>) msg.obj);
+		}
+	};
+
+	private void processUserSubscriptionResults(DataResult<SubscriptionResult> obj) {
+		if(obj.entity != null ){
+			boolean isSubscribed = obj.entity.isSubscribed;
+			MLogger.logInfo(TAG, "isUserSubscribed :: "+isSubscribed);
+			mIsUserSubscribed = isSubscribed;
+
+			getVideos(((MagikFlix)getApplicationContext()).getToken());
+
+		}
+	}
+
+	private void showSubscriptionPopUp(){
+		LayoutInflater layoutInflater = (LayoutInflater)getBaseContext().getSystemService(LAYOUT_INFLATER_SERVICE);  
+		View popupView = layoutInflater.inflate(R.layout.subscribe_popup, null);  
+		mSubscriptionPopUp = new PopupWindow(popupView, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT,true);
+		mSubscriptionPopUp.setContentView(popupView);
+		promoCodeEt = (EditText)popupView.findViewById(R.id.subscription_popup_promo_code_et);
+		TextView priceTV = (TextView)popupView.findViewById(R.id.subscription_price_tv);
+		if(mPrice != null && priceTV.length() > 0)
+			priceTV.setText(mPrice);
+		Button cancelBtn = (Button)popupView.findViewById(R.id.subscription_popup_promo_code_cancel_btn);
+		cancelBtn.setOnClickListener(this);
+		Button applyBtn = (Button)popupView.findViewById(R.id.subscription_popup_promo_code_apply_btn);
+		applyBtn.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
+				String promoCode = promoCodeEt.getText().toString();
+				if(promoCode.length() > 0){
+					verifyPromoCode(promoCode);
+				}
+				else{
+					showCustomAlert("Please enter Promo Code");
+				}
+			}
+		});
+		Button buyBtn = (Button)popupView.findViewById(R.id.subscription_popup_promo_code_buy_btn);
+		buyBtn.setOnClickListener(this);
+		mSubscriptionPopUp.showAtLocation(popupView, Gravity.CENTER, 0, 0);
+
+	}
+
+	private void verifyPromoCode(String promoCode) {
+		MagikFlix app = (MagikFlix)this.getApplicationContext();
+		RedeemCodeRequest  request = new RedeemCodeRequest();
+		request.token = app.getToken();
+		request.promoCodeRequest = new PromoCodeRequest();
+		request.promoCodeRequest.promoCode = promoCode;
+		request.requestDelegate = new MFlixJsonBuilder();
+		request.requestType =  WebRequestType.VERIFY_REDEEM;	
+		new DataApiAsyncTask(true, this, promoCodeHandler, null).execute(request);
+
+	}
+
+	private Handler promoCodeHandler = new Handler(){
+		@SuppressWarnings("unchecked")
+		@Override
+		public void handleMessage(Message msg) {
+			super.handleMessage(msg);
+			processPromoCodeResults((DataResult<PromoCodeResult>) msg.obj);
+		}
+	};
+
+	private void processPromoCodeResults(DataResult<PromoCodeResult> obj) {
+		if(obj.entity != null ){
+			PromoCodeResult proCodeResult = obj.entity;
+			if(!(proCodeResult.isSuccess) && (proCodeResult.id != null) && (proCodeResult.id.length() > 0)){
+				if(mSubscriptionPopUp != null){
+					mSubscriptionPopUp.dismiss();
+				}
+
+//				initIBapHelper(proCodeResult.id);
+				initIBapHelper(FREE_PRODUCT);
+			}else{
+				showCustomAlert(obj.entity.message);
+			}
+
+		}
+	}
+
+
+	@SuppressLint("InflateParams") private void showCustomAlert(String title){
+		if( mCustomPopUp != null && mCustomPopUp.isShowing()){
+			return;
+		}
+		LayoutInflater inflater = (LayoutInflater)getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
+		View layout = inflater.inflate(R.layout.custom_alert,null);
+		TextView titleTv = (TextView)layout.findViewById(R.id.custom_alert_title);
+		titleTv.setText(title);
+		mCustomPopUp = new PopupWindow(layout, LayoutParams.MATCH_PARENT
+				, LayoutParams.MATCH_PARENT);
+
+		mCustomPopUp.setAnimationStyle(R.style.PopUpAnimation);
+		mCustomPopUp.setFocusable(true);
+		mCustomPopUp.setContentView(layout);
+		mCustomPopUp.showAtLocation(layout, Gravity.CENTER, 0, 0);
+		mCustomPopUp.getContentView().setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				mCustomPopUp.dismiss();
+
+			}
+		});
+
+
+	}
+
+	public void initIBapHelper(final String productId){
+		//		System.out.println("Subscriing to product id --->"+productId);
+		mHelper = new IabHelper(this, "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAh/ZIaQBmoGC1Rwu04RJhaNiCqFI/CNGgkH7oSBwcx2w8pDdrXMRz6g16hUhRWeDTnHBvmpPdgP9YSOrO/VpGEAI+tWY5aQKoyLlcQDrWa8r21KY4/HmTkKYr7JCDr5qQ6H6mipQbMZn1NPj2NzTcyEW3Qhr8SipD3ElVGIHmmENuRzeru9ul6MvaQ2ugVai/Nd9BiXnH8ZzCgKphkpK09J8gi7m+9xfeuQajz8t1q6pcx4FEAzw5fjh4IqpoxhdgWKCXj2kBxioI/he+U5mbDWd8P/BEg1DNWLEQhKoNvUsJgXc3sTZUgQ9kI5lx7wMOzrrqPRhFiCJ8tKWgtGLHmwIDAQAB");
+
+		mHelper.startSetup(new 
+				IabHelper.OnIabSetupFinishedListener() {
+			public void onIabSetupFinished(IabResult result) 
+			{
+				if (!result.isSuccess()) {
+
+
+				} else {  
+					launchPurchaseFlow(productId);
+				}
+			}
+		});
+	}
+
+	private void launchPurchaseFlow(String prodcutId){
+		System.out.println("Subscriing to product id --->"+prodcutId);
+		mHelper.launchSubscriptionPurchaseFlow(this, prodcutId, 10001,   
+				mPurchaseFinishedListener, "mypurchasetoken");
+		//		mHelper.launchPurchaseFlow(this, ITEM_SKU, 10001,   
+		//				mPurchaseFinishedListener, "mypurchasetoken");
+	}
+
+	IabHelper.OnIabPurchaseFinishedListener mPurchaseFinishedListener 
+	= new IabHelper.OnIabPurchaseFinishedListener() {
+		public void onIabPurchaseFinished(IabResult result, 
+				Purchase purchase) {
+			if (result.isFailure()) {
+				String errorMessage = result.getMessage();
+				showAlertDialog(errorMessage);
+				// Handle error
+				return;
+			}      
+		}
+
+	};
+
+
+	private void showAlertDialog(String message){
+		AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
+		builder1.setTitle("Purchase Info");
+		builder1.setMessage(message);
+		builder1.setCancelable(true);
+		builder1.setPositiveButton("OK",
+				new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int id) {
+				dialog.cancel();
+			}
+		});
+		AlertDialog alert11 = builder1.create();
+		alert11.show();
+	}
+
+
+	private void addSubscription(String receipt, String productId) {
+		MagikFlix app = (MagikFlix)this.getApplicationContext();
+		AddSubscriptionrequest  request = new AddSubscriptionrequest();
+		request.token = app.getToken();
+		request.subscriptionModel = new SubscriptionModel();
+		request.subscriptionModel.isFree = 0;
+		request.subscriptionModel.payload = new PayLoad();
+		request.subscriptionModel.payload.packageName = getPackageName();
+		request.subscriptionModel.payload.platform = Constants.PLATFORM;
+		request.subscriptionModel.payload.token = receipt;
+		request.subscriptionModel.payload.isIos6 = 0;
+		request.subscriptionModel.product = productId;
+		request.subscriptionModel.email = app.getEmail();
+		request.subscriptionModel.isSubscription = true;
+		request.requestDelegate = new MFlixJsonBuilder();
+		request.requestType =  WebRequestType.ADD_SUBSCRIPTION;	
+		new DataApiAsyncTask(true, this, addSubscriptionHandler, null).execute(request);
+
+	}
+
+	private Handler addSubscriptionHandler = new Handler(){
+		@SuppressWarnings("unchecked")
+		@Override
+		public void handleMessage(Message msg) {
+			super.handleMessage(msg);
+			processSubscriptionResults((DataResult<AddSubscriptionResult>) msg.obj);
+		}
+	};
+
+	private void processSubscriptionResults(DataResult<AddSubscriptionResult> obj) {
+		if(obj.entity != null ){
+			mIsUserSubscribed = obj.entity.isSuccess;
+			if(obj.entity.isSuccess){
+				showShortToast(obj.entity.message);
+			}
+		}
+	}
+
+	class GetProdcutDetails extends AsyncTask<Void, Integer, Bundle>{
+
+		protected Bundle doInBackground(Void...arg0) {
+			return  getProdcutDetails();
+		}
+
+		protected void onPostExecute(Bundle result) {
+			if(result != null){
+				int response = result.getInt("RESPONSE_CODE");
+				if (response == 0) {
+					ArrayList<String> responseList = result.getStringArrayList("DETAILS_LIST");
+					for (String thisResponse : responseList) {
+						JSONObject object;
+						try {
+							object = new JSONObject(thisResponse);
+							String sku = object.getString("productId");
+							mPrice = object.getString("price");
+						} catch (JSONException e) {
+							MLogger.logInfo(TAG, "Error : getting prodcut details "+ e.getMessage());
+						}
+					}
+				}
+			}
+		}
+	}
+
+	private Bundle getProdcutDetails(){
+		Bundle skuDetails = null;
+		ArrayList<String> skuList = new ArrayList<String> ();
+		skuList.add(PRODUCT);
+		Bundle querySkus = new Bundle();
+		querySkus.putStringArrayList("ITEM_ID_LIST", skuList);
+		try {
+			skuDetails = mService.getSkuDetails(3, 
+					getPackageName(), "subs", querySkus);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		return skuDetails;
+	}
+
 }

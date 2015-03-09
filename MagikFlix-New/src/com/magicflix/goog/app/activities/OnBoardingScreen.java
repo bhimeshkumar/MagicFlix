@@ -43,7 +43,6 @@ public class OnBoardingScreen extends BaseActivity implements OnClickListener, O
 	private ProgressBar mProgressBar;
 	private RelativeLayout mParentGateWayLayout;
 	private Button mSkipBtn;
-	
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -142,29 +141,23 @@ public class OnBoardingScreen extends BaseActivity implements OnClickListener, O
 		mEmailEt.setOnEditorActionListener(this);
 		mEmailLayout.setOnClickListener(this);
 		mSkipBtn.setOnClickListener(this);
-		
 		mParentControlBtn.setOnTouchListener(new View.OnTouchListener() {
-
 	        @Override
 	        public boolean onTouch(View arg0, MotionEvent arg1) {
 	            switch (arg1.getAction()) {
 	            case MotionEvent.ACTION_DOWN:
 	                handel.postDelayed(run, 3000/* OR the amount of time you want */);
 	                break;
-
 	            case MotionEvent.ACTION_CANCEL:
 	                handel.removeCallbacks(run);
 	                break;
-
 	            case MotionEvent.ACTION_UP:
 	                handel.removeCallbacks(run);
 	                break;
-
 	            }
 	            return true;
 	        }
 	    });
-
 	}
 
 	private void setIdsToViews() {
@@ -185,7 +178,6 @@ public class OnBoardingScreen extends BaseActivity implements OnClickListener, O
 	}
 
 	Runnable run = new Runnable() {
-
 		@Override
 		public void run() {
 			if(mLocalyticsSession != null)
@@ -203,13 +195,10 @@ public class OnBoardingScreen extends BaseActivity implements OnClickListener, O
 		switch (v.getId()) {
 		case R.id.on_board_screen_skip_btn:
 			navigateToHomeScreen();
-			
 			break;
-
 		default:
 			break;
 		}
-
 	}
 
 	@Override
@@ -264,7 +253,6 @@ public class OnBoardingScreen extends BaseActivity implements OnClickListener, O
 		EmaiResult emailResponse = obj.entity;
 		if(emailResponse != null && obj.entity.isSubscriptionRestored){
 			((MagikFlix)getApplicationContext()).setIsSubscriptionRestored(obj.entity.isSubscriptionRestored);
-
 		}
 		if(emailResponse != null && emailResponse.message.equalsIgnoreCase("Email set.")){
 			MagikFlix app = (MagikFlix)getApplicationContext();
@@ -273,13 +261,10 @@ public class OnBoardingScreen extends BaseActivity implements OnClickListener, O
 		}else{
 			showShortToast("Email is not set.please try agian");
 		}
-
 	}
 
 	private void navigateToHomeScreen() {
 		this.finish();
 		startActivity(new Intent(OnBoardingScreen.this,AgeSelectionActivity.class));
-
 	}
-	
 }

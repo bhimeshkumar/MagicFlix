@@ -12,7 +12,7 @@ public class MLogger {
 	public static final String LOG_TAG = "Magicflix";
 	
 	private static boolean inTestMode(){
-		return true;
+		return false;
 	}
 	
 	public static void logInfo(String tag, String msg) {

@@ -14,69 +14,59 @@ import com.magicflix.goog.app.api.requests.VideoRequest;
 
 public class MFlixUrlBuilder {
 
-	private static String cloudUrl = "http://magikflixtest.cloudapp.net/"; //Development
-//	private static String cloudUrl = "http://mflixsvc.cloudapp.net/";      // Production
+	private static String BASE_URL = "http://magikflixtest.cloudapp.net/"; //Development
+//	private static String cloudUrl = "http://mflixsvc.cloudapp.net/";      //Production
 
 	public static String getVideosURL(VideoRequest request) {
-		return String.format("%s/api/v2/Application/InitialData?appid=%s&appversion=%s&token=%s", cloudUrl,request.appid,request.appversion, request.token);
+		return String.format("%s/api/v2/Application/InitialData?appid=%s&appversion=%s&token=%s", BASE_URL,request.appid,request.appversion, request.token);
 	}
 	
 	public static String postFavVideos(FavourireVideoRequest dataRequest) {
-	    return String.format("%sapi/v2/User/FavoriteVideo?Token=%s",cloudUrl,dataRequest.token);
+	    return String.format("%sapi/v2/User/FavoriteVideo?Token=%s",BASE_URL,dataRequest.token);
 	}
 
 	public static String postRecentVideos(RecentVideoRequest dataRequest) {
-		return String.format("%s/api/v2/videos/recent?Token=%s",cloudUrl,dataRequest.token);
+		return String.format("%s/api/v2/videos/recent?Token=%s",BASE_URL,dataRequest.token);
 	}
 
 	public static String getGuestLoginURL() {
-		return String.format("%s/api/v2/auth/register/guest?",cloudUrl);
+		return String.format("%s/api/v2/auth/register/guest?",BASE_URL);
 	}
 	
 	public static String getCustomLogginURL(CustomLogginRequest dataRequest) {
-//		return String.format("%s/api/v2/diagnostics/log?Token=%s",cloudUrl,dataRequest.token);
-		return String.format("%s/api/v2/Events/log?Token=%s",cloudUrl,dataRequest.token);
+		return String.format("%s/api/v2/Events/log?Token=%s",BASE_URL,dataRequest.token);
 	}
 
 	public static String getEmailRegisterURL(RegisterEmailRequest dataRequest) {
-		return String.format("%s/api/v2/User/Email?Token=%s",cloudUrl,dataRequest.Token);
+		return String.format("%s/api/v2/User/Email?Token=%s",BASE_URL,dataRequest.Token);
 	}
 	
 	public static String getAppConfigURL(GuestRequest dataRequest) {
-		return String.format("%s/api/v2/Application/AppConfig?appid=%s&appversion=%s",cloudUrl,dataRequest.appid,dataRequest.appversion);
+		return String.format("%s/api/v2/Application/AppConfig?appid=%s&appversion=%s",BASE_URL,dataRequest.appid,dataRequest.appversion);
 	}
 	
 	public static String getSecretCodeURL(SecretCodeRequest dataRequest) {
-		return String.format("%sapi/v2/User/SecretCode?Token=%s",cloudUrl,dataRequest.token);
+		return String.format("%sapi/v2/User/SecretCode?Token=%s",BASE_URL,dataRequest.token);
 	}
 
 	public static String removeFavVideoURL(FavourireVideoRequest dataRequest) {
-		 return String.format("%sapi/v2/User/FavoriteVideo?Token=%s&VideoId=%s",cloudUrl,dataRequest.token,dataRequest.videoId);
+		 return String.format("%sapi/v2/User/FavoriteVideo?Token=%s&VideoId=%s",BASE_URL,dataRequest.token,dataRequest.videoId);
 	}
 	
 	public static String getPromotionCodeURL(RedeemCodeRequest dataRequest){
-		return String.format("%sapi/v2/Promotion/Redeem?token=%s",cloudUrl,dataRequest.token);
+		return String.format("%sapi/v2/Promotion/Redeem?token=%s",BASE_URL,dataRequest.token);
 	}
 	
 	public static String getAddSubcriptionURL(AddSubscriptionrequest dataRequest){
-		return String.format("%sapi/v2/Subscription/Add?token=%s",cloudUrl,dataRequest.token);
+		return String.format("%sapi/v2/Subscription/Add?token=%s",BASE_URL,dataRequest.token);
 	}
 	
 	public static String getSubcriptionURL(AddSubscriptionrequest dataRequest){
-		return String.format("%sapi/v2/User/Subscription?token=%s",cloudUrl,dataRequest.token);
+		return String.format("%sapi/v2/User/Subscription?token=%s",BASE_URL,dataRequest.token);
 	}
 	
 	public static String getUpdateAgeURL(AgeRequest dataRequest){
-		return String.format("%sapi/v2/User/Age?token=%s&age=%s",cloudUrl,dataRequest.token,dataRequest.age);
+		return String.format("%sapi/v2/User/Age?token=%s&age=%s",BASE_URL,dataRequest.token,dataRequest.age);
 	}
 	
-	
-//	http://magikflixtest.cloudapp.net/api/v2/Subscription/Add?token=469a06a57ea7b43444bbefcff894722125eb41aa8e355716782b738c84cbede9
-	
-//	http://magikflixtest.cloudapp.net/api/v2/Promotion/Redeem?token=469a06a57ea7b43444bbefcff894722125eb41aa8e355716782b738c84cbede9&code=123ABC
-	 
-	
-//	http://mflixsvc.cloudapp.net/api/v2/User/SecretCode?Token=469a06a57ea7b43444bbefcff894722125eb41aa8e355716782b738c84cbede9
-	
-//	http://mflixsvc.cloudapp.net/api/v2/Application/AppConfig?appid=com.magicflix.magicflix&appversion=1.0
 }
