@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Resources;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -57,10 +58,12 @@ public class MovieAdapter extends FancyCoverFlowAdapter{
           } else {
               customViewGroup = new CustomViewGroup(viewGroup.getContext());
               
-              if(CompatibilityUtil.isTablet(mContext))
-            	  customViewGroup.setLayoutParams(new FancyCoverFlow.LayoutParams(dpToPx(380), FancyCoverFlow.LayoutParams.MATCH_PARENT));
-              else
-            	  customViewGroup.setLayoutParams(new FancyCoverFlow.LayoutParams(dpToPx(220), FancyCoverFlow.LayoutParams.MATCH_PARENT));
+              int movieItemWidth = (int) mContext.getResources().getDimension(R.dimen.movieItemWidth);
+              
+//              if(CompatibilityUtil.isTablet(mContext))
+//            	  customViewGroup.setLayoutParams(new FancyCoverFlow.LayoutParams(dpToPx(380), FancyCoverFlow.LayoutParams.MATCH_PARENT));
+//              else
+            	  customViewGroup.setLayoutParams(new FancyCoverFlow.LayoutParams(dpToPx(movieItemWidth), FancyCoverFlow.LayoutParams.MATCH_PARENT));
           }
 
           customViewGroup.getDurationTextView().setText(Constants.formatDuration(mVideosList.get(position).duration));
@@ -193,6 +196,14 @@ public class MovieAdapter extends FancyCoverFlowAdapter{
 	            return duartionTextView;
 	        }
 	    }
+	 
+	 
+	 public static int convertPixelsToDp(float px, Context context){
+		    Resources resources = context.getResources();
+		    DisplayMetrics metrics = resources.getDisplayMetrics();
+		    int dp = (int) (px / (metrics.densityDpi / 160f));
+		    return dp;
+		}
 
 
 }

@@ -101,7 +101,7 @@ public class VideoPlayingActivity extends BaseActivity implements OnInitializedL
 						YPlayer.pause();
 					}
 				}
-				showTrialExpiredPopUp();
+				showTrialExpiredPopUp(getString(R.string.times_up_txt));
 			}
 		};
 		mIntentFilter = new IntentFilter("com.magikflic.goog.TRIALEXPIRED");
@@ -202,9 +202,8 @@ public class VideoPlayingActivity extends BaseActivity implements OnInitializedL
 						if(videoPlayedSecs == 10){
 							postRecentVideos(mVideoId);
 						}
-
-						if(Constants.IS_SUBSCRIPTION_ENABLED){
-							MagikFlix app = (MagikFlix)getApplicationContext();
+						MagikFlix app = (MagikFlix)getApplicationContext();
+						if(Constants.IS_SUBSCRIPTION_ENABLED && !(app.isUserSubscribed())){
 							if(YPlayer != null && YPlayer.isPlaying()){
 								app.setVideoPlayTime(app.getVideoPlayTime()+1);
 							}
@@ -355,7 +354,7 @@ public class VideoPlayingActivity extends BaseActivity implements OnInitializedL
 			if(mVideoPausePostion > 0){
 				totalTimeWatched = (YPlayer.getDurationMillis()/1000 )-mVideoPausePostion;
 			}else{
-				totalTimeWatched  = (YPlayer.getDurationMillis()/1000 );
+				totalTimeWatched  = (YPlayer.getDurationMillis()/1000 )+1; // YPlayer is giving 1 sec less to total time so adding +1
 			}
 
 			mVideoPausePostion = 0;
@@ -532,7 +531,7 @@ public class VideoPlayingActivity extends BaseActivity implements OnInitializedL
 		case R.id.play_btn:
 			if(YPlayer != null){
 				if(((MagikFlix)getApplicationContext()).isTrialPeriodExpired()){
-					showTrialExpiredPopUp();
+					showTrialExpiredPopUp(getString(R.string.times_up_txt));
 					return;
 				}
 				mTransparentLayout.setVisibility(View.GONE);
@@ -557,8 +556,6 @@ public class VideoPlayingActivity extends BaseActivity implements OnInitializedL
 		default:
 			break;
 		}
-
-
 	}
 
 

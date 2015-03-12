@@ -7,21 +7,22 @@ import android.widget.Button;
 
 import com.magicflix.goog.MagikFlix;
 import com.magicflix.goog.R;
+import com.magicflix.goog.app.utils.Constants;
 import com.magicflix.goog.app.views.CircularSeekBar;
 import com.magicflix.goog.app.views.CircularSeekBar.OnCircleSeekBarChangeListener;
 
 public class SettingsActivity extends BaseActivity implements OnClickListener, OnCircleSeekBarChangeListener{
-	
+
 	private Button mOkBtn;
 	private CircularSeekBar mCircularSeekBar;
 	private MagikFlix mApplication;
-	
+
 	@Override
 	protected void onCreate(Bundle arg0) {
 		super.onCreate(arg0);
 		setContentView(R.layout.activity_settings);
-		init();
 		setIdsToViews();
+		init();
 		setListnersToViews();
 	}
 
@@ -29,7 +30,7 @@ public class SettingsActivity extends BaseActivity implements OnClickListener, O
 		getActionBar().hide();
 		mApplication = (MagikFlix)getApplicationContext();
 	}
-	
+
 	private void setListnersToViews() {
 		mOkBtn.setOnClickListener(this);
 		mCircularSeekBar.setOnSeekBarChangeListener(this);
@@ -51,18 +52,20 @@ public class SettingsActivity extends BaseActivity implements OnClickListener, O
 		}
 	}
 
-	@Override
 	public void onProgressChanged(CircularSeekBar seekBar, int progress,
 			boolean fromUser) {
 	}
 
 	@Override
 	public void onStartTrackingTouch(CircularSeekBar seekBar) {
-		
+
 	}
 
 	@Override
 	public void onStopTrackingTouch(CircularSeekBar seekBar) {
-		mApplication.setApplicationActiveTime(seekBar.getValue());
+		mApplication.setAppTimerValue(String.valueOf(seekBar.getValue()));
+		Constants.TIMER_LIMIT_UPDATED = true;
+		Constants.DEFAULT_APP_TIMER_LIMIT = seekBar.getValue() * 60 * 1000;
 	}
+	
 }

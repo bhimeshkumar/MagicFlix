@@ -202,4 +202,23 @@ public class MagikFlix  extends Application {
 		return PrefManager.getBool(getApplicationContext(), "isAgeSelected", false);
 		
 	}
+
+	public void setIsUserSubscribed(boolean isUserSubscribed) {
+		PrefManager.saveBool(getApplicationContext(), "isUserSubscribed", isUserSubscribed);
+		
+	}
+	
+	public boolean isUserSubscribed() {
+		return PrefManager.getBool(getApplicationContext(), "isUserSubscribed", false);
+		
+	}
+
+	public void setAppTimerValue(String timerString) {
+		PrefManager.saveString(getApplicationContext(), "appTimerValue", timerString);
+		
+	}
+	
+	public String getAppTimerValue(){
+		return PrefManager.getString(getApplicationContext(), "appTimerValue", "20");
+	}
 }

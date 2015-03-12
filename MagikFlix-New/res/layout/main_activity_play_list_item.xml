@@ -3,19 +3,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="center_vertical"
-    android:gravity="center_vertical"
     android:orientation="vertical" >
 
     <RelativeLayout
         android:layout_width="@dimen/play_list_item_width"
-        android:layout_height="@dimen/play_list_item_height"
+        android:layout_height="match_parent"
         android:layout_marginRight="@dimen/play_list_item_marginRight"
          >
 
         <ImageView
             android:id="@+id/play_list_thumbnail_iv"
             android:layout_width="@dimen/play_list_item_width"
-            android:layout_height="@dimen/play_list_item_height"
+            android:layout_height="match_parent"
             android:scaleType="fitXY" />
 
         <TextView

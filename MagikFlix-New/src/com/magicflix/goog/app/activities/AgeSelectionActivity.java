@@ -31,7 +31,6 @@ import com.magicflix.goog.app.api.MFlixJsonBuilder.WebRequestType;
 import com.magicflix.goog.app.api.requests.AgeRequest;
 import com.magicflix.goog.app.asyntasks.DataApiAsyncTask;
 import com.magicflix.goog.app.utils.Constants;
-import com.magicflix.goog.utils.MLogger;
 
 public class AgeSelectionActivity extends BaseActivity implements OnSeekBarChangeListener, OnClickListener{
 	private SeekBar mSeekBar;

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/com.magicflix.goog"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#A6000000"
@@ -20,14 +21,16 @@
         android:layout_marginLeft="@dimen/marginTimesPopUpBalloon"
         android:orientation="vertical" >
 
-        <TextView
+        <com.magicflix.goog.app.views.MagicflixTextView
             android:id="@+id/times_up_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/times_up_txt"
             android:layout_gravity="center_horizontal"
             android:textColor="@color/white"
-            android:textSize="@dimen/textSizeTimesUp" />
+            android:gravity="center"
+            android:textSize="@dimen/textSizeTimesUp"
+            app:fontName="avenirnext_medium_lt.otf" />
 
         <ImageView
             android:layout_width="@dimen/timesPopUpBalloonWidth"

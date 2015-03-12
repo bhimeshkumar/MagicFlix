@@ -157,7 +157,12 @@
     <dimen name="parentControlButtonHeight">250dp</dimen>
     <dimen name="textSizeOnBoarding">25sp</dimen>
     <dimen name="onBoardingBallonHeight">90dp</dimen>
-     <dimen name="marginTopAgeSelection">60dp</dimen>
-      <dimen name="ageSelectionSeekBarWidth">400dp</dimen>
+    <dimen name="marginTopAgeSelection">60dp</dimen>
+    <dimen name="ageSelectionSeekBarWidth">400dp</dimen>
+    
+    <dimen name="textSizeCategoryName">14sp</dimen>
+    <dimen name="movieItemWidth">340dp</dimen>
+    <dimen name="enabledCategoryItemWidthHeight">95dp</dimen>
+     <dimen name="disabledCategoryItemWidthHeight">80dp</dimen>
 
 </resources>

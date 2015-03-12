@@ -1,83 +1,64 @@
 package com.magicflix.goog.app.activities;
 
-import android.app.Activity;
 import android.content.Intent;
+import android.media.MediaPlayer;
+import android.media.MediaPlayer.OnCompletionListener;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.text.TextUtils;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.ImageView;
 import android.widget.Toast;
+import android.widget.VideoView;
 
 import com.magicflix.goog.MagikFlix;
 import com.magicflix.goog.R;
-import com.magicflix.goog.animation.FasterAnimationsContainer;
-import com.magicflix.goog.animation.FasterAnimationsContainer.OnAnimationStoppedListener;
-import com.magicflix.goog.app.asyntasks.SetupAsyncTask;
-import com.magicflix.goog.app.utils.Constants;
 
-public class SplashActivity extends Activity implements  OnAnimationStoppedListener{
+public class SplashActivity extends BaseActivity implements  OnCompletionListener{
 
-	private ImageView mAnimatedImageView;
-	private boolean mIsBackPressed = false;
-//	private FasterAnimationsContainer mFasterAnimationsContainer;
-	private static final int ANIMATION_INTERVAL = 2;
+	private VideoView mVideoView;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setUpScreen();
-		setUpApp();
-//		startAnimation();
-		mAnimatedImageView = (ImageView) findViewById(R.id.magikflix_logo);
-		mAnimatedImageView.setImageDrawable(this.getResources().getDrawable(R.drawable.blux_appear_26));
 	}
 
-	/**
-	 * To setup application such as checking the connections and creating DB
-	 */
-	private void setUpApp() {
-
-		new SetupAsyncTask(this).execute();
-	}
-
-//	private void startAnimation() {
-//		mAnimatedImageView = (ImageView) findViewById(R.id.magikflix_logo);
-//		mFasterAnimationsContainer = null;
-//		mFasterAnimationsContainer = FasterAnimationsContainer
-//				.getInstance(mAnimatedImageView);
-//		mFasterAnimationsContainer.addAllFrames(Constants.SPLASH_IMAGE_RESOURCES,
-//				ANIMATION_INTERVAL);
-//		mFasterAnimationsContainer.setOnAnimationStoppedListener(this);
-//		mFasterAnimationsContainer.start();
-//	}
-
-
-	/**
-	 * TO setup layout and the screen settings 
-	 */
 	private void setUpScreen() {
-		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		getActionBar().hide();
+//		requestWindowFeature(Window.FEATURE_NO_TITLE);
+//		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		setContentView(R.layout.activity_splash);
+		setIdsToViews();
+		setListnersToViews();
+		playVideo();
+	}
+
+	private void setListnersToViews() {
+		mVideoView.setOnCompletionListener(this);
+		
+	}
+
+	private void playVideo() {
+		String path = "android.resource://" + getPackageName() + "/" + R.raw.splash_screen_video;
+		mVideoView.setVideoURI(Uri.parse(path));
+		mVideoView.start();
+		
+	}
+
+	private void setIdsToViews() {
+		mVideoView = (VideoView)findViewById(R.id.splash_screen_video_view);
+
 	}
 
 	public void goToNextScreen() {
-		new CountDownTimer(3000, 1000) {
-			@Override
-			public void onFinish() {
-				if(!mIsBackPressed)
-					navigateToHome();
-				else
-					finish();
-			}
-
-			@Override
-			public void onTick(long millisUntilFinished) {
-			}
-		}.start();
+		if(isFinishing())
+			return;
+		navigateToHome();
+		finish();
 	}
+	
 	/**
 	 * TO redirect next screen
 	 */
@@ -93,7 +74,6 @@ public class SplashActivity extends Activity implements  OnAnimationStoppedListe
 			startActivity(new Intent(getApplicationContext(), HomeActivity.class));
 		}
 		finish();
-
 	}
 
 
@@ -119,30 +99,9 @@ public class SplashActivity extends Activity implements  OnAnimationStoppedListe
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-//		mFasterAnimationsContainer.stop();
-//		mFasterAnimationsContainer.clearInstance();
 	}
 
-	@Override
-	public void onBackPressed() {
-		mIsBackPressed = true;
-		super.onBackPressed();
-	}
-
-
-	@Override
-	public void onAnimationStopped() {
-		mAnimatedImageView.setImageDrawable(this.getResources().getDrawable(R.drawable.blux_appareance_skew20));
-		new CountDownTimer(5000, 1000) {
-			@Override
-			public void onFinish() {
-
-				goToNextScreen();
-			}
-
-			@Override
-			public void onTick(long millisUntilFinished) {
-			}
-		}.start();
+	public void onCompletion(MediaPlayer mp) {
+		goToNextScreen();
 	}
 }

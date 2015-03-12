@@ -31,6 +31,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
@@ -103,6 +104,8 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 	private Map<String, String> mLocaliticsAttributes ;
 	private String mSelectedCategoryName;
 	private String mPrice;
+	private MagikFlix mApplication;
+	private AppConuntDownTimer countDownTimer;
 
 	//susbcsription 
 
@@ -114,7 +117,7 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 	private  PopupWindow mSubscriptionPopUp , mCustomPopUp; Dialog trailDialog ;
 	private  EditText promoCodeEt;
 	private Button mTimerValueTV;
-	private Button mActionBarSubscribeBtn ;
+	private Button mActionBarSubscribeBtn ,mActionBarAppTimerBtn;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -129,6 +132,26 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 		}else{
 			getVideos(((MagikFlix)getApplicationContext()).getToken());
 		}
+
+
+	}
+
+	private void startAppTimer() {
+		mActionBarAppTimerBtn.setVisibility(View.VISIBLE);
+		int timerValue = Integer.valueOf(mApplication.getAppTimerValue());
+		if(timerValue == 0){
+			mActionBarAppTimerBtn.setText("0");
+			mActionBarAppTimerBtn.setTextColor(Color.RED);
+			return;
+		}
+		if(countDownTimer != null){
+			countDownTimer.cancel();
+			countDownTimer = null;
+		}
+		Constants.DEFAULT_APP_TIMER_LIMIT =(timerValue+1)  * 60 * 1000;
+		countDownTimer = new AppConuntDownTimer(Constants.DEFAULT_APP_TIMER_LIMIT, Constants.APP_TIMER_DELAY);
+		countDownTimer.start();
+
 	}
 
 	private void setUpUI() {
@@ -143,6 +166,7 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 	}
 
 	private void init() {
+		mApplication = (MagikFlix)getApplication();
 		mLocalyticsSession = ((MagikFlix)getApplication()).getLocatyticsSession();
 		mLocaliticsAttributes = new HashMap<String, String>();
 		this.fancyCoverFlow = (FancyCoverFlow) this.findViewById(R.id.mainActivity_movie_list);
@@ -177,7 +201,19 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 		mPlayListListView.setOnItemClickListener(this);
 		mTermsOfUseIV.setOnClickListener(this);
 		mActionBarSubscribeBtn.setOnClickListener(this);
+		mActionBarAppTimerBtn.setOnClickListener(this);
 		mTimerValueTV.setOnClickListener(this);
+
+		/* SharedPreferences prefs = 
+				getSharedPreferences(Constants.PREFS_FILE_NAME, Context.MODE_PRIVATE);
+		OnSharedPreferenceChangeListener listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+			public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+				
+			}
+		};
+
+		prefs.registerOnSharedPreferenceChangeListener(listener);*/
+
 	}
 
 	@SuppressWarnings("deprecation")
@@ -223,6 +259,7 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 
 		mTimerValueTV = (Button)mActionBar.getCustomView().findViewById(R.id.actionBar_timer_value_tv);
 		mActionBarSubscribeBtn = (Button)mActionBar.getCustomView().findViewById(R.id.actionBar_subscribe_btn);
+		mActionBarAppTimerBtn = (Button)mActionBar.getCustomView().findViewById(R.id.actionBar_app_timer_btn);
 	}
 
 
@@ -251,7 +288,7 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 			if(mIsUserSubscribed || !(app.isTrialPeriodExpired()) || app.isSubscriptionRestored())   // || videoResult.userParent.isPromotionSubscribed || videoResult.userParent.isSubscribed  || mIsSubscsriptionResored)
 				checkYouTubAppAvailability(position,videoList);
 			else
-				showTrialExpiredPopUp();
+				showTrialExpiredPopUp(getString(R.string.times_up_txt));
 		}else{
 			checkYouTubAppAvailability(position,videoList);
 		}
@@ -327,7 +364,6 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 					}	
 				}
 				catch (JSONException e) {
-					System.out.println("Failed to parse purchase data.");
 					e.printStackTrace();
 				}
 			}
@@ -356,6 +392,7 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 
 	private void processVideoResults(DataResult<VideoResult> obj) {
 		if(obj.entity != null ){
+			mTermsOfUseIV.setVisibility(View.VISIBLE);
 			Playlists[] playLists = obj.entity.playlists;
 			ArrayList<Playlists> categoriesList = new ArrayList<Playlists>();
 
@@ -384,7 +421,7 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 					MagikFlix app = (MagikFlix)getApplicationContext();
 					app.setFreeTrailPeriod(Constants.TIMERLIMIT);
 					if(app.isTrialPeriodExpired()){
-						showTrialExpiredPopUp();
+						showTrialExpiredPopUp(getString(R.string.times_up_txt));
 					}else{
 						mTimerValueTV.setVisibility(View.VISIBLE);
 						setFreeTrialValue();
@@ -392,6 +429,8 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 					}
 				}
 			}
+
+			startAppTimer();
 		}
 	}
 
@@ -543,6 +582,9 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 		case R.id.actionBar_timer_value_tv:
 			//startActivity(new Intent(this,SettingsActivity.class));
 			break;
+		case R.id.actionBar_app_timer_btn:
+			startActivity(new Intent(this,SettingsActivity.class));
+			break;
 		default:
 			break;
 		}
@@ -558,6 +600,14 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 		super.onResume();
 		if(Constants.IS_SUBSCRIPTION_ENABLED)
 			setFreeTrialValue();
+
+		if(Constants.TIMER_LIMIT_UPDATED){
+			Constants.TIMER_LIMIT_UPDATED = false;
+			if(countDownTimer != null){
+				countDownTimer.cancel();
+				startAppTimer();
+			}
+		}
 
 		registerReceiver(mFavouriteChangeListner, mFavIntentFilter);
 		registerReceiver(mConnReceiver,  new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
@@ -602,6 +652,9 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
+		if(countDownTimer != null ){
+			countDownTimer.cancel();
+		}
 		unregisterReceiver(mFavouriteChangeListner);
 		if (Constants.IS_SUBSCRIPTION_ENABLED && mService != null) {
 			unbindService(mServiceConn);
@@ -644,6 +697,7 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 			boolean isSubscribed = obj.entity.isSubscribed;
 			MLogger.logInfo(TAG, "isUserSubscribed :: "+isSubscribed);
 			mIsUserSubscribed = isSubscribed;
+			((MagikFlix)getApplicationContext()).setIsUserSubscribed(mIsUserSubscribed);
 
 			getVideos(((MagikFlix)getApplicationContext()).getToken());
 
@@ -709,8 +763,7 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 				if(mSubscriptionPopUp != null){
 					mSubscriptionPopUp.dismiss();
 				}
-
-//				initIBapHelper(proCodeResult.id);
+				//				initIBapHelper(proCodeResult.id);
 				initIBapHelper(FREE_PRODUCT);
 			}else{
 				showCustomAlert(obj.entity.message);
@@ -748,9 +801,7 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 	}
 
 	public void initIBapHelper(final String productId){
-		//		System.out.println("Subscriing to product id --->"+productId);
 		mHelper = new IabHelper(this, "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAh/ZIaQBmoGC1Rwu04RJhaNiCqFI/CNGgkH7oSBwcx2w8pDdrXMRz6g16hUhRWeDTnHBvmpPdgP9YSOrO/VpGEAI+tWY5aQKoyLlcQDrWa8r21KY4/HmTkKYr7JCDr5qQ6H6mipQbMZn1NPj2NzTcyEW3Qhr8SipD3ElVGIHmmENuRzeru9ul6MvaQ2ugVai/Nd9BiXnH8ZzCgKphkpK09J8gi7m+9xfeuQajz8t1q6pcx4FEAzw5fjh4IqpoxhdgWKCXj2kBxioI/he+U5mbDWd8P/BEg1DNWLEQhKoNvUsJgXc3sTZUgQ9kI5lx7wMOzrrqPRhFiCJ8tKWgtGLHmwIDAQAB");
-
 		mHelper.startSetup(new 
 				IabHelper.OnIabSetupFinishedListener() {
 			public void onIabSetupFinished(IabResult result) 
@@ -766,7 +817,6 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 	}
 
 	private void launchPurchaseFlow(String prodcutId){
-		System.out.println("Subscriing to product id --->"+prodcutId);
 		mHelper.launchSubscriptionPurchaseFlow(this, prodcutId, 10001,   
 				mPurchaseFinishedListener, "mypurchasetoken");
 		//		mHelper.launchPurchaseFlow(this, ITEM_SKU, 10001,   
@@ -837,6 +887,9 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 		if(obj.entity != null ){
 			mIsUserSubscribed = obj.entity.isSuccess;
 			if(obj.entity.isSuccess){
+				((MagikFlix)getApplicationContext()).setIsUserSubscribed(mIsUserSubscribed);
+				mActionBarSubscribeBtn.setVisibility(View.GONE);
+				mTimerValueTV.setVisibility(View.GONE);
 				showShortToast(obj.entity.message);
 			}
 		}
@@ -883,4 +936,42 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 		return skuDetails;
 	}
 
+	public class AppConuntDownTimer extends CountDownTimer{
+
+		public AppConuntDownTimer(long millisInFuture, long countDownInterval) {
+			super(millisInFuture, countDownInterval);
+		}
+
+		@Override
+		public void onFinish() {
+			mActionBarAppTimerBtn.setTextColor(Color.RED);
+			mActionBarAppTimerBtn.setText("0");
+		}
+
+		@Override
+		public void onTick(long millisUntilFinished) {
+			setAppTimer(millisUntilFinished);
+		}
+	}
+	
+	
+	private void setAppTimer(long millisUntilFinished) {
+		int timerValue = (int) (millisUntilFinished / 1000);
+		String timerString = String.valueOf(timerValue/60);
+		mActionBarAppTimerBtn.setText(timerString);
+		if(timerString.equalsIgnoreCase("0")){
+			mActionBarAppTimerBtn.setTextColor(Color.RED);
+		}else if(Integer.parseInt(timerString) < 5){
+			mActionBarAppTimerBtn.setTextColor(HomeActivity.this.getResources().getColor(R.color.category_disable_color));
+		}else if(Integer.parseInt(timerString) == 5){
+			showTrialExpiredPopUp(HomeActivity.this.getString(R.string.app_timer_msg));
+			mActionBarAppTimerBtn.setTextColor(HomeActivity.this.getResources().getColor(R.color.category_disable_color));
+		}else{
+			mActionBarAppTimerBtn.setTextColor(Color.WHITE);
+		}
+	}
+
+
 }
+
+

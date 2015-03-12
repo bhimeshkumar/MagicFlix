@@ -117,8 +117,8 @@
 
     <!-- main_activity_play_list_item -->
 
-    <dimen name="play_list_item_width">240dp</dimen>
-    <dimen name="play_list_item_height">130dp</dimen>
+    <dimen name="play_list_item_width">280dp</dimen>
+    <dimen name="play_list_item_height">140dp</dimen>
     <dimen name="play_list_item_marginRight">10dp</dimen>
 
     <!-- Subscription screen dimens -->
@@ -141,17 +141,20 @@
     <dimen name="timesPopUpBalloonHeight">100dp</dimen>
     <dimen name="marginTimesPopUpBalloon">330dp</dimen>
     <dimen name="textSizeTimesUp">35sp</dimen>
-    
     <dimen name="marginTopOnBoarding">60dp</dimen>
     <dimen name="onBoardingAvatarWidth">450dp</dimen>
-     <dimen name="onBoardingAvatarHeight">450dp</dimen>
-     
-     <dimen name="parentControlButtonWidth">350dp</dimen>
+    <dimen name="onBoardingAvatarHeight">450dp</dimen>
+    <dimen name="parentControlButtonWidth">350dp</dimen>
     <dimen name="parentControlButtonHeight">350dp</dimen>
-    
     <dimen name="textSizeOnBoarding">35sp</dimen>
-     <dimen name="onBoardingBallonHeight">120dp</dimen>
-     <dimen name="marginTopAgeSelection">80dp</dimen>
-      <dimen name="ageSelectionSeekBarWidth">500dp</dimen>
+    <dimen name="onBoardingBallonHeight">120dp</dimen>
+    <dimen name="marginTopAgeSelection">80dp</dimen>
+    <dimen name="ageSelectionSeekBarWidth">500dp</dimen>
+    
+    <dimen name="textSizeCategoryName">16sp</dimen>
+    
+     <dimen name="movieItemWidth">300dp</dimen>
+     <dimen name="enabledCategoryItemWidthHeight">110dp</dimen>
+     <dimen name="disabledCategoryItemWidthHeight">90dp</dimen>
 
 </resources>

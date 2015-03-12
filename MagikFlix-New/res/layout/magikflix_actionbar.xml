@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/com.magicflix.goog"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
@@ -18,27 +19,45 @@
         android:gravity="center_vertical"
         android:orientation="horizontal" >
 
-        <Button
+        <com.magicflix.goog.app.views.MagicflixButton
             android:id="@+id/actionBar_subscribe_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/marginMedium"
             android:background="@color/transparent"
             android:text="@string/subscribe_btn_txt"
             android:textColor="@color/white"
-            android:visibility="gone"
             android:textSize="@dimen/textSizeLargePlus"
-            android:layout_marginRight="@dimen/marginMedium"
-            />
-
-        <Button
-            android:id="@+id/actionBar_timer_value_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:background="@drawable/timer_circle"
-            android:gravity="center"
             android:visibility="gone"
-            android:textColor="@color/white" />
+            app:fontName="avenirnext_medium_lt.otf" />
+
+        <com.magicflix.goog.app.views.MagicflixButton
+            android:id="@+id/actionBar_app_timer_btn"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="@dimen/marginMedium"
+            android:layout_marginRight="@dimen/marginLarge"
+            android:background="@drawable/stop_watch_timer_selector"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:visibility="gone"
+            android:textSize="@dimen/textSizeLarge"
+            
+            app:fontName="avenirnext_medium_lt.otf" />
+
+        <com.magicflix.goog.app.views.MagicflixButton
+            android:id="@+id/actionBar_timer_value_tv"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_marginRight="@dimen/marginMedium"
+            android:background="@drawable/stop_watch_timer_selector"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:visibility="gone"
+            app:fontName="avenirnext_medium_lt.otf" />
     </LinearLayout>
 
     <ImageView
@@ -47,6 +66,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
+        android:visibility="gone"
         android:layout_marginLeft="@dimen/marginMediumPlus"
         android:background="@drawable/icon_category_terms_of_use" />
 

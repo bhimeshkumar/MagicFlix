@@ -15,7 +15,7 @@ import com.magicflix.goog.app.api.requests.VideoRequest;
 public class MFlixUrlBuilder {
 
 	private static String BASE_URL = "http://magikflixtest.cloudapp.net/"; //Development
-//	private static String cloudUrl = "http://mflixsvc.cloudapp.net/";      //Production
+//	private static String BASE_URL = "http://mflixsvc.cloudapp.net/";      //Production
 
 	public static String getVideosURL(VideoRequest request) {
 		return String.format("%s/api/v2/Application/InitialData?appid=%s&appversion=%s&token=%s", BASE_URL,request.appid,request.appversion, request.token);

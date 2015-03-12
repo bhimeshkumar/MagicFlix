@@ -4,14 +4,15 @@
         Base application theme, dependent on API level. This theme is replaced
         by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
     -->
-  <style name="tallerBarStyle" parent="@android:style/Widget.SeekBar">
+    <style name="tallerBarStyle" parent="@android:style/Widget.SeekBar">
         <item name="android:minHeight">8dip</item>
         <item name="android:maxHeight">20dip</item>
     </style>
-    
-  <style name="PopUpAnimation">
-    <item name="android:windowEnterAnimation">@anim/popup_appear</item>
-    <item name="android:windowExitAnimation">@anim/popup_disappear</item>
-</style>
+
+    <style name="PopUpAnimation">
+        <item name="android:windowEnterAnimation">@anim/popup_appear</item>
+        <item name="android:windowExitAnimation">@anim/popup_disappear</item>
+    </style>
+
 
 </resources>

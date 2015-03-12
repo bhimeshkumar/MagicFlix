@@ -47,6 +47,7 @@ public class Constants {
 	public static final String PREFS_FILE_NAME = "MFLIX_PREFERENCES";
 	public static String IS_SUBSCRIPTION_RESTORED = "IS_SUBSCRIPTION_RESTORED";
 	public static int VIDEO_PLAY_TIME;
+	public static boolean TIMER_LIMIT_UPDATED = false;
 	public static final String PREF_EMAIL ="PREF_EMAIL";
 	public static final int[] SPLASH_IMAGE_RESOURCES = {
 		R.drawable.blux_appear_0, R.drawable.blux_appear_1,
@@ -89,6 +90,8 @@ public class Constants {
 	public static final String VIDEO_ID = "videoId";
 	public static final String PARENT_GATE_OPEN = "parentGateOpen";
 	public static final String PARENT_GATE_PASSED = "parentGatePassed";
+	public static  long DEFAULT_APP_TIMER_LIMIT = 21*60*1000;
+	public static final long APP_TIMER_DELAY = 60*1000;
 
 
 	public static String readTxt(Context context, boolean isAboutThisApp){
@@ -166,31 +169,6 @@ public class Constants {
 		}
 	} 
 
-
-
-	// Transparent background color codes
-
-	//	100% � FF
-	//	95% � F2
-	//	90% � E6
-	//	85% � D9
-	//	80% � CC
-	//	75% � BF
-	//	70% � B3
-	//	65% � A6
-	//	60% � 99
-	//	55% � 8C
-	//	50% � 80
-	//	45% � 73
-	//	40% � 66
-	//	35% � 59
-	//	30% � 4D
-	//	25% � 40
-	//	20% � 33
-	//	15% � 26
-	//	10% � 1A
-	//	5% � 0D
-	//	0% � 00
 }
 
 

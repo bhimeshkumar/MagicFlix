@@ -152,13 +152,14 @@
     <dimen name="onBoardingAvatarHeight">300dp</dimen>
     <dimen name="parentControlButtonWidth">150dp</dimen>
     <dimen name="parentControlButtonHeight">150dp</dimen>
-     <dimen name="textSizeOnBoarding">19sp</dimen>
-      <dimen name="onBoardingBallonHeight">70dp</dimen>
-      <dimen name="marginTopAgeSelection">30dp</dimen>
-      <dimen name="ageSelectionSeekBarWidth">300dp</dimen>
-      
-     
+    <dimen name="textSizeOnBoarding">19sp</dimen>
+    <dimen name="onBoardingBallonHeight">70dp</dimen>
+    <dimen name="marginTopAgeSelection">30dp</dimen>
+    <dimen name="ageSelectionSeekBarWidth">300dp</dimen>
     
-    
+    <dimen name="textSizeCategoryName">14sp</dimen>
+    <dimen name="movieItemWidth">160dp</dimen>
+    <dimen name="enabledCategoryItemWidthHeight">70dp</dimen>
+    <dimen name="disabledCategoryItemWidthHeight">60dp</dimen>
 
 </resources>

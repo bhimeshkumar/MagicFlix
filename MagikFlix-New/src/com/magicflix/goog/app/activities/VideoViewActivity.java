@@ -193,7 +193,7 @@ public class VideoViewActivity extends BaseActivity implements PlayPauseListener
 		case R.id.play_btn:
 			if(mVideoView != null){
 				if(((MagikFlix)getApplicationContext()).isTrialPeriodExpired()){
-					showTrialExpiredPopUp();
+					showTrialExpiredPopUp(getString(R.string.times_up_txt));
 					return;
 				}
 				mTransparentLayout.setVisibility(View.GONE);

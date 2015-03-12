@@ -1,4 +1,5 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/com.magicflix.goog"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -30,7 +31,7 @@
             android:paddingLeft="@dimen/paddingMediumPlus"
             android:paddingRight="@dimen/paddingMediumPlus" />
 
-        <TextView
+        <com.magicflix.goog.app.views.MagicflixTextView
             android:id="@+id/category_name_tv"
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -40,7 +41,8 @@
             android:gravity="left|center"
             android:paddingLeft="@dimen/paddingMediumPlus"
             android:textColor="@color/white"
-            android:textSize="@dimen/textSizeSmall"
+            android:textSize="@dimen/textSizeCategoryName"
+            app:fontName="avenirnext_medium_lt.otf"
             android:textStyle="normal" />
 
         <RelativeLayout
@@ -54,14 +56,17 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:padding="@dimen/fpp_tile_margin" />
-            <TextView android:id="@+id/main_screen_no_videos_tv"
+
+            <com.magicflix.goog.app.views.MagicflixTextView
+                android:id="@+id/main_screen_no_videos_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/textSizeMedium"
-                android:text="@string/info_no_videos_found"
                 android:layout_centerInParent="true"
+                android:text="@string/info_no_videos_found"
                 android:textColor="@color/white"
-                android:visibility="gone"/>
+                android:textSize="@dimen/textSizeMedium"
+                app:fontName="avenirnext_medium_lt.otf"
+                android:visibility="gone" />
         </RelativeLayout>
     </LinearLayout>
 

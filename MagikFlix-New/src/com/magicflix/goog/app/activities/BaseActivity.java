@@ -87,9 +87,12 @@ public class BaseActivity extends YouTubeBaseActivity{
 	}
 	
 	@SuppressLint("InflateParams") @SuppressWarnings("deprecation")
-	public void showTrialExpiredPopUp(){
+	public void showTrialExpiredPopUp(String message){
 		LayoutInflater layoutInflater = (LayoutInflater)getBaseContext().getSystemService(LAYOUT_INFLATER_SERVICE);  
 		View popupView = layoutInflater.inflate(R.layout.time_up_pop_up, null);  
+	
+		TextView messsageLabel = (TextView)popupView.findViewById(R.id.times_up_tv);
+		messsageLabel.setText(message);
 		final PopupWindow popupMessage = new PopupWindow(popupView, LayoutParams.MATCH_PARENT,
 				LayoutParams.MATCH_PARENT);
 		popupMessage.setContentView(popupView);
@@ -106,21 +109,6 @@ public class BaseActivity extends YouTubeBaseActivity{
 				
 			}
 		});
-//		String title = "Trial Expired!";
-//		String message = "Your trial period expired , please subscribe";
-//		AlertDialog.Builder timerBuilder = new AlertDialog.Builder(this);
-//		timerBuilder.setTitle(title);
-//		timerBuilder.setCancelable(false);
-//		timerBuilder.setMessage(message);
-//		timerBuilder.setPositiveButton("OK",
-//				new DialogInterface.OnClickListener() {
-//			public void onClick(DialogInterface dialog, int id) {
-//				dialog.cancel();
-//			}
-//		});
-//
-//		AlertDialog timerAlert = timerBuilder.create();
-//		timerAlert.show();
 		
 		
 	}

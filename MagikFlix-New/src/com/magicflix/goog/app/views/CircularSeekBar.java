@@ -16,6 +16,7 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.magicflix.goog.MagikFlix;
 import com.magicflix.goog.R;
 
 /**
@@ -107,14 +108,14 @@ public class CircularSeekBar extends View {
 	private float mAngle;
 	private Paint textPaint;
 	private String text;
-	private int conversion = 0;
+	private int conversion = 20;
 	private int max = 100;
 	private SweepGradient s;
 	private Paint mArcColor;
 	private String wheel_color_attr, wheel_unactive_color_attr,
-			pointer_color_attr, pointer_halo_color_attr, text_color_attr;
+	pointer_color_attr, pointer_halo_color_attr, text_color_attr;
 	private int wheel_color, unactive_wheel_color, pointer_color,
-			pointer_halo_color, text_size, text_color, init_position;
+	pointer_halo_color, text_size, text_color, init_position;
 	private boolean block_end = false;
 	private float lastX;
 	private int last_radians = 0;
@@ -130,19 +131,23 @@ public class CircularSeekBar extends View {
 	private int end_wheel;
 
 	private boolean show_text = true;
+	private Context mContext;
 
 	public CircularSeekBar(Context context) {
 		super(context);
+		mContext = context;
 		init(null, 0);
 	}
 
 	public CircularSeekBar(Context context, AttributeSet attrs) {
 		super(context, attrs);
+		mContext = context;
 		init(attrs, 0);
 	}
 
 	public CircularSeekBar(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
+		mContext = context;
 		init(attrs, defStyle);
 	}
 
@@ -227,7 +232,7 @@ public class CircularSeekBar extends View {
 		text_size = a.getInteger(R.styleable.CircularSeekBar_text_size, 95);
 
 		init_position = a.getInteger(
-				R.styleable.CircularSeekBar_init_position, 0);
+				R.styleable.CircularSeekBar_init_position, Integer.valueOf(((MagikFlix)mContext.getApplicationContext()).getAppTimerValue()));
 
 		start_arc = a.getInteger(R.styleable.CircularSeekBar_start_angle, 0);
 		end_wheel = a.getInteger(R.styleable.CircularSeekBar_end_angle, 360);
@@ -335,7 +340,7 @@ public class CircularSeekBar extends View {
 			canvas.drawText(
 					text,
 					(mColorWheelRectangle.centerX())
-							- (textPaint.measureText(text) / 2),
+					- (textPaint.measureText(text) / 2),
 					mColorWheelRectangle.centerY() + bounds.height() / 2,
 					textPaint);
 
@@ -580,11 +585,21 @@ public class CircularSeekBar extends View {
 	public interface OnCircleSeekBarChangeListener {
 
 		public abstract void onProgressChanged(CircularSeekBar seekBar,
-                                               int progress, boolean fromUser);
+				int progress, boolean fromUser);
 
 		public abstract void onStartTrackingTouch(CircularSeekBar seekBar);
 
-        public abstract void onStopTrackingTouch(CircularSeekBar seekBar);
+		public abstract void onStopTrackingTouch(CircularSeekBar seekBar);
 	}
+
+	public void setInitPosition(int init) {
+		init_position = init;
+		text = String.valueOf(init_position);
+		mAngle = calculateAngleFromRadians(init_position);
+		arc_finish_radians = calculateRadiansFromAngle(mAngle);
+		pointerPosition = calculatePointerPosition(mAngle);
+		invalidate();
+	}
+
 
 }
