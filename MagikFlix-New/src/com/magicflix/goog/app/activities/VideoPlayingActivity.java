@@ -12,11 +12,13 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.PopupWindow;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
@@ -44,6 +46,7 @@ import com.magicflix.goog.app.api.results.Videos;
 import com.magicflix.goog.app.asyntasks.DataApiAsyncTask;
 import com.magicflix.goog.app.utils.Constants;
 import com.magicflix.goog.app.utils.TrialExpiredBroadCastReceiver;
+import com.magicflix.goog.broadcasts.AppTimerBroadCastReceiver;
 import com.magicflix.goog.utils.MLogger;
 
 public class VideoPlayingActivity extends BaseActivity implements OnInitializedListener, PlayerStateChangeListener, PlaybackEventListener, OnClickListener{
@@ -65,7 +68,8 @@ public class VideoPlayingActivity extends BaseActivity implements OnInitializedL
 	private RelativeLayout mTransparentLayout;
 	private ImageView mPlayIV,mBackToGalleryIV,mFavIV;
 	private TrialExpiredBroadCastReceiver mTrialExpiredBroadCastReceiver ;
-	private IntentFilter mIntentFilter; 
+	private AppTimerBroadCastReceiver mAppTimerBroadCastReceiver;
+	private IntentFilter mTrialExpireIntent,mAppTimerIntent; 
 	private TimerTask videoTimerTask ;
 	private boolean mVideoIsStarted = false;
 
@@ -88,25 +92,45 @@ public class VideoPlayingActivity extends BaseActivity implements OnInitializedL
 		mPlayIV.setOnClickListener(this);
 		mBackToGalleryIV.setOnClickListener(this);
 		mFavIV.setOnClickListener(this);
+		
+		mTrialExpiredBroadCastReceiver = new TrialExpiredBroadCastReceiver() {
+			@Override
+			protected void onTrialExpired() {
+				showTimerAlert();
+			}
+
+		};
+		mTrialExpireIntent = new IntentFilter(Constants.INTENT_TRIAL_EXPIRED);
+		mAppTimerIntent = new IntentFilter(Constants.INTENT_APP_TIMER_EXPIRED);
+		
+		 mAppTimerBroadCastReceiver = new AppTimerBroadCastReceiver() {
+			
+			@Override
+			protected void onTimerExpired() {
+				Constants.IS_APP_TIMER_SHOWN = true;
+				showTimerAlert();
+				
+			}
+		};
 	}
 
 	private void init() {
 		getActionBar().hide();
-		mTrialExpiredBroadCastReceiver = new TrialExpiredBroadCastReceiver() {
-			@Override
-			protected void onTrialExpired() {
-				if(YPlayer != null){
-					if(YPlayer.isPlaying()){
-						mTransparentLayout.setVisibility(View.VISIBLE);
-						YPlayer.pause();
-					}
-				}
-				showTrialExpiredPopUp(getString(R.string.times_up_txt));
-			}
-		};
-		mIntentFilter = new IntentFilter("com.magikflic.goog.TRIALEXPIRED");
+		
 	}
 
+	
+	private void showTimerAlert() {
+		if(YPlayer != null){
+			if(YPlayer.isPlaying()){
+				mTransparentLayout.setVisibility(View.VISIBLE);
+				YPlayer.pause();
+			}
+		}
+		
+		PopupWindow popupWindow =getTrialExpiredPopUp((Constants.APP_TIMER_VALUE == 0) ? getString(R.string.times_up_txt) : getString(R.string.app_timer_msg));
+		popupWindow.showAtLocation(popupWindow.getContentView(), Gravity.CENTER, 0, 0);
+	}
 	/*private void showTrialExpiredDialog(String title,String message){
 		AlertDialog.Builder timerBuilder = new AlertDialog.Builder(this);
 		timerBuilder.setTitle(title);
@@ -127,13 +151,15 @@ public class VideoPlayingActivity extends BaseActivity implements OnInitializedL
 	@Override
 	protected void onResume() {
 		super.onResume();
-		registerReceiver(mTrialExpiredBroadCastReceiver, mIntentFilter);
+		registerReceiver(mTrialExpiredBroadCastReceiver, mTrialExpireIntent);
+		registerReceiver(mAppTimerBroadCastReceiver, mAppTimerIntent);
 
 	}
 	@Override
 	protected void onPause() {
 		super.onPause();
 		unregisterReceiver(mTrialExpiredBroadCastReceiver);
+		unregisterReceiver(mAppTimerBroadCastReceiver);
 	}
 	@SuppressWarnings("unchecked")
 	private void getVideoLink() {
@@ -175,7 +201,9 @@ public class VideoPlayingActivity extends BaseActivity implements OnInitializedL
 		mBackToGalleryIV = (ImageView)findViewById(R.id.back_to_main_gallery_btn);
 		mFavIV = (ImageView)findViewById(R.id.favourite_btn);
 		myYouTubePlayerView.initialize(Constants.YOUTUBE_DEVELOPER_KEY, this);
-
+		myYouTubePlayerView.setFocusableInTouchMode(false);
+		myYouTubePlayerView.setFocusable(false);
+		
 		if(videosList.get(mSelectedPostion).isFavorite){
 			mFavIV.setBackground(VideoPlayingActivity.this.getResources().getDrawable(R.drawable.icon_outline_color_selected));
 		}else{
@@ -295,7 +323,9 @@ public class VideoPlayingActivity extends BaseActivity implements OnInitializedL
 		if (!wasRestored) {
 			YPlayer = player;
 			YPlayer.setPlayerStyle(PlayerStyle.CHROMELESS);
-			YPlayer.setFullscreenControlFlags(YouTubePlayer.FULLSCREEN_FLAG_CUSTOM_LAYOUT);
+			YPlayer.setFullscreenControlFlags(YouTubePlayer.FULLSCREEN_FLAG_CONTROL_ORIENTATION
+                    | YouTubePlayer.FULLSCREEN_FLAG_CONTROL_SYSTEM_UI
+                    | YouTubePlayer.FULLSCREEN_FLAG_CUSTOM_LAYOUT);
 			YPlayer.setFullscreen(true);
 			YPlayer.setShowFullscreenButton(true);
 			//			YPlayer.setOnFullscreenListener(this);
@@ -313,6 +343,7 @@ public class VideoPlayingActivity extends BaseActivity implements OnInitializedL
 
 	@Override
 	public void onAdStarted() {
+		MLogger.logInfo(TAG, "AD STARTED ----->");
 
 	}
 
@@ -531,7 +562,8 @@ public class VideoPlayingActivity extends BaseActivity implements OnInitializedL
 		case R.id.play_btn:
 			if(YPlayer != null){
 				if(((MagikFlix)getApplicationContext()).isTrialPeriodExpired()){
-					showTrialExpiredPopUp(getString(R.string.times_up_txt));
+					PopupWindow popupWindow = getTrialExpiredPopUp(getString(R.string.times_up_txt));
+					popupWindow.showAtLocation(popupWindow.getContentView(), Gravity.CENTER, 0, 0);
 					return;
 				}
 				mTransparentLayout.setVisibility(View.GONE);
@@ -611,5 +643,6 @@ public class VideoPlayingActivity extends BaseActivity implements OnInitializedL
 			videoTimerTask.cancel();
 
 	}
-
+	
+	
 }

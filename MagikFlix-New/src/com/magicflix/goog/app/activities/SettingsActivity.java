@@ -16,6 +16,7 @@ public class SettingsActivity extends BaseActivity implements OnClickListener, O
 	private Button mOkBtn;
 	private CircularSeekBar mCircularSeekBar;
 	private MagikFlix mApplication;
+	private int mProgressValue;
 
 	@Override
 	protected void onCreate(Bundle arg0) {
@@ -29,6 +30,7 @@ public class SettingsActivity extends BaseActivity implements OnClickListener, O
 	private void init() {
 		getActionBar().hide();
 		mApplication = (MagikFlix)getApplicationContext();
+		mProgressValue = mCircularSeekBar.getValue();
 	}
 
 	private void setListnersToViews() {
@@ -45,6 +47,10 @@ public class SettingsActivity extends BaseActivity implements OnClickListener, O
 	public void onClick(View view) {
 		switch (view.getId()) {
 		case R.id.settings_screen_ok_btn:
+			if(Constants.TIMER_LIMIT_UPDATED){
+				mApplication.setAppTimerValue(String.valueOf(mProgressValue));
+				Constants.DEFAULT_APP_TIMER_LIMIT = mProgressValue;
+			}
 			this.finish();
 			break;
 		default:
@@ -63,9 +69,13 @@ public class SettingsActivity extends BaseActivity implements OnClickListener, O
 
 	@Override
 	public void onStopTrackingTouch(CircularSeekBar seekBar) {
-		mApplication.setAppTimerValue(String.valueOf(seekBar.getValue()));
+		mProgressValue = seekBar.getValue();
 		Constants.TIMER_LIMIT_UPDATED = true;
-		Constants.DEFAULT_APP_TIMER_LIMIT = seekBar.getValue() * 60 * 1000;
 	}
-	
+
+	@Override
+	public void onBackPressed() {
+		super.onBackPressed();
+	}
+
 }

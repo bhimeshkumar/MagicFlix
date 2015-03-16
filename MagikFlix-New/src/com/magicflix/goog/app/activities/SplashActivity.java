@@ -7,8 +7,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.text.TextUtils;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Toast;
 import android.widget.VideoView;
 
@@ -27,8 +25,6 @@ public class SplashActivity extends BaseActivity implements  OnCompletionListene
 
 	private void setUpScreen() {
 		getActionBar().hide();
-//		requestWindowFeature(Window.FEATURE_NO_TITLE);
-//		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		setContentView(R.layout.activity_splash);
 		setIdsToViews();
 		setListnersToViews();

@@ -9,13 +9,13 @@ public class VideoResult {
 	public Videos[] videos;
 	public Subscriptions[] subscriptions;
 	
-	public String name;
-	public Categories[] categories;
-	public String[] ProductIDs;
-	public Favorites[] Favorites;
-	public String category;
-	public boolean isInAppActive;
-	public boolean isSubscribed;
-	public int data_version;
-	public int balance;
+//	public String name;
+//	public Categories[] categories;
+//	public String[] ProductIDs;
+//	public Favorites[] Favorites;
+//	public String category;
+//	public boolean isInAppActive;
+//	public boolean isSubscribed;
+//	public int data_version;
+//	public int balance;
 }

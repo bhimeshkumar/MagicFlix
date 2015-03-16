@@ -10,16 +10,21 @@ public class Videos  implements Serializable{
 	
 	
 	private static final long serialVersionUID = -3371978325534565535L;
+	public String id;
 	public String videoId;
 	public String title;
 	public String source;
 	public String thumbnailUrl;
+	public String downloadUrl;
 	public String streamUrl;
 	public String isDownloadable;
 	public int duration;
 	public int order;
 	public String category;
 	public Float score;
+	public int minAge;
+	public int maxAge;
+	
 	
 //	public String id ;
 //	public String tl ;

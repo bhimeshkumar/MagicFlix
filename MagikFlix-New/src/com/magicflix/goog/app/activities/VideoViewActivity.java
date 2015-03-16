@@ -30,6 +30,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -38,6 +39,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
@@ -193,7 +195,8 @@ public class VideoViewActivity extends BaseActivity implements PlayPauseListener
 		case R.id.play_btn:
 			if(mVideoView != null){
 				if(((MagikFlix)getApplicationContext()).isTrialPeriodExpired()){
-					showTrialExpiredPopUp(getString(R.string.times_up_txt));
+					PopupWindow popupWindow = getTrialExpiredPopUp(getString(R.string.times_up_txt));
+					popupWindow.showAtLocation(popupWindow.getContentView(), Gravity.CENTER, 0, 0);
 					return;
 				}
 				mTransparentLayout.setVisibility(View.GONE);

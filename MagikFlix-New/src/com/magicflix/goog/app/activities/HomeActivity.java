@@ -106,6 +106,7 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 	private String mPrice;
 	private MagikFlix mApplication;
 	private AppConuntDownTimer countDownTimer;
+	private PopupWindow mAppTimerPopupWindow;
 
 	//susbcsription 
 
@@ -148,7 +149,7 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 			countDownTimer.cancel();
 			countDownTimer = null;
 		}
-		Constants.DEFAULT_APP_TIMER_LIMIT =(timerValue+1)  * 60 * 1000;
+		Constants.DEFAULT_APP_TIMER_LIMIT =(timerValue)  * 60 * 1000;
 		countDownTimer = new AppConuntDownTimer(Constants.DEFAULT_APP_TIMER_LIMIT, Constants.APP_TIMER_DELAY);
 		countDownTimer.start();
 
@@ -187,6 +188,7 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 			serviceIntent.setPackage("com.android.vending");
 			bindService(serviceIntent, mServiceConn, Context.BIND_AUTO_CREATE);
 		}
+
 	}
 
 	private void setUpActionBar() {
@@ -208,7 +210,7 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 				getSharedPreferences(Constants.PREFS_FILE_NAME, Context.MODE_PRIVATE);
 		OnSharedPreferenceChangeListener listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
 			public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-				
+
 			}
 		};
 
@@ -287,8 +289,10 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 		if(Constants.IS_SUBSCRIPTION_ENABLED){
 			if(mIsUserSubscribed || !(app.isTrialPeriodExpired()) || app.isSubscriptionRestored())   // || videoResult.userParent.isPromotionSubscribed || videoResult.userParent.isSubscribed  || mIsSubscsriptionResored)
 				checkYouTubAppAvailability(position,videoList);
-			else
-				showTrialExpiredPopUp(getString(R.string.times_up_txt));
+			else{
+				PopupWindow popupWindow = getTrialExpiredPopUp(getString(R.string.times_up_txt));
+				popupWindow.showAtLocation(popupWindow.getContentView(), Gravity.CENTER, 0, 0);
+			}
 		}else{
 			checkYouTubAppAvailability(position,videoList);
 		}
@@ -421,7 +425,8 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 					MagikFlix app = (MagikFlix)getApplicationContext();
 					app.setFreeTrailPeriod(Constants.TIMERLIMIT);
 					if(app.isTrialPeriodExpired()){
-						showTrialExpiredPopUp(getString(R.string.times_up_txt));
+						PopupWindow popupWindow = getTrialExpiredPopUp(getString(R.string.times_up_txt));
+						popupWindow.showAtLocation(popupWindow.getContentView(), Gravity.CENTER, 0, 0);
 					}else{
 						mTimerValueTV.setVisibility(View.VISIBLE);
 						setFreeTrialValue();
@@ -430,7 +435,8 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 				}
 			}
 
-			startAppTimer();
+			//			startAppTimer();
+			runAppTimer();
 		}
 	}
 
@@ -601,12 +607,15 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 		if(Constants.IS_SUBSCRIPTION_ENABLED)
 			setFreeTrialValue();
 
+		// dismiss timer pop-up
+		if(mAppTimerPopupWindow != null && mAppTimerPopupWindow.isShowing()){
+			mAppTimerPopupWindow.dismiss();
+		}
+
+		//run timer only when user updates timer
 		if(Constants.TIMER_LIMIT_UPDATED){
 			Constants.TIMER_LIMIT_UPDATED = false;
-			if(countDownTimer != null){
-				countDownTimer.cancel();
-				startAppTimer();
-			}
+			runAppTimer();
 		}
 
 		registerReceiver(mFavouriteChangeListner, mFavIntentFilter);
@@ -944,32 +953,103 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 
 		@Override
 		public void onFinish() {
+			MLogger.logInfo(TAG, "On Finish");
 			mActionBarAppTimerBtn.setTextColor(Color.RED);
 			mActionBarAppTimerBtn.setText("0");
 		}
 
 		@Override
 		public void onTick(long millisUntilFinished) {
+			MLogger.logInfo(TAG, "On tick :: "+((int) (millisUntilFinished / 1000))/60);
 			setAppTimer(millisUntilFinished);
 		}
 	}
-	
-	
+
+
 	private void setAppTimer(long millisUntilFinished) {
 		int timerValue = (int) (millisUntilFinished / 1000);
-		String timerString = String.valueOf(timerValue/60);
+		String timerString = String.valueOf((timerValue/60+1));
 		mActionBarAppTimerBtn.setText(timerString);
 		if(timerString.equalsIgnoreCase("0")){
 			mActionBarAppTimerBtn.setTextColor(Color.RED);
 		}else if(Integer.parseInt(timerString) < 5){
 			mActionBarAppTimerBtn.setTextColor(HomeActivity.this.getResources().getColor(R.color.category_disable_color));
 		}else if(Integer.parseInt(timerString) == 5){
-			showTrialExpiredPopUp(HomeActivity.this.getString(R.string.app_timer_msg));
+			mAppTimerPopupWindow = getTrialExpiredPopUp(HomeActivity.this.getString(R.string.app_timer_msg));
+			mAppTimerPopupWindow.showAtLocation(mAppTimerPopupWindow.getContentView(), Gravity.CENTER, 0, 0);
 			mActionBarAppTimerBtn.setTextColor(HomeActivity.this.getResources().getColor(R.color.category_disable_color));
 		}else{
 			mActionBarAppTimerBtn.setTextColor(Color.WHITE);
 		}
 	}
+
+
+
+	private void runAppTimer() {
+		mActionBarAppTimerBtn.setVisibility(View.VISIBLE);
+		int timerValue = Integer.valueOf(mApplication.getAppTimerValue());
+		Constants.DEFAULT_APP_TIMER_LIMIT =  timerValue;
+		handler.removeCallbacksAndMessages(null);
+		Message message = new Message();
+		message.what = 0;
+		message.arg1 = (Constants.DEFAULT_APP_TIMER_LIMIT * 60 * 1000);
+		handler.sendMessageDelayed(message, 1000);
+	}
+	private void updateTimer(Message msg) {
+		int pending = msg.arg1 - (Constants.APP_TIMER_DELAY * 1000);
+		long millis = pending;
+		Message m = new Message();
+		m.what = 0;
+		m.arg1 = pending;
+		handler.sendMessageDelayed(m, (Constants.APP_TIMER_DELAY * 1000));
+	}
+
+	Handler handler = new Handler() {
+		@Override
+		public void handleMessage(Message msg) {
+			switch (msg.what) {
+			case 0:
+				try {
+					if(mAppTimerPopupWindow != null && mAppTimerPopupWindow.isShowing()){
+						mAppTimerPopupWindow.dismiss();
+					}
+					int timerValue = (msg.arg1/60000);
+					mActionBarAppTimerBtn.setText(String.valueOf(msg.arg1/60000));
+					if (timerValue > 0){
+						if(timerValue < 5){
+
+							mActionBarAppTimerBtn.setTextColor(HomeActivity.this.getResources().getColor(R.color.category_disable_color));
+						}else if(timerValue == 5){
+							Constants.APP_TIMER_VALUE = 5;
+							Intent intnet = new Intent(Constants.INTENT_APP_TIMER_EXPIRED);
+							sendBroadcast(intnet);
+							mAppTimerPopupWindow = getTrialExpiredPopUp(HomeActivity.this.getString(R.string.app_timer_msg));
+							mAppTimerPopupWindow.showAtLocation(mAppTimerPopupWindow.getContentView(), Gravity.CENTER, 0, 0);
+							mActionBarAppTimerBtn.setTextColor(HomeActivity.this.getResources().getColor(R.color.category_disable_color));
+						}else{
+							mActionBarAppTimerBtn.setTextColor(Color.WHITE);
+						}
+
+						updateTimer(msg);
+					}else if(timerValue == 0){
+						Constants.APP_TIMER_VALUE = 0;
+						Intent intnet = new Intent(Constants.INTENT_APP_TIMER_EXPIRED);
+						sendBroadcast(intnet);
+						mActionBarAppTimerBtn.setText("0");
+						mAppTimerPopupWindow = getTrialExpiredPopUp(getString(R.string.times_up_txt));
+						mAppTimerPopupWindow.showAtLocation(mAppTimerPopupWindow.getContentView(), Gravity.CENTER, 0, 0);
+						mActionBarAppTimerBtn.setTextColor(Color.RED);
+						handler.removeCallbacksAndMessages(null);
+					}
+				} catch (Exception e) {
+					MLogger.logInfo(TAG, "Exception :: Timer Handler "+ e.getMessage());
+				}
+				break;	
+			default:
+				break;
+			}
+		}
+	};
 
 
 }

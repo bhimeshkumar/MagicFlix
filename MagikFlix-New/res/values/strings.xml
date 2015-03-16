@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">MagicFlix</string>
+    <string name="app_name">Magicflix</string>
     <string name="imagedescription">imagedescription</string>
     <string name="flurry_api_key">6YKH2ZN4SVFF8B2C3V2R</string>
 

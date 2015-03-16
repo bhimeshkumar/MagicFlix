@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 
 import com.magicflix.goog.R;
@@ -90,8 +91,12 @@ public class Constants {
 	public static final String VIDEO_ID = "videoId";
 	public static final String PARENT_GATE_OPEN = "parentGateOpen";
 	public static final String PARENT_GATE_PASSED = "parentGatePassed";
-	public static  long DEFAULT_APP_TIMER_LIMIT = 21*60*1000;
-	public static final long APP_TIMER_DELAY = 60*1000;
+	public static  int DEFAULT_APP_TIMER_LIMIT = 20;
+	public static boolean IS_APP_TIMER_SHOWN;
+	public static int APP_TIMER_VALUE;
+	public static final int APP_TIMER_DELAY = 60;
+	public static final String INTENT_APP_TIMER_EXPIRED = "com.magikflic.goog.APP_TIMER_EXPIRED";
+	public static final String INTENT_TRIAL_EXPIRED = "com.magikflic.goog.TRIALEXPIRED";
 
 
 	public static String readTxt(Context context, boolean isAboutThisApp){

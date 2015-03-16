@@ -87,7 +87,8 @@ public class BaseActivity extends YouTubeBaseActivity{
 	}
 	
 	@SuppressLint("InflateParams") @SuppressWarnings("deprecation")
-	public void showTrialExpiredPopUp(String message){
+	public PopupWindow getTrialExpiredPopUp(String message){
+		
 		LayoutInflater layoutInflater = (LayoutInflater)getBaseContext().getSystemService(LAYOUT_INFLATER_SERVICE);  
 		View popupView = layoutInflater.inflate(R.layout.time_up_pop_up, null);  
 	
@@ -100,7 +101,6 @@ public class BaseActivity extends YouTubeBaseActivity{
 		popupMessage.setFocusable(true);
 		popupMessage.setBackgroundDrawable(new BitmapDrawable());
 		popupMessage.setOutsideTouchable(true);
-		popupMessage.showAtLocation(popupView, Gravity.CENTER, 0, 0);
 		popupMessage.getContentView().setOnClickListener(new OnClickListener() {
 			
 			@Override
@@ -109,6 +109,7 @@ public class BaseActivity extends YouTubeBaseActivity{
 				
 			}
 		});
+		return popupMessage;
 		
 		
 	}
