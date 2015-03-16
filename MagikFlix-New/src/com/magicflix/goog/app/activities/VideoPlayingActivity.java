@@ -512,7 +512,6 @@ public class VideoPlayingActivity extends BaseActivity implements OnInitializedL
 				avgTime  = avgTime +watchedtime;
 
 			}
-			System.out.println("avg watched time ::: "+avgTime);
 
 
 			Timestamp timeStamp = new Timestamp(new Date().getTime());

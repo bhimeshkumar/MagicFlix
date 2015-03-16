@@ -57,14 +57,17 @@ import com.magicflix.goog.app.api.MFlixJsonBuilder.WebRequestType;
 import com.magicflix.goog.app.api.requests.CustomLogginRequest;
 import com.magicflix.goog.app.api.requests.FavourireVideoRequest;
 import com.magicflix.goog.app.api.requests.RecentVideoRequest;
+import com.magicflix.goog.app.api.requests.VimeoVideoRequest;
 import com.magicflix.goog.app.api.results.VideoInfo;
 import com.magicflix.goog.app.api.results.VideoResult;
 import com.magicflix.goog.app.api.results.Videos;
+import com.magicflix.goog.app.api.results.VimeoVideoResult;
 import com.magicflix.goog.app.asyntasks.DataApiAsyncTask;
 import com.magicflix.goog.app.utils.Constants;
 import com.magicflix.goog.app.views.CustomVideoView;
 import com.magicflix.goog.app.views.CustomVideoView.PlayPauseListener;
 import com.magicflix.goog.medialplayer.CustomMediaController;
+import com.magicflix.goog.utils.MLogger;
 
 public class VideoViewActivity extends BaseActivity implements PlayPauseListener, OnClickListener, OnItemClickListener, OnSeekBarChangeListener, OnPreparedListener, OnCompletionListener, OnErrorListener{
 	private static String TAG = VideoPlayingActivity.class.getName();
@@ -83,8 +86,9 @@ public class VideoViewActivity extends BaseActivity implements PlayPauseListener
 	private RelativeLayout mTransparentLayout;
 	private ImageView mPlayIV,mBackToGalleryIV,mFavIV;
 	private TimerTask videoTimerTask;
-	
-	private boolean mVideoIsStarted = false, mIsBackbtnPressed = false;;
+
+	private boolean mVideoIsStarted = false, mIsBackbtnPressed = false;
+	private boolean mIsVideoPaused = false;
 
 	@Override
 	protected void onCreate(Bundle arg0) {
@@ -99,7 +103,7 @@ public class VideoViewActivity extends BaseActivity implements PlayPauseListener
 	private void getVideoLink() {
 		Bundle bundle =getIntent().getExtras();
 		videosList  = (ArrayList<Videos>) bundle.getSerializable("videosList");
-		mCategoryName = bundle.getString("categeoryName", "");
+		mCategoryName = bundle.getString("categoryName", "");
 		mVideoId = bundle.getString("videoId");
 		mSelectedPostion = bundle.getInt("selectedPosition", 0);
 		mToken = ((MagikFlix) getApplication()).getToken();
@@ -109,9 +113,12 @@ public class VideoViewActivity extends BaseActivity implements PlayPauseListener
 			mFavIV.setBackground(null);
 		}
 
-		VideoId lYouTubeId = new VideoId(mVideoId);
-		new ProcesYouTubeTask().execute(lYouTubeId);
-
+		if(mCategoryName.equalsIgnoreCase("Vimeo")){
+			getVimeoVideoURL(mVideoId);
+		}else{
+			VideoId lYouTubeId = new VideoId(mVideoId);
+			new ProcesYouTubeTask().execute(lYouTubeId);
+		}
 	}
 
 	private void selecetNextVideoToPlay(){
@@ -123,8 +130,13 @@ public class VideoViewActivity extends BaseActivity implements PlayPauseListener
 			mVideoId = videosList.get(mSelectedPostion).videoId;
 		}
 
-		VideoId lYouTubeId = new VideoId(mVideoId);
-		new ProcesYouTubeTask().execute(lYouTubeId);
+		if(mCategoryName.equalsIgnoreCase("Vimeo")){
+			getVimeoVideoURL(mVideoId);
+		}else{
+
+			VideoId lYouTubeId = new VideoId(mVideoId);
+			new ProcesYouTubeTask().execute(lYouTubeId);
+		}
 
 	}
 
@@ -335,14 +347,14 @@ public class VideoViewActivity extends BaseActivity implements PlayPauseListener
 							app.setVideoPlayTime(app.getVideoPlayTime()+1);
 						}
 
-//						int trialPeriod = Constants.TIMERLIMIT;
-//						int trialPeriodinSecs = trialPeriod * 60;
-//						if(app.getVideoPlayTime() >= trialPeriodinSecs){
-//							app.setIsTrialPeriod(true);
-//							this.cancel();
-//							Intent intnet = new Intent("com.magikflic.goog.TRIALEXPIRED");
-//							sendBroadcast(intnet);
-//						}
+						//						int trialPeriod = Constants.TIMERLIMIT;
+						//						int trialPeriodinSecs = trialPeriod * 60;
+						//						if(app.getVideoPlayTime() >= trialPeriodinSecs){
+						//							app.setIsTrialPeriod(true);
+						//							this.cancel();
+						//							Intent intnet = new Intent("com.magikflic.goog.TRIALEXPIRED");
+						//							sendBroadcast(intnet);
+						//						}
 						//						mVideoSeekBar.setProgress(mVideoView.getCurrentPosition());
 					}
 					catch (Exception e)
@@ -461,6 +473,16 @@ public class VideoViewActivity extends BaseActivity implements PlayPauseListener
 		mProgressBar.setVisibility(View.GONE);
 		//		mVideoSeekBar.setMax(mVideoView.getDuration());
 		startVideoTimer();
+		mVideoIsStarted = true;
+		Timestamp timeStamp = new Timestamp(new Date().getTime());
+		VideoInfo videoInfo = new VideoInfo();
+		videoInfo.type = 0;
+		videoInfo.video_id = mVideoId;
+		videoInfo.watched_time = 0;
+		//		videoInfo.isComplete = false;
+		videoInfo.user_id = ((MagikFlix)getApplicationContext()).getUserId();
+		videoInfo.time_stamp = (timeStamp.getTime()/1000);
+		postCustomLogging(videoInfo);
 
 	}
 
@@ -472,18 +494,19 @@ public class VideoViewActivity extends BaseActivity implements PlayPauseListener
 	}
 
 	public void stopVideoPlay(){
+		MLogger.logInfo(TAG, "is video playing :: "+mVideoView.isPlaying());
 		if(mVideoView.isPlaying()){
 			mVideoView.stopPlayback();
 		}
 		if(videoTimer != null){
 			videoTimer.cancel();
 		}
+		
+		postLoggingOnBackButtonPress();
 	}
 
 	@Override
 	public void onStop() {
-		postLoggingOnBackButtonPress();
-		//		stopVideoPlay();
 		super.onStop();
 
 	}
@@ -520,20 +543,14 @@ public class VideoViewActivity extends BaseActivity implements PlayPauseListener
 	@Override
 	public void onVideoPlay() {
 		mVideoIsStarted = true;
-		Timestamp timeStamp = new Timestamp(new Date().getTime());
-		VideoInfo videoInfo = new VideoInfo();
-		videoInfo.type = 0;
-		videoInfo.video_id = mVideoId;
-		videoInfo.watched_time = 0;
-		//		videoInfo.isComplete = false;
-		videoInfo.user_id = ((MagikFlix)getApplicationContext()).getUserId();
-		videoInfo.time_stamp = (timeStamp.getTime()/1000);
-		postCustomLogging(videoInfo);
 
 	}
 
 	@Override
 	public void onVideoPause() {
+		if(!mIsBackbtnPressed)
+			mTransparentLayout.setVisibility(View.VISIBLE);
+		mIsVideoPaused = true;
 		Timestamp timeStamp = new Timestamp(new Date().getTime());
 		VideoInfo videoInfo = new VideoInfo();
 		videoInfo.type = 1;
@@ -599,25 +616,34 @@ public class VideoViewActivity extends BaseActivity implements PlayPauseListener
 		videoInfo.user_id = ((MagikFlix)getApplicationContext()).getUserId();
 		postCustomLogging(videoInfo);
 		selecetNextVideoToPlay();
-		VideoId lYouTubeId = new VideoId(mVideoId);
-		new ProcesYouTubeTask().execute(lYouTubeId);
 	}
 
 	private void postLoggingOnBackButtonPress() {
-		if(mVideoIsStarted && mIsBackbtnPressed ){
-		Timestamp timeStamp = new Timestamp(new Date().getTime());
-		VideoInfo videoInfo = new VideoInfo();
-		videoInfo.type = 3;
-		videoInfo.video_id = mVideoId;
-		//		videoInfo.isComplete = false;
-		videoInfo.user_id = ((MagikFlix)getApplicationContext()).getUserId();
-		if(mVideoPausedPosition > 0)
-			videoInfo.watched_time = (mVideoView.getCurrentPosition()/1000) - mVideoPausedPosition;
-		else
-			videoInfo.watched_time = (mVideoView.getCurrentPosition()/1000);
+		if(mVideoIsStarted && mIsBackbtnPressed  ){
+			MLogger.logInfo(TAG, "onBack :: video is playing ::"+mVideoView.isPlaying());
+			if(mVideoView.isPlaying()){
+				onVideoPause();
+			}
+			Timestamp timeStamp = new Timestamp(new Date().getTime());
+			VideoInfo videoInfo = new VideoInfo();
+			videoInfo.type = 3;
+			videoInfo.video_id = mVideoId;
+			//		videoInfo.isComplete = false;
+			videoInfo.user_id = ((MagikFlix)getApplicationContext()).getUserId();
+			if(mVideoPausedPosition > 0)
+				videoInfo.watched_time = (mVideoView.getCurrentPosition()/1000) - mVideoPausedPosition;
+			else
+				videoInfo.watched_time = (mVideoView.getCurrentPosition()/1000);
 
-		videoInfo.time_stamp = (timeStamp.getTime()/1000);
-		postCustomLogging(videoInfo);
+			if(videoInfo.watched_time <= 0){
+				videoInfo.watched_time = 0;
+			}
+			videoInfo.time_stamp = (timeStamp.getTime()/1000);
+			postCustomLogging(videoInfo);
+		}else{
+			if(mVideoView.isPlaying()){
+				mVideoView.stopPlayback();
+			}
 		}
 		mIsBackbtnPressed = false;
 		mVideoIsStarted = false;
@@ -627,6 +653,7 @@ public class VideoViewActivity extends BaseActivity implements PlayPauseListener
 	@Override
 	public void onBackPressed() {
 		mIsBackbtnPressed = true;
+	    postLoggingOnBackButtonPress();
 		Intent returnIntent = new Intent();
 		returnIntent.putExtra("recentVideoId",mRecentVideoId);
 		setResult(RESULT_OK,returnIntent);
@@ -668,6 +695,9 @@ public class VideoViewActivity extends BaseActivity implements PlayPauseListener
 	@Override
 	protected void onPause() {
 		super.onPause();
+		if(mVideoIsStarted && mVideoView.isPlaying() && !mIsBackbtnPressed){
+			mVideoView.pause();
+		}
 		unregisterReceiver(mConnReceiver);
 	}
 
@@ -733,6 +763,48 @@ public class VideoViewActivity extends BaseActivity implements PlayPauseListener
 		if(videoTimerTask != null)
 			videoTimerTask.cancel();
 
+	}
+
+	private void getVimeoVideoURL(String videoId) {
+		mProgressBar.setVisibility(View.VISIBLE);
+		VimeoVideoRequest  vimeoVideoRequest = new VimeoVideoRequest();
+		vimeoVideoRequest.videoId = videoId;
+		vimeoVideoRequest.requestDelegate = new MFlixJsonBuilder();
+		vimeoVideoRequest.requestType =  WebRequestType.GET_VIMEO_VIDEO;	
+		new DataApiAsyncTask(true, this, vimeoVideoHandler, null).execute(vimeoVideoRequest);
+	}
+
+	private Handler vimeoVideoHandler = new Handler(){
+		@SuppressWarnings("unchecked")
+		@Override
+		public void handleMessage(Message msg) {
+			super.handleMessage(msg);
+			processVideoResults((DataResult<VimeoVideoResult>) msg.obj);
+		}
+	};
+
+	private void processVideoResults(DataResult<VimeoVideoResult> obj) {
+		try {
+			VimeoVideoResult result = obj.entity;
+			if(result != null ){
+				String videoURL = null ;
+				if(result.request.files.h264.hd != null){
+					videoURL = obj.entity.request.files.h264.hd.url;
+				}else if(result.request.files.h264.sd != null){
+					videoURL = obj.entity.request.files.h264.sd.url;
+				}else if(result.request.files.h264.mobile != null){
+					videoURL = obj.entity.request.files.h264.mobile.url;
+				}else if(result.request.files.hls != null){
+					videoURL = obj.entity.request.files.hls.all;
+				}
+				mVideoView.setVideoPath(videoURL);
+				mVideoView.requestFocus();
+				mVideoView.start();
+			}
+
+		} catch (Exception e) {
+			MLogger.logInfo(TAG, "Exception while playing vimeo video");
+		}
 	}
 
 }

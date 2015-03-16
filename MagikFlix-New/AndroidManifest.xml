@@ -82,6 +82,10 @@
             android:name="com.magicflix.goog.app.activities.FamilySetUpActivity"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="landscape" />
+        <activity
+            android:name="com.magicflix.goog.app.activities.VimeoVideoPlayerActivity"
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="landscape" />
 
         <receiver
             android:name="com.localytics.android.PushReceiver"

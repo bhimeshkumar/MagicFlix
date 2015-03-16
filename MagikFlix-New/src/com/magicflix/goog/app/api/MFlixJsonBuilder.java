@@ -18,6 +18,7 @@ import com.magicflix.goog.app.api.requests.RedeemCodeRequest;
 import com.magicflix.goog.app.api.requests.RegisterEmailRequest;
 import com.magicflix.goog.app.api.requests.SecretCodeRequest;
 import com.magicflix.goog.app.api.requests.VideoRequest;
+import com.magicflix.goog.app.api.requests.VimeoVideoRequest;
 import com.magicflix.goog.app.api.results.AddSubscriptionResult;
 import com.magicflix.goog.app.api.results.AppConfigResult;
 import com.magicflix.goog.app.api.results.EmaiResult;
@@ -26,6 +27,7 @@ import com.magicflix.goog.app.api.results.PromoCodeResult;
 import com.magicflix.goog.app.api.results.SecretCodeResult;
 import com.magicflix.goog.app.api.results.SubscriptionResult;
 import com.magicflix.goog.app.api.results.VideoResult;
+import com.magicflix.goog.app.api.results.VimeoVideoResult;
 import com.magicflix.goog.app.utils.Constants;
 import com.magicflix.goog.builders.BaseBuilder;
 import com.magicflix.goog.builders.CommonJsonBuilder;
@@ -64,6 +66,8 @@ public class MFlixJsonBuilder extends BaseBuilder {
 			return (DataResult<T>) verifyPromoCode((RedeemCodeRequest)dataRequest);
 		case SET_AGE :
 			return (DataResult<T>) setAge((AgeRequest)dataRequest);
+		case GET_VIMEO_VIDEO :
+			return (DataResult<T>) getVimeoVideo((VimeoVideoRequest)dataRequest);
 		default:
 			return null;
 		}
@@ -236,10 +240,20 @@ public class MFlixJsonBuilder extends BaseBuilder {
 		//				result.entity = (true ?new CommonJsonBuilder().getEntityForJson(httpResult.result, PromoCodeResult.class) : null);
 		return result;
 	}
+	
+	private DataResult<VimeoVideoResult> getVimeoVideo(VimeoVideoRequest dataRequest) {
+		HttpResult httpResult = httpHelper.getString(MFlixUrlBuilder.getVimeoVideoURL(dataRequest));
+		DataResult<VimeoVideoResult> result= new DataResult<VimeoVideoResult>();
+		result.successful = isResultSuccesfull(httpResult);
+		result.entity = (isResultSuccesfull(httpResult) ?new CommonJsonBuilder().getEntityForJson(httpResult.result, VimeoVideoResult.class) : null);
+		return result;
+	}
+
 
 	public static enum WebRequestType implements IDataRequestType{
 		GET_VIDEOS, GET_FAVOURITE_VIDEOS, GET_RECENT_VIDEOS,POST_RECENT_VIDEOS,POST_FAV_VIDEOS, DO_GUEST_LOGIN, POST_VIDEO_LOGGING, DO_EMAIL_REGISTER, 
-		GET_APP_CONFIG,GET_SECRET_CODE, ADD_SUBSCRIPTION,VERIFY_REDEEM,GET_USER_SUBSCRIPTION, SET_AGE;
+		GET_APP_CONFIG,GET_SECRET_CODE, ADD_SUBSCRIPTION,VERIFY_REDEEM,GET_USER_SUBSCRIPTION, SET_AGE,
+	    GET_VIMEO_VIDEO;
 	}
 
 	private DataResult<SecretCodeResult> getSecretCode(SecretCodeRequest dataRequest) {

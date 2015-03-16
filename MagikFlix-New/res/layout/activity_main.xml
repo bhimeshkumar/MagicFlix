@@ -42,8 +42,8 @@
             android:paddingLeft="@dimen/paddingMediumPlus"
             android:textColor="@color/white"
             android:textSize="@dimen/textSizeCategoryName"
-            app:fontName="avenirnext_medium_lt.otf"
-            android:textStyle="normal" />
+            android:textStyle="normal"
+            app:fontName="avenirnext_medium_lt.otf" />
 
         <RelativeLayout
             android:layout_width="fill_parent"
@@ -65,8 +65,8 @@
                 android:text="@string/info_no_videos_found"
                 android:textColor="@color/white"
                 android:textSize="@dimen/textSizeMedium"
-                app:fontName="avenirnext_medium_lt.otf"
-                android:visibility="gone" />
+                android:visibility="gone"
+                app:fontName="avenirnext_medium_lt.otf" />
         </RelativeLayout>
     </LinearLayout>
 
@@ -76,5 +76,16 @@
         android:layout_width="@dimen/progressbar_height_width"
         android:layout_height="@dimen/progressbar_height_width"
         android:layout_centerInParent="true" />
+
+    <com.magicflix.goog.app.views.MagicflixTextView
+        android:id="@+id/main_screen_no_network_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="@string/internet_failure_msg"
+        android:textColor="@color/white"
+        android:textSize="@dimen/textSizeMedium"
+        android:visibility="gone"
+        app:fontName="avenirnext_medium_lt.otf" />
 
 </RelativeLayout>

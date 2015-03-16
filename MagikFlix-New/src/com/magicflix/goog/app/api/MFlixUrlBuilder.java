@@ -10,6 +10,7 @@ import com.magicflix.goog.app.api.requests.RedeemCodeRequest;
 import com.magicflix.goog.app.api.requests.RegisterEmailRequest;
 import com.magicflix.goog.app.api.requests.SecretCodeRequest;
 import com.magicflix.goog.app.api.requests.VideoRequest;
+import com.magicflix.goog.app.api.requests.VimeoVideoRequest;
 
 
 public class MFlixUrlBuilder {
@@ -67,6 +68,11 @@ public class MFlixUrlBuilder {
 	
 	public static String getUpdateAgeURL(AgeRequest dataRequest){
 		return String.format("%sapi/v2/User/Age?token=%s&age=%s",BASE_URL,dataRequest.token,dataRequest.age);
+	}
+	
+	
+	public static String getVimeoVideoURL(VimeoVideoRequest dataRequest){
+		return String.format("http://player.vimeo.com/video/%s/config",dataRequest.videoId);
 	}
 	
 }

@@ -97,7 +97,7 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 	private ArrayList<Videos> filteredVideoList;
 	private ActionBar mActionBar;
 	private ImageView mTermsOfUseIV;
-	private TextView mCategoryNameTv , mNoVideoFoundTV;
+	private TextView mCategoryNameTv , mNoVideoFoundTV, noNetworkTV;
 	private FavouriteChangeListner mFavouriteChangeListner;
 	private IntentFilter mFavIntentFilter; 
 	private LocalyticsAmpSession mLocalyticsSession; 
@@ -119,6 +119,8 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 	private  EditText promoCodeEt;
 	private Button mTimerValueTV;
 	private Button mActionBarSubscribeBtn ,mActionBarAppTimerBtn;
+	private boolean mIsDataLoading = false;
+	
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -131,6 +133,7 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 		if(Constants.IS_SUBSCRIPTION_ENABLED){
 			getUserSubscription();
 		}else{
+			((MagikFlix)getApplicationContext()).setVideosResult(null);
 			getVideos(((MagikFlix)getApplicationContext()).getToken());
 		}
 
@@ -258,7 +261,8 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 		mProgressBar = (ProgressBar)findViewById(R.id.home_screen_pb);
 		mTermsOfUseIV = (ImageView)mActionBar.getCustomView().findViewById(R.id.actionBar_terms_of_use_iv);
 		mNoVideoFoundTV = (TextView)findViewById(R.id.main_screen_no_videos_tv);
-
+		noNetworkTV  = (TextView)findViewById(R.id.main_screen_no_network_tv);
+		
 		mTimerValueTV = (Button)mActionBar.getCustomView().findViewById(R.id.actionBar_timer_value_tv);
 		mActionBarSubscribeBtn = (Button)mActionBar.getCustomView().findViewById(R.id.actionBar_subscribe_btn);
 		mActionBarAppTimerBtn = (Button)mActionBar.getCustomView().findViewById(R.id.actionBar_app_timer_btn);
@@ -302,7 +306,7 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 		if(!(ConnectionResult.SERVICE_MISSING == GooglePlayServicesUtil.isGooglePlayServicesAvailable(this))){
 			String packageName = "com.google.android.youtube";
 			boolean isYoutubeInstalled = isYouTubeAppInstalled(packageName);
-			if(isYoutubeInstalled){
+			if(isYoutubeInstalled && !mSelectedCategoryName.equalsIgnoreCase("Vimeo")){
 				navigateToVideoPlayScreen(position, videosList);
 			}else{
 				navigateToVideoViewScreen(position, videosList);
@@ -339,6 +343,7 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 		Bundle bundle = new Bundle();
 		bundle.putSerializable("videosList", videoList);
 		bundle.putString("videoId", videoList.get(position).videoId);
+		bundle.putString("categoryName", mSelectedCategoryName);
 		bundle.putInt("selectedPosition", position);
 		bundle.putString("videoLink", "https://www.youtube.com/watch?v="+videoList.get(position).videoId);
 		intent.putExtras(bundle);
@@ -376,6 +381,7 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 
 
 	private void getVideos(String token) {
+		mIsDataLoading = true;
 		VideoRequest  loginRequest = new VideoRequest();
 		loginRequest.appid = getPackageName();
 		loginRequest.token = token;
@@ -437,6 +443,9 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 
 			//			startAppTimer();
 			runAppTimer();
+		}else{
+			mIsDataLoading = false;
+			((MagikFlix)getApplicationContext()).setVideosResult(null);
 		}
 	}
 
@@ -638,9 +647,12 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 			NetworkInfo currentNetworkInfo = (NetworkInfo) intent.getParcelableExtra(ConnectivityManager.EXTRA_NETWORK_INFO);
 			if(!currentNetworkInfo.isConnected()){
 				mProgressBar.setVisibility(View.GONE);
-				showLongToast(context.getString(R.string.internet_failure_msg));
+//				showLongToast(context.getString(R.string.internet_failure_msg));
+				if(((MagikFlix)getApplicationContext()).getVideoResult() == null)
+					noNetworkTV.setVisibility(View.VISIBLE);
 			}else{
-				if(((MagikFlix)getApplicationContext()).getVideoResult() == null){
+				noNetworkTV.setVisibility(View.GONE);
+				if(((MagikFlix)getApplicationContext()).getVideoResult() == null && !mIsDataLoading){
 					mProgressBar.setVisibility(View.VISIBLE);
 					if(Constants.IS_SUBSCRIPTION_ENABLED){
 						getUserSubscription();
