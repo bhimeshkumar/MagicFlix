@@ -51,10 +51,13 @@ public class PlayListAdapter extends BaseAdapter{
 		          .findViewById(R.id.play_list_thumbnail_iv);
 		      viewHolder.mVideoDurationTV = (TextView) rowView
 			          .findViewById(R.id.play_list_duration_tv);
+		      viewHolder.mVideoTitleTV = (TextView) rowView
+			          .findViewById(R.id.play_list_title_tv);
 		      rowView.setTag(viewHolder);
 		    }
 		    // fill data
 		    ViewHolder holder = (ViewHolder) rowView.getTag();
+		    holder.mVideoTitleTV.setText(mVideosList.get(position).title);
 		    holder.mVideoDurationTV.setText(Constants.formatDuration(mVideosList.get(position).duration));
 		    Picasso.with(mContext).load(mVideosList.get(position).thumbnailUrl).placeholder(mContext.getResources().getDrawable(R.drawable.image_loading_icon)).into(holder.movieThumbnailTV);
 		return rowView;
@@ -64,6 +67,7 @@ public class PlayListAdapter extends BaseAdapter{
 	static class ViewHolder {
 		public TextView mVideoDurationTV;
 		public ImageView movieThumbnailTV;
+		public TextView mVideoTitleTV;
 	}
 
 

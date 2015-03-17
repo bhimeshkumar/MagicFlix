@@ -113,7 +113,7 @@ public class VideoViewActivity extends BaseActivity implements PlayPauseListener
 			mFavIV.setBackground(null);
 		}
 
-		if(mCategoryName.equalsIgnoreCase("Vimeo")){
+		if(mCategoryName.equalsIgnoreCase(getString(R.string.category_vimeo_title))){
 			getVimeoVideoURL(mVideoId);
 		}else{
 			VideoId lYouTubeId = new VideoId(mVideoId);

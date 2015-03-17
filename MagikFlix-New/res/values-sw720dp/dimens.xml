@@ -15,6 +15,7 @@
     <dimen name="fpp_back_width">45dp</dimen>
     <dimen name="fpp_back_left_margin">140dp</dimen>
     <dimen name="fpp_category_name_bottom_margin">6dp</dimen>
+     <dimen name="actionBar_app_timer_width">40dp</dimen>
 
     <!-- List -->
     <dimen name="fpp_margin_top">6dp</dimen>

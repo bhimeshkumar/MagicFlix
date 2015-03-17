@@ -33,7 +33,7 @@
 
         <com.magicflix.goog.app.views.MagicflixButton
             android:id="@+id/actionBar_app_timer_btn"
-            android:layout_width="40dp"
+            android:layout_width="@dimen/actionBar_app_timer_width"
             android:layout_height="match_parent"
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="@dimen/marginMedium"
@@ -44,12 +44,11 @@
             android:textStyle="bold"
             android:visibility="gone"
             android:textSize="@dimen/textSizeLarge"
-            
             app:fontName="avenirnext_medium_lt.otf" />
 
         <com.magicflix.goog.app.views.MagicflixButton
             android:id="@+id/actionBar_timer_value_tv"
-            android:layout_width="40dp"
+            android:layout_width="@dimen/actionBar_app_timer_width"
             android:layout_height="match_parent"
             android:layout_gravity="center_vertical"
             android:layout_marginRight="@dimen/marginMedium"

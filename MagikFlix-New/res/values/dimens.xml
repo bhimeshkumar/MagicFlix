@@ -7,6 +7,8 @@
     <dimen name="fpp_back_width">45dp</dimen>
     <dimen name="fpp_back_left_margin">140dp</dimen>
     <dimen name="fpp_category_name_bottom_margin">6dp</dimen>
+    <dimen name="actionBar_app_timer_width">30dp</dimen>
+    
 
     <!-- List -->
     <dimen name="fpp_margin_top">6dp</dimen>
@@ -34,6 +36,7 @@
     <dimen name="fpp_tile_small_height">79dp</dimen>
     <dimen name="progressbar_height_width">50dp</dimen>
     <dimen name="paddingMedium">5dp</dimen>
+    <dimen name="paddingSmall">3dp</dimen>
     <dimen name="paddingMicro">1dp</dimen>
     <dimen name="paddingMediumPlus">10dp</dimen>
     <dimen name="paddingMediumExtraPlus">15dp</dimen>

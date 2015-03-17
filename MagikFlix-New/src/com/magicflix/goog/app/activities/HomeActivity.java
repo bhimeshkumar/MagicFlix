@@ -17,12 +17,10 @@ import org.json.JSONObject;
 import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
@@ -120,7 +118,7 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 	private Button mTimerValueTV;
 	private Button mActionBarSubscribeBtn ,mActionBarAppTimerBtn;
 	private boolean mIsDataLoading = false;
-	
+
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -136,26 +134,6 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 			((MagikFlix)getApplicationContext()).setVideosResult(null);
 			getVideos(((MagikFlix)getApplicationContext()).getToken());
 		}
-
-
-	}
-
-	private void startAppTimer() {
-		mActionBarAppTimerBtn.setVisibility(View.VISIBLE);
-		int timerValue = Integer.valueOf(mApplication.getAppTimerValue());
-		if(timerValue == 0){
-			mActionBarAppTimerBtn.setText("0");
-			mActionBarAppTimerBtn.setTextColor(Color.RED);
-			return;
-		}
-		if(countDownTimer != null){
-			countDownTimer.cancel();
-			countDownTimer = null;
-		}
-		Constants.DEFAULT_APP_TIMER_LIMIT =(timerValue)  * 60 * 1000;
-		countDownTimer = new AppConuntDownTimer(Constants.DEFAULT_APP_TIMER_LIMIT, Constants.APP_TIMER_DELAY);
-		countDownTimer.start();
-
 	}
 
 	private void setUpUI() {
@@ -166,7 +144,6 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 			mActionBarSubscribeBtn.setVisibility(View.GONE);
 			mTimerValueTV.setVisibility(View.GONE);
 		}
-
 	}
 
 	private void init() {
@@ -191,14 +168,13 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 			serviceIntent.setPackage("com.android.vending");
 			bindService(serviceIntent, mServiceConn, Context.BIND_AUTO_CREATE);
 		}
-
 	}
 
 	private void setUpActionBar() {
 		try {
 			mActionBar = setUpCustomActionBar(false);
 		} catch (IOException e) {
-			e.printStackTrace();
+			MLogger.logInfo(TAG, "Exception in setUpActionBar() :: "+e.getMessage());
 		}
 	}
 
@@ -208,17 +184,6 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 		mActionBarSubscribeBtn.setOnClickListener(this);
 		mActionBarAppTimerBtn.setOnClickListener(this);
 		mTimerValueTV.setOnClickListener(this);
-
-		/* SharedPreferences prefs = 
-				getSharedPreferences(Constants.PREFS_FILE_NAME, Context.MODE_PRIVATE);
-		OnSharedPreferenceChangeListener listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
-			public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-
-			}
-		};
-
-		prefs.registerOnSharedPreferenceChangeListener(listener);*/
-
 	}
 
 	@SuppressWarnings("deprecation")
@@ -228,13 +193,12 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 		movieVideos = getRecommendedVideos();
 		this.fancyCoverFlow.setAdapter(new MovieAdapter(this,movieVideos));
 		this.fancyCoverFlow.setUnselectedAlpha(0.9f);
-		//		this.fancyCoverFlow.setUnselectedSaturation(0.8f);
 		this.fancyCoverFlow.setUnselectedScale(0.84f);
 		this.fancyCoverFlow.setSpacing(-10);
 		this.fancyCoverFlow.setMaxRotation(0);
 		this.fancyCoverFlow.setScaleDownGravity(0.5f);
-		//		this.fancyCoverFlow.setActionDistance(FancyCoverFlow.DRAWING_CACHE_QUALITY_LOW);
 		fancyCoverFlow.setAnimationDuration(500);
+		this.fancyCoverFlow.setSelection((movieVideos.size()) > 1 ? 1 :0, true);
 		fancyCoverFlow.setOnItemClickListener(this);
 	}
 
@@ -262,7 +226,6 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 		mTermsOfUseIV = (ImageView)mActionBar.getCustomView().findViewById(R.id.actionBar_terms_of_use_iv);
 		mNoVideoFoundTV = (TextView)findViewById(R.id.main_screen_no_videos_tv);
 		noNetworkTV  = (TextView)findViewById(R.id.main_screen_no_network_tv);
-		
 		mTimerValueTV = (Button)mActionBar.getCustomView().findViewById(R.id.actionBar_timer_value_tv);
 		mActionBarSubscribeBtn = (Button)mActionBar.getCustomView().findViewById(R.id.actionBar_subscribe_btn);
 		mActionBarAppTimerBtn = (Button)mActionBar.getCustomView().findViewById(R.id.actionBar_app_timer_btn);
@@ -275,17 +238,13 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 	public void onNothingSelected(AdapterView<?> arg0) {}
 
 	@Override
-	public void onItemClick(
-			it.sephiroth.android.library.widget.AdapterView<?> parent,
-			View view, int position, long id) {
+	public void onItemClick(it.sephiroth.android.library.widget.AdapterView<?> parent,View view, int position, long id) {
 		mLocaliticsAttributes.clear();
 		mLocaliticsAttributes.put(Constants.CATEGORY, mSelectedCategoryName);
 		mLocaliticsAttributes.put(Constants.INDEX, String.valueOf(position));
 		mLocaliticsAttributes.put(Constants.VIDEO_ID, videosList.get(position).videoId);
 		mLocalyticsSession.tagEvent(Constants.CATEGORY_VIDEO, mLocaliticsAttributes);
-
 		checkSubscriptionAndNavigate(position,videosList);
-
 	}
 
 	private void checkSubscriptionAndNavigate(int position, ArrayList<Videos> videoList) {
@@ -303,16 +262,17 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 	}
 
 	private void checkYouTubAppAvailability(int position, ArrayList<Videos> videosList) {
+		String videoCategory = videosList.get(position).category;
 		if(!(ConnectionResult.SERVICE_MISSING == GooglePlayServicesUtil.isGooglePlayServicesAvailable(this))){
 			String packageName = "com.google.android.youtube";
 			boolean isYoutubeInstalled = isYouTubeAppInstalled(packageName);
-			if(isYoutubeInstalled && !mSelectedCategoryName.equalsIgnoreCase("Vimeo")){
+			if(isYoutubeInstalled && !videoCategory.equalsIgnoreCase(getString(R.string.category_vimeo_title))){
 				navigateToVideoPlayScreen(position, videosList);
 			}else{
-				navigateToVideoViewScreen(position, videosList);
+				navigateToVideoViewScreen(position, videosList,videoCategory);
 			}
 		}else{
-			navigateToVideoViewScreen(position, videosList);
+			navigateToVideoViewScreen(position, videosList,videoCategory);
 		}
 	}
 
@@ -338,12 +298,12 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 		startActivityForResult(intent, 1);
 	}
 
-	private void navigateToVideoViewScreen(int position, ArrayList<Videos> videoList) {
+	private void navigateToVideoViewScreen(int position, ArrayList<Videos> videoList, String videoCategory) {
 		Intent intent = new Intent(this,VideoViewActivity.class);
 		Bundle bundle = new Bundle();
 		bundle.putSerializable("videosList", videoList);
 		bundle.putString("videoId", videoList.get(position).videoId);
-		bundle.putString("categoryName", mSelectedCategoryName);
+		bundle.putString("categoryName", videoCategory);
 		bundle.putInt("selectedPosition", position);
 		bundle.putString("videoLink", "https://www.youtube.com/watch?v="+videoList.get(position).videoId);
 		intent.putExtras(bundle);
@@ -356,6 +316,7 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 		if (requestCode == 1) {
 			if(resultCode == RESULT_OK){
 				mRecentVideoId =data.getStringExtra("recentVideoId");
+				MLogger.logInfo(TAG, "RecentVideo :"+mRecentVideoId);
 				getRecentPlayList("Recent Videos");
 			}
 		}else if (requestCode == 10001) {           
@@ -378,7 +339,6 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 			}
 		}
 	}
-
 
 	private void getVideos(String token) {
 		mIsDataLoading = true;
@@ -417,6 +377,7 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 			setFavoriteVideos();
 
 			setUpUI();
+
 			if(Constants.IS_SUBSCRIPTION_ENABLED){
 				boolean isSubscriptionRestored = ((MagikFlix)getApplicationContext()).isSubscriptionRestored();
 				if (mTimerValueTV != null){
@@ -440,8 +401,6 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 					}
 				}
 			}
-
-			//			startAppTimer();
 			runAppTimer();
 		}else{
 			mIsDataLoading = false;
@@ -539,28 +498,33 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 	}
 
 	private ArrayList<Videos> getRecentPlayList(String categoryName) {
-		for (Playlists playlist : ((MagikFlix)getApplicationContext()).getVideoResult().playlists) {
-			if(playlist.name.equalsIgnoreCase(categoryName)){
-				for (String videoId : playlist.videoIds) {
-					for (Videos videos : ((MagikFlix)getApplicationContext()).getVideoResult().videos) {
-						if(videoId.equalsIgnoreCase(videos.videoId)){
-							filteredVideoList.add(videos);
+		try {
+			for (Playlists playlist : ((MagikFlix)getApplicationContext()).getVideoResult().playlists) {
+				if(playlist.name.equalsIgnoreCase(categoryName)){
+					for (String videoId : playlist.videoIds) {
+						for (Videos videos : ((MagikFlix)getApplicationContext()).getVideoResult().videos) {
+							if(videoId.equalsIgnoreCase(videos.videoId)){
+								filteredVideoList.add(videos);
+							}
 						}
 					}
 				}
 			}
-		}
-		Videos recentVideo = null;
-		for (Videos videos : ((MagikFlix)getApplicationContext()).getVideoResult().videos) {
-			if(((mRecentVideoId != null && mRecentVideoId.length() > 0) && mRecentVideoId.equalsIgnoreCase(videos.videoId))){
-				recentVideo = videos;
+			Videos recentVideo = null;
+			for (Videos videos : ((MagikFlix)getApplicationContext()).getVideoResult().videos) {
+				if(((mRecentVideoId != null && mRecentVideoId.length() > 0) && mRecentVideoId.equalsIgnoreCase(videos.videoId))){
+					recentVideo = videos;
+				}
 			}
-		}
-		if(recentVideo != null)
-			filteredVideoList.add(recentVideo);
+			if(recentVideo != null)
+				filteredVideoList.add(recentVideo);
 
-		HashSet<Videos> hashSet = new HashSet<Videos>(filteredVideoList);
-		return new ArrayList<Videos>(hashSet);
+			HashSet<Videos> hashSet = new HashSet<Videos>(filteredVideoList);
+			return new ArrayList<Videos>(hashSet);
+		} catch (Exception e) {
+			MLogger.logInfo(TAG, "Exception in getRecentPlayList() ");
+			return null;
+		}
 
 	}
 
@@ -613,22 +577,21 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 	@Override
 	protected void onResume() {
 		super.onResume();
-		if(Constants.IS_SUBSCRIPTION_ENABLED)
-			setFreeTrialValue();
+		try {
 
-		// dismiss timer pop-up
-		if(mAppTimerPopupWindow != null && mAppTimerPopupWindow.isShowing()){
-			mAppTimerPopupWindow.dismiss();
+			if(Constants.IS_SUBSCRIPTION_ENABLED)
+				setFreeTrialValue();
+
+			dismissTimerPopUp();
+			if(Constants.TIMER_LIMIT_UPDATED){
+				Constants.TIMER_LIMIT_UPDATED = false;
+				runAppTimer();
+			}
+			registerReceiver(mFavouriteChangeListner, mFavIntentFilter);
+			registerReceiver(mConnReceiver,  new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+		} catch (Exception e) {
+			MLogger.logInfo(TAG, "Exception in onResume() :: "+e.getMessage());
 		}
-
-		//run timer only when user updates timer
-		if(Constants.TIMER_LIMIT_UPDATED){
-			Constants.TIMER_LIMIT_UPDATED = false;
-			runAppTimer();
-		}
-
-		registerReceiver(mFavouriteChangeListner, mFavIntentFilter);
-		registerReceiver(mConnReceiver,  new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
 	}
 
 	@Override
@@ -647,7 +610,6 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 			NetworkInfo currentNetworkInfo = (NetworkInfo) intent.getParcelableExtra(ConnectivityManager.EXTRA_NETWORK_INFO);
 			if(!currentNetworkInfo.isConnected()){
 				mProgressBar.setVisibility(View.GONE);
-//				showLongToast(context.getString(R.string.internet_failure_msg));
 				if(((MagikFlix)getApplicationContext()).getVideoResult() == null)
 					noNetworkTV.setVisibility(View.VISIBLE);
 			}else{
@@ -673,13 +635,17 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		if(countDownTimer != null ){
-			countDownTimer.cancel();
+		try {
+			if(countDownTimer != null ){
+				countDownTimer.cancel();
+			}
+			unregisterReceiver(mFavouriteChangeListner);
+			if (mService != null) {
+				unbindService(mServiceConn);
+			} 
+		} catch (Exception e) {
+			MLogger.logInfo(TAG, "Exception in onDestroy() :: "+e.getMessage());
 		}
-		unregisterReceiver(mFavouriteChangeListner);
-		if (Constants.IS_SUBSCRIPTION_ENABLED && mService != null) {
-			unbindService(mServiceConn);
-		} 
 	}
 
 
@@ -719,9 +685,7 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 			MLogger.logInfo(TAG, "isUserSubscribed :: "+isSubscribed);
 			mIsUserSubscribed = isSubscribed;
 			((MagikFlix)getApplicationContext()).setIsUserSubscribed(mIsUserSubscribed);
-
 			getVideos(((MagikFlix)getApplicationContext()).getToken());
-
 		}
 	}
 
@@ -744,9 +708,8 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 				String promoCode = promoCodeEt.getText().toString();
 				if(promoCode.length() > 0){
 					verifyPromoCode(promoCode);
-				}
-				else{
-					showCustomAlert("Please enter Promo Code");
+				}else{
+					showCustomAlert(getString(R.string.please_enter_promo_code_msg));
 				}
 			}
 		});
@@ -793,7 +756,6 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 		}
 	}
 
-
 	@SuppressLint("InflateParams") private void showCustomAlert(String title){
 		if( mCustomPopUp != null && mCustomPopUp.isShowing()){
 			return;
@@ -802,35 +764,27 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 		View layout = inflater.inflate(R.layout.custom_alert,null);
 		TextView titleTv = (TextView)layout.findViewById(R.id.custom_alert_title);
 		titleTv.setText(title);
-		mCustomPopUp = new PopupWindow(layout, LayoutParams.MATCH_PARENT
-				, LayoutParams.MATCH_PARENT);
-
+		mCustomPopUp = new PopupWindow(layout, LayoutParams.MATCH_PARENT,LayoutParams.MATCH_PARENT);
 		mCustomPopUp.setAnimationStyle(R.style.PopUpAnimation);
 		mCustomPopUp.setFocusable(true);
 		mCustomPopUp.setContentView(layout);
 		mCustomPopUp.showAtLocation(layout, Gravity.CENTER, 0, 0);
 		mCustomPopUp.getContentView().setOnClickListener(new OnClickListener() {
-
 			@Override
 			public void onClick(View v) {
 				mCustomPopUp.dismiss();
-
 			}
 		});
-
-
 	}
 
 	public void initIBapHelper(final String productId){
 		mHelper = new IabHelper(this, "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAh/ZIaQBmoGC1Rwu04RJhaNiCqFI/CNGgkH7oSBwcx2w8pDdrXMRz6g16hUhRWeDTnHBvmpPdgP9YSOrO/VpGEAI+tWY5aQKoyLlcQDrWa8r21KY4/HmTkKYr7JCDr5qQ6H6mipQbMZn1NPj2NzTcyEW3Qhr8SipD3ElVGIHmmENuRzeru9ul6MvaQ2ugVai/Nd9BiXnH8ZzCgKphkpK09J8gi7m+9xfeuQajz8t1q6pcx4FEAzw5fjh4IqpoxhdgWKCXj2kBxioI/he+U5mbDWd8P/BEg1DNWLEQhKoNvUsJgXc3sTZUgQ9kI5lx7wMOzrrqPRhFiCJ8tKWgtGLHmwIDAQAB");
 		mHelper.startSetup(new 
 				IabHelper.OnIabSetupFinishedListener() {
-			public void onIabSetupFinished(IabResult result) 
-			{
+			public void onIabSetupFinished(IabResult result){
 				if (!result.isSuccess()) {
-
-
-				} else {  
+					MLogger.logError(TAG, "Error :: initIBapHelper");
+				}else{  
 					launchPurchaseFlow(productId);
 				}
 			}
@@ -850,8 +804,7 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 				Purchase purchase) {
 			if (result.isFailure()) {
 				String errorMessage = result.getMessage();
-				showAlertDialog(errorMessage);
-				// Handle error
+				MLogger.logInfo(TAG, "Error ::OnIabPurchaseFinishedListener "+errorMessage);
 				return;
 			}      
 		}
@@ -859,7 +812,7 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 	};
 
 
-	private void showAlertDialog(String message){
+	/*private void showAlertDialog(String message){
 		AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
 		builder1.setTitle("Purchase Info");
 		builder1.setMessage(message);
@@ -872,7 +825,7 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 		});
 		AlertDialog alert11 = builder1.create();
 		alert11.show();
-	}
+	}*/
 
 
 	private void addSubscription(String receipt, String productId) {
@@ -921,7 +874,6 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 		protected Bundle doInBackground(Void...arg0) {
 			return  getProdcutDetails();
 		}
-
 		protected void onPostExecute(Bundle result) {
 			if(result != null){
 				int response = result.getInt("RESPONSE_CODE");
@@ -931,7 +883,6 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 						JSONObject object;
 						try {
 							object = new JSONObject(thisResponse);
-							String sku = object.getString("productId");
 							mPrice = object.getString("price");
 						} catch (JSONException e) {
 							MLogger.logInfo(TAG, "Error : getting prodcut details "+ e.getMessage());
@@ -952,7 +903,7 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 			skuDetails = mService.getSkuDetails(3, 
 					getPackageName(), "subs", querySkus);
 		} catch (RemoteException e) {
-			e.printStackTrace();
+			MLogger.logError(TAG, "Exception in getProdcutDetails() :: "+ e.getMessage());
 		}
 		return skuDetails;
 	}
@@ -995,8 +946,6 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 		}
 	}
 
-
-
 	private void runAppTimer() {
 		mActionBarAppTimerBtn.setVisibility(View.VISIBLE);
 		int timerValue = Integer.valueOf(mApplication.getAppTimerValue());
@@ -1009,7 +958,6 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 	}
 	private void updateTimer(Message msg) {
 		int pending = msg.arg1 - (Constants.APP_TIMER_DELAY * 1000);
-		long millis = pending;
 		Message m = new Message();
 		m.what = 0;
 		m.arg1 = pending;
@@ -1022,20 +970,23 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 			switch (msg.what) {
 			case 0:
 				try {
-					if(mAppTimerPopupWindow != null && mAppTimerPopupWindow.isShowing()){
-						mAppTimerPopupWindow.dismiss();
-					}
+					dismissTimerPopUp();
 					int timerValue = (msg.arg1/60000);
 					mActionBarAppTimerBtn.setText(String.valueOf(msg.arg1/60000));
 					if (timerValue > 0){
 						if(timerValue < 5){
-
 							mActionBarAppTimerBtn.setTextColor(HomeActivity.this.getResources().getColor(R.color.category_disable_color));
 						}else if(timerValue == 5){
 							Constants.APP_TIMER_VALUE = 5;
 							Intent intnet = new Intent(Constants.INTENT_APP_TIMER_EXPIRED);
 							sendBroadcast(intnet);
-							mAppTimerPopupWindow = getTrialExpiredPopUp(HomeActivity.this.getString(R.string.app_timer_msg));
+							String message ;
+							if(Integer.parseInt(mApplication.getAppTimerValue()) == 5){
+								message = HomeActivity.this.getString(R.string.app_timer_at_five_mins_msg);
+							}else{
+								message = HomeActivity.this.getString(R.string.app_timer_msg);
+							}
+							mAppTimerPopupWindow = getTrialExpiredPopUp(message);
 							mAppTimerPopupWindow.showAtLocation(mAppTimerPopupWindow.getContentView(), Gravity.CENTER, 0, 0);
 							mActionBarAppTimerBtn.setTextColor(HomeActivity.this.getResources().getColor(R.color.category_disable_color));
 						}else{
@@ -1063,7 +1014,10 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 		}
 	};
 
+	private void dismissTimerPopUp() {
+		if(mAppTimerPopupWindow != null && mAppTimerPopupWindow.isShowing()){
+			mAppTimerPopupWindow.dismiss();
+		}
+	}
 
 }
-
-

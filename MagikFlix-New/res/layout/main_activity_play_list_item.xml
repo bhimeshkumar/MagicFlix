@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/com.magicflix.goog"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="center_vertical"
@@ -8,24 +9,38 @@
     <RelativeLayout
         android:layout_width="@dimen/play_list_item_width"
         android:layout_height="match_parent"
-        android:layout_marginRight="@dimen/play_list_item_marginRight"
-         >
+        android:layout_marginRight="@dimen/play_list_item_marginRight" >
 
         <ImageView
             android:id="@+id/play_list_thumbnail_iv"
-            android:layout_width="@dimen/play_list_item_width"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="fitXY" />
 
-        <TextView
+        <com.magicflix.goog.app.views.MagicflixTextView
             android:id="@+id/play_list_duration_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
             android:background="@color/transparent_black"
-            android:padding="@dimen/paddingMedium"
-            android:textColor="@color/white" />
+            android:padding="@dimen/paddingSmall"
+            android:textColor="@color/white"
+            app:fontName="avenirnext_medium_lt.otf" />
+
+        <com.magicflix.goog.app.views.MagicflixTextView
+            android:id="@+id/play_list_title_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:visibility="gone"
+            android:layout_toLeftOf="@id/play_list_duration_tv"
+            android:background="@color/transparent_black"
+            android:padding="@dimen/paddingSmall"
+            android:singleLine="true"
+            android:textColor="@color/white"
+            app:fontName="avenirnext_medium_lt.otf" />
     </RelativeLayout>
 
 </LinearLayout>

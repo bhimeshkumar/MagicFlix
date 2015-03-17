@@ -107,5 +107,8 @@
     <string name="magicflix_app_info">Magicflix is in no way affiliated with Youtube. All videos are the copyright of their respective owners. You can review the complete terms of use and privacy policy at <a STYLE="text-decoration:none" href="http://magicflix.com/termsofuse"><b>http://magicflix.com/termsofuse</b></a> and <a STYLE="text-decoration:none" href="http://magicflix.com/privacy"><b>http://magicflix.com/privacy</b></a>.</string>
     <string name="subscribe_btn_txt">Subscribe</string>
     <string name="app_timer_msg">You still have 5 \nminutes!</string>
+    <string name="app_timer_at_five_mins_msg">You have 5 \nminutes!</string>
+    <string name="category_vimeo_title">Vimeo</string>
+    <string name="please_enter_promo_code_msg">Please enter Promo Code</string>
 
 </resources>
