@@ -82,7 +82,7 @@
 
     <!-- acitvity_terms_of_use_strings -->
     <string name="terms_of_use_ok_btn_text">OK</string>
-    <string name="terms_of_use_tv_text">MagicFlix Terms Of Use</string>
+    <string name="terms_of_use_tv_text">Magicflix Terms Of Use</string>
     <string name="terms_of_use_wv_text">MagicFlix Terms Of Use</string>
     <string name="info_no_videos_found">No Videos Found</string>
     <string name="subscription_promo_code_apply_btn_txt">APPLY</string>
@@ -110,5 +110,12 @@
     <string name="app_timer_at_five_mins_msg">You have 5 \nminutes!</string>
     <string name="category_vimeo_title">Vimeo</string>
     <string name="please_enter_promo_code_msg">Please enter Promo Code</string>
+    <string name="delete_profile_msg">Are you sure you want to remove this profile ?</string>
+    <string name="delete_profile_no_txt">No</string>
+    <string name="delete_profile_yes_txt">Yes</string>
+    <string name="email_invalid_msg">Enter a valid email.</string>
+    <string name="my_videos_empty_list_msg">Go to magicflix.com/parents to create your personalized playlist.</string>
+    <string name="favorite_videos_empty_list_msg">Go ahead and favorite videos to make your own playlist.</string>
+    <string name="info_profile_pic">Take a picture for your profile</string>
 
 </resources>

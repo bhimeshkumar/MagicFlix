@@ -59,7 +59,7 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginBottom="@dimen/marginMediumPlus"
-            android:layout_marginRight="@dimen/marginMediumPlus"
+            android:layout_marginRight="@dimen/marginExtraLargePlus"
             android:scaleType="fitXY"
             android:src="@drawable/icon_outline_favorites" />
     </RelativeLayout>

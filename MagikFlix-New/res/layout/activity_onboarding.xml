@@ -3,14 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res/com.magicflix.goog"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/landing_screen_bg"
+    android:background="@color/familyScreenBg"
     android:orientation="vertical" >
 
     <RelativeLayout
         android:id="@+id/on_boarding_parent_gate_way_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/landing_screen_bg" >
+        android:background="@color/familyScreenBg" >
 
         <LinearLayout
             android:id="@+id/on_board_parent_gate_help_txt_layout"
@@ -45,7 +45,7 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="@dimen/marginLarge"
-            android:background="@drawable/shape_circular"
+            android:background="@drawable/parent_gate_btn_selector"
             android:padding="10dp"
             android:text="@string/parent_control_txt"
             android:textColor="@color/text_selector"
@@ -96,6 +96,17 @@
         android:text="SKIP"
         android:textColor="@color/white"
         android:textSize="@dimen/textSizeLargeSubscriptionBuyBtn"
+        android:visibility="gone"
+        app:fontName="avenirnext_medium_lt.otf" />
+
+    <com.magicflix.goog.app.views.MagicflixTextView
+        android:id="@+id/on_boarding_screen_no_network_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="@string/internet_failure_msg"
+        android:textColor="@color/white"
+        android:textSize="@dimen/textSizeMedium"
         android:visibility="gone"
         app:fontName="avenirnext_medium_lt.otf" />
 

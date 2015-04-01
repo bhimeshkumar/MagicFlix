@@ -15,7 +15,7 @@
     <dimen name="fpp_back_width">45dp</dimen>
     <dimen name="fpp_back_left_margin">140dp</dimen>
     <dimen name="fpp_category_name_bottom_margin">6dp</dimen>
-     <dimen name="actionBar_app_timer_width">40dp</dimen>
+    <dimen name="actionBar_app_timer_width">40dp</dimen>
 
     <!-- List -->
     <dimen name="fpp_margin_top">6dp</dimen>
@@ -151,11 +151,28 @@
     <dimen name="onBoardingBallonHeight">120dp</dimen>
     <dimen name="marginTopAgeSelection">80dp</dimen>
     <dimen name="ageSelectionSeekBarWidth">500dp</dimen>
-    
     <dimen name="textSizeCategoryName">16sp</dimen>
-    
-     <dimen name="movieItemWidth">300dp</dimen>
-     <dimen name="enabledCategoryItemWidthHeight">110dp</dimen>
-     <dimen name="disabledCategoryItemWidthHeight">90dp</dimen>
+    <dimen name="movieItemWidth">300dp</dimen>
+    <dimen name="enabledCategoryItemWidthHeight">110dp</dimen>
+    <dimen name="disabledCategoryItemWidthHeight">90dp</dimen>
+
+    <!-- Camera Screen dimens -->
+
+    <dimen name="cameraPreviewWidthHeight">550dp</dimen>
+    <dimen name="cameraPreviewPadding">50dp</dimen>
+
+    <!-- FamilySetUp screen dimens -->
+
+    <dimen name="familyScreenProfileAvatarCircleSize">280dp</dimen>
+    <dimen name="familyScreenProfileAvatarSize">180dp</dimen>
+    <dimen name="childNameLabelWidth">380dp</dimen>
+    <dimen name="childNameLabelHeight">60dp</dimen>
+    <dimen name="marginTopCameraPlayListLayout">50dp</dimen>
+    <dimen name="marginTopChildInfoLayout">50dp</dimen>
+    <dimen name="familyScreenTakePictureTxtSize">25sp</dimen>
+    <dimen name="marginChildProfileAdapter">40dp</dimen>
+    <dimen name="familyProfileDeleteBtnWidthHeight">100dp</dimen>
+    <dimen name="marginExtraLargePlus">50dp</dimen>
+    <dimen name="marginBottomFavIcon">90dp</dimen>
 
 </resources>

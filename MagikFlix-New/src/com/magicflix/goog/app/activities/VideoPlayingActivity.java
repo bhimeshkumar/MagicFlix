@@ -19,6 +19,7 @@ import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
+import android.widget.PopupWindow.OnDismissListener;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
@@ -47,9 +48,10 @@ import com.magicflix.goog.app.asyntasks.DataApiAsyncTask;
 import com.magicflix.goog.app.utils.Constants;
 import com.magicflix.goog.app.utils.TrialExpiredBroadCastReceiver;
 import com.magicflix.goog.broadcasts.AppTimerBroadCastReceiver;
+import com.magicflix.goog.broadcasts.PopUpDismissBroadCastReceiver;
 import com.magicflix.goog.utils.MLogger;
 
-public class VideoPlayingActivity extends BaseActivity implements OnInitializedListener, PlayerStateChangeListener, PlaybackEventListener, OnClickListener{
+public class VideoPlayingActivity extends BaseActivity implements OnInitializedListener, PlayerStateChangeListener, PlaybackEventListener, OnClickListener, OnDismissListener{
 
 	private static String TAG = VideoPlayingActivity.class.getName();
 	private ArrayList<Videos> videosList;
@@ -69,16 +71,17 @@ public class VideoPlayingActivity extends BaseActivity implements OnInitializedL
 	private ImageView mPlayIV,mBackToGalleryIV,mFavIV;
 	private TrialExpiredBroadCastReceiver mTrialExpiredBroadCastReceiver ;
 	private AppTimerBroadCastReceiver mAppTimerBroadCastReceiver;
-	private IntentFilter mTrialExpireIntent,mAppTimerIntent; 
+	private IntentFilter mTrialExpireIntent,mAppTimerIntent,mPopUpDismissIntent; 
 	private TimerTask videoTimerTask ;
 	private boolean mVideoIsStarted = false;
-
+	private PopUpDismissBroadCastReceiver mPopUpDismissBroadCastReceiver;
+	private PopupWindow popupWindow ;
 	private ArrayList<Integer> avgTimeVideoVatched = new ArrayList<Integer>();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+//		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		setContentView(R.layout.video_playing_screen);
 		init();
 		getVideoLink();
@@ -107,7 +110,6 @@ public class VideoPlayingActivity extends BaseActivity implements OnInitializedL
 			
 			@Override
 			protected void onTimerExpired() {
-				Constants.IS_APP_TIMER_SHOWN = true;
 				showTimerAlert();
 				
 			}
@@ -116,7 +118,20 @@ public class VideoPlayingActivity extends BaseActivity implements OnInitializedL
 
 	private void init() {
 		getActionBar().hide();
-		
+		mPopUpDismissIntent = new IntentFilter(Constants.INTENT_APP_ALERT_DISMISS);
+		mPopUpDismissBroadCastReceiver = new PopUpDismissBroadCastReceiver() {
+
+			@Override
+			protected void dismissPopUp() {
+				try {
+					if(popupWindow != null && popupWindow.isShowing()){
+						popupWindow.dismiss();
+					}
+				} catch (Exception e) {
+					MLogger.logInfo(TAG, "Exception in mPopUpDismissBroadCastReceiver ::"+e.getLocalizedMessage());
+				}
+			}
+		};
 	}
 
 	
@@ -128,8 +143,9 @@ public class VideoPlayingActivity extends BaseActivity implements OnInitializedL
 			}
 		}
 		
-		PopupWindow popupWindow =getTrialExpiredPopUp((Constants.APP_TIMER_VALUE == 0) ? getString(R.string.times_up_txt) : getString(R.string.app_timer_msg));
+		 popupWindow =getTrialExpiredPopUp((Constants.APP_TIMER_VALUE == 0) ? getString(R.string.times_up_txt) : getString(R.string.app_timer_msg));
 		popupWindow.showAtLocation(popupWindow.getContentView(), Gravity.CENTER, 0, 0);
+		popupWindow.setOnDismissListener(this);
 	}
 	/*private void showTrialExpiredDialog(String title,String message){
 		AlertDialog.Builder timerBuilder = new AlertDialog.Builder(this);
@@ -153,6 +169,7 @@ public class VideoPlayingActivity extends BaseActivity implements OnInitializedL
 		super.onResume();
 		registerReceiver(mTrialExpiredBroadCastReceiver, mTrialExpireIntent);
 		registerReceiver(mAppTimerBroadCastReceiver, mAppTimerIntent);
+		registerReceiver(mPopUpDismissBroadCastReceiver, mPopUpDismissIntent);
 
 	}
 	@Override
@@ -160,6 +177,7 @@ public class VideoPlayingActivity extends BaseActivity implements OnInitializedL
 		super.onPause();
 		unregisterReceiver(mTrialExpiredBroadCastReceiver);
 		unregisterReceiver(mAppTimerBroadCastReceiver);
+		unregisterReceiver(mPopUpDismissBroadCastReceiver);
 	}
 	@SuppressWarnings("unchecked")
 	private void getVideoLink() {
@@ -642,6 +660,10 @@ public class VideoPlayingActivity extends BaseActivity implements OnInitializedL
 			videoTimerTask.cancel();
 
 	}
-	
-	
+
+	@Override
+	public void onDismiss() {
+		Constants.IS_APP_TIMER_SHOWN = true;
+		
+	}
 }

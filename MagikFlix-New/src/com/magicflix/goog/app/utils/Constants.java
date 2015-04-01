@@ -50,25 +50,6 @@ public class Constants {
 	public static int VIDEO_PLAY_TIME;
 	public static boolean TIMER_LIMIT_UPDATED = false;
 	public static final String PREF_EMAIL ="PREF_EMAIL";
-	public static final int[] SPLASH_IMAGE_RESOURCES = {
-		R.drawable.blux_appear_0, R.drawable.blux_appear_1,
-		R.drawable.blux_appear_2, R.drawable.blux_appear_3,
-		R.drawable.blux_appear_4, R.drawable.blux_appear_5,
-		R.drawable.blux_appear_6, R.drawable.blux_appear_7,
-		R.drawable.blux_appear_8, R.drawable.blux_appear_9,
-		R.drawable.blux_appear_10, R.drawable.blux_appear_11,
-		R.drawable.blux_appear_12, R.drawable.blux_appear_13,
-		R.drawable.blux_appear_14, R.drawable.blux_appear_15,
-		R.drawable.blux_appear_16, R.drawable.blux_appear_17,
-		R.drawable.blux_appear_18, R.drawable.blux_appear_19,
-		R.drawable.blux_appear_20, R.drawable.blux_appear_21,
-		R.drawable.blux_appear_22, R.drawable.blux_appear_23,
-		R.drawable.blux_appear_24, R.drawable.blux_appear_25,
-		R.drawable.blux_appear_26, R.drawable.blux_appear_19,
-		R.drawable.blux_appear_20, R.drawable.blux_appear_21,
-		R.drawable.blux_appear_22, R.drawable.blux_appear_23,
-		R.drawable.blux_appear_24, R.drawable.blux_appear_25,
-		R.drawable.blux_appear_26 };
 	public static final String MFLIX_PREFS_NAME = "MFLIX_PREFERENCES";
 	public static final int PLATFORM = 1;
 	public static final String APP_LICENSE_KEY = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAhv8NDaUixhmVqO+GLQ4lUf0twYQq5jAVzTqinEiAVJbI+QiXsTSiTayPih/T3brlFjgaIw3MFOdB2PgctQ4tTNQvpod2Z2z1s4fVOLo6RiQU/N1v4XZbFaeLhaupLhucHQDkjA2MFxzOAYU0mpm9W1ILUcOH4h7iGFhgOUal2DI8ArVXElzAmvOOwT9kI5flLsEaZ3a8YPOk/MoM7skAzyBA+ekbfNq/EE8TIPkof73qtFiyoftmDx7hMS1Ghs02f6o2zKexmL7QT8fK1QNcbuD23hAbecsSBmo9knj3hvcr7n4H+uIo0Z/dhWFYIc/4KjDz1DJu9lKmEqdJ3UTBbQIDAQAB";
@@ -96,7 +77,9 @@ public class Constants {
 	public static int APP_TIMER_VALUE;
 	public static final int APP_TIMER_DELAY = 60;
 	public static final String INTENT_APP_TIMER_EXPIRED = "com.magikflic.goog.APP_TIMER_EXPIRED";
+	public static final String INTENT_APP_ALERT_DISMISS = "com.magikflic.goog.ALERT_DISMISS";
 	public static final String INTENT_TRIAL_EXPIRED = "com.magikflic.goog.TRIALEXPIRED";
+	public static boolean IS_PROFILE_SELECTION_CHANGED = false;
 
 
 	public static String readTxt(Context context, boolean isAboutThisApp){

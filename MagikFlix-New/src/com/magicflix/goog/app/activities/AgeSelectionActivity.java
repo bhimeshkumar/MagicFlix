@@ -170,6 +170,7 @@ public class AgeSelectionActivity extends BaseActivity implements OnSeekBarChang
 			mLocalyticsSession.tagEvent(Constants.AGE_IS_SELECTED, mLocalyticsAttributes);
 		MagikFlix app = (MagikFlix)getApplication();
 		app.setAgeIsSelected(true);
+		app.setDefaultAge(mSelectedAge);
 		navigateToMainScreen();
 	}
 

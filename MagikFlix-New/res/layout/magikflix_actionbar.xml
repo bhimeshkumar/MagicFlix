@@ -34,16 +34,16 @@
         <com.magicflix.goog.app.views.MagicflixButton
             android:id="@+id/actionBar_app_timer_btn"
             android:layout_width="@dimen/actionBar_app_timer_width"
-            android:layout_height="match_parent"
+            android:layout_height="@dimen/actionBar_app_timer_width"
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="@dimen/marginMedium"
-            android:layout_marginRight="@dimen/marginLarge"
-            android:background="@drawable/stop_watch_timer_selector"
+            android:layout_marginRight="@dimen/marginMediumExtraPlusPlus"
+            android:background="@drawable/camera_bg"
             android:gravity="center"
             android:textColor="@color/white"
+            android:textSize="@dimen/textSizeLarge"
             android:textStyle="bold"
             android:visibility="gone"
-            android:textSize="@dimen/textSizeLarge"
             app:fontName="avenirnext_medium_lt.otf" />
 
         <com.magicflix.goog.app.views.MagicflixButton
@@ -57,16 +57,40 @@
             android:textColor="@color/white"
             android:visibility="gone"
             app:fontName="avenirnext_medium_lt.otf" />
+
+        <RelativeLayout
+            android:id="@+id/actionBar_profile_layout"
+            android:layout_width="@dimen/actionBar_app_timer_width"
+            android:layout_height="@dimen/actionBar_app_timer_width"
+            android:layout_marginRight="@dimen/marginMedium"
+            android:background="@drawable/camera_bg"
+            android:padding="2dp"
+            android:visibility="gone" >
+
+            <com.magicflix.goog.app.views.RoundedImageView
+                android:id="@+id/actionBar_profile_iv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                 />
+        </RelativeLayout>
     </LinearLayout>
 
-    <ImageView
-        android:id="@+id/actionBar_terms_of_use_iv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <RelativeLayout
+        android:id="@+id/actionBar_family_settings_layout"
+        android:layout_width="@dimen/actionBar_app_timer_width"
+        android:layout_height="@dimen/actionBar_app_timer_width"
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
-        android:visibility="gone"
         android:layout_marginLeft="@dimen/marginMediumPlus"
-        android:background="@drawable/icon_category_terms_of_use" />
+        android:background="@drawable/camera_bg"
+        android:padding="@dimen/paddingMicro"
+        android:visibility="gone" >
+
+        <ImageView
+            android:id="@+id/actionBar_terms_of_use_iv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/icon_familysetup" />
+    </RelativeLayout>
 
 </RelativeLayout>

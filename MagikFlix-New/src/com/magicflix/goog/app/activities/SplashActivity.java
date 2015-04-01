@@ -12,6 +12,7 @@ import android.widget.VideoView;
 
 import com.magicflix.goog.MagikFlix;
 import com.magicflix.goog.R;
+import com.magicflix.goog.app.db.Db4oHelper;
 
 public class SplashActivity extends BaseActivity implements  OnCompletionListener{
 
@@ -20,7 +21,19 @@ public class SplashActivity extends BaseActivity implements  OnCompletionListene
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setUpScreen();
+		getActionBar().hide();
+		MagikFlix app = (MagikFlix) getApplicationContext();
+		String token = app.getToken();
+		if( token.length() <= 0 || (!app.isEmailOptional() && TextUtils.isEmpty(app.getEmail())) || (token.length() <= 0 || !(app.isAgeSelected())) ){
+			new Db4oHelper(this).delete(); // deleting old db
+			setUpScreen();
+		}else{
+			Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+			intent.putExtra("isFromSplashScreen", true);
+			startActivity(intent);
+			this.finish();
+		}
+
 	}
 
 	private void setUpScreen() {
@@ -33,14 +46,14 @@ public class SplashActivity extends BaseActivity implements  OnCompletionListene
 
 	private void setListnersToViews() {
 		mVideoView.setOnCompletionListener(this);
-		
+
 	}
 
 	private void playVideo() {
 		String path = "android.resource://" + getPackageName() + "/" + R.raw.splash_screen_video;
 		mVideoView.setVideoURI(Uri.parse(path));
 		mVideoView.start();
-		
+
 	}
 
 	private void setIdsToViews() {
@@ -54,20 +67,22 @@ public class SplashActivity extends BaseActivity implements  OnCompletionListene
 		navigateToHome();
 		finish();
 	}
-	
+
 	/**
 	 * TO redirect next screen
 	 */
 	public void navigateToHome() {
 		MagikFlix app = (MagikFlix) getApplicationContext();
 		String token = app.getToken();
-
+		Intent intent ;
 		if( token.length() <= 0 || (!app.isEmailOptional() && TextUtils.isEmpty(app.getEmail())) ){
-			startActivity(new Intent(getApplicationContext(), OnBoardingScreen.class));
+			intent = new Intent(getApplicationContext(), OnBoardingScreen.class);
+			intent.putExtra("isFromSplashScreen", true);
+			startActivity(intent);
 		}else if( token.length() <= 0 || !(app.isAgeSelected())){
-			startActivity(new Intent(getApplicationContext(), AgeSelectionActivity.class));
-		}else{
-			startActivity(new Intent(getApplicationContext(), HomeActivity.class));
+			intent = new Intent(getApplicationContext(), AgeSelectionActivity.class);
+			intent.putExtra("isFromSplashScreen", true);
+			startActivity(intent);
 		}
 		finish();
 	}

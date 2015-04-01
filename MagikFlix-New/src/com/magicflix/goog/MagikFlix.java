@@ -5,6 +5,7 @@ import android.text.TextUtils;
 
 import com.localytics.android.LocalyticsActivityLifecycleCallbacks;
 import com.localytics.android.LocalyticsAmpSession;
+import com.magicflix.goog.app.api.results.AppConfigResult;
 import com.magicflix.goog.app.api.results.VideoResult;
 import com.magicflix.goog.app.utils.Constants;
 import com.magicflix.goog.utils.PrefManager;
@@ -14,6 +15,7 @@ public class MagikFlix  extends Application {
 	private VideoResult mVideoResult;
 	private boolean mIsSubscriptionRestored;
 	private LocalyticsAmpSession localyticsSession;
+	private AppConfigResult mAppConfiguration;
 
 	@Override
 	public void onCreate() {
@@ -221,4 +223,25 @@ public class MagikFlix  extends Application {
 	public String getAppTimerValue(){
 		return PrefManager.getString(getApplicationContext(), "appTimerValue", "20");
 	}
+
+	public void setAppConfiguration(AppConfigResult entity) {
+		mAppConfiguration = entity;
+		
+	}
+	
+	public AppConfigResult getAppConfiguration() {
+		return mAppConfiguration;
+		
+	}
+	
+	public void setSelectedProfileIndex(int index){
+		PrefManager.saveInt(getApplicationContext(), "selectedProfile", index);
+	}
+	
+	public int getSelectedProfileIndex() {
+		return PrefManager.getInt(getApplicationContext(), "selectedProfile", 0);
+		
+	}
+
+	
 }

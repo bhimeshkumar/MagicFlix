@@ -82,7 +82,7 @@ public class SettingsAdapter extends ArrayAdapter<Item> {
 	private void buildSetLimitTextView(TextView textView){   
 	    LinearLayout.LayoutParams paramsExample = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT,1.0f);
 	    textView.setGravity(Gravity.CENTER);
-	    textView.setBackgroundResource(R.drawable.btn_age_setter);
+//	    textView.setBackgroundResource(R.drawable.btn_age_setter);
 	    paramsExample.setMargins(0, 0, 25, 0);
 	    textView.setPadding(10, 10, 10, 10);
 	    textView.setTextSize(18);

@@ -24,9 +24,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
+import android.media.MediaPlayer;
+import android.media.MediaPlayer.OnCompletionListener;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -40,12 +43,15 @@ import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.VideoView;
 import at.technikum.mti.fancycoverflow.FancyCoverFlow;
 
 import com.android.vending.billing.IInAppBillingService;
@@ -54,12 +60,14 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.localytics.android.LocalyticsAmpSession;
 import com.magicflix.goog.MagikFlix;
 import com.magicflix.goog.R;
+import com.magicflix.goog.api.data.AbstractDataRequest;
 import com.magicflix.goog.api.data.DataResult;
 import com.magicflix.goog.app.adapters.CategoryAdapter;
 import com.magicflix.goog.app.adapters.MovieAdapter;
 import com.magicflix.goog.app.adapters.PlayListAdapter;
 import com.magicflix.goog.app.api.MFlixJsonBuilder;
 import com.magicflix.goog.app.api.MFlixJsonBuilder.WebRequestType;
+import com.magicflix.goog.app.api.Model.UserProfile;
 import com.magicflix.goog.app.api.requests.AddSubscriptionrequest;
 import com.magicflix.goog.app.api.requests.PromoCodeRequest;
 import com.magicflix.goog.app.api.requests.RedeemCodeRequest;
@@ -73,13 +81,16 @@ import com.magicflix.goog.app.api.results.SubscriptionResult;
 import com.magicflix.goog.app.api.results.VideoResult;
 import com.magicflix.goog.app.api.results.Videos;
 import com.magicflix.goog.app.asyntasks.DataApiAsyncTask;
+import com.magicflix.goog.app.db.Db4oHelper;
 import com.magicflix.goog.app.utils.Constants;
 import com.magicflix.goog.app.utils.Utils;
 import com.magicflix.goog.broadcasts.FavouriteChangeListner;
 import com.magicflix.goog.subscription.IabHelper;
 import com.magicflix.goog.subscription.IabResult;
 import com.magicflix.goog.subscription.Purchase;
+import com.magicflix.goog.utils.CompatibilityUtil;
 import com.magicflix.goog.utils.MLogger;
+import com.magicflix.goog.utils.NetworkConnection;
 
 public class HomeActivity extends BaseActivity implements OnItemSelectedListener, OnItemClickListener,  OnClickListener, android.widget.AdapterView.OnItemClickListener {
 
@@ -94,7 +105,8 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 	private String mRecentVideoId = null;
 	private ArrayList<Videos> filteredVideoList;
 	private ActionBar mActionBar;
-	private ImageView mTermsOfUseIV;
+	private RelativeLayout mSettingsLayout, mProfileLayout;
+	private ImageView mActionBarPriofileIV;
 	private TextView mCategoryNameTv , mNoVideoFoundTV, noNetworkTV;
 	private FavouriteChangeListner mFavouriteChangeListner;
 	private IntentFilter mFavIntentFilter; 
@@ -118,22 +130,88 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 	private Button mTimerValueTV;
 	private Button mActionBarSubscribeBtn ,mActionBarAppTimerBtn;
 	private boolean mIsDataLoading = false;
+	private VideoView mVideoView;
 
+	private AsyncTask<AbstractDataRequest, Void, DataResult<?>> mVideoAsycTask;
+	private UserProfile mUserProfile;
+	private RelativeLayout mPlayListLayout;
+	private Db4oHelper mDb4oProvider;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		setContentView(R.layout.activity_main);
-		setUpActionBar();
 		init();
 		setIdsToViews();
 		setListnersToViews();
+
 		if(Constants.IS_SUBSCRIPTION_ENABLED){
 			getUserSubscription();
 		}else{
-			((MagikFlix)getApplicationContext()).setVideosResult(null);
-			getVideos(((MagikFlix)getApplicationContext()).getToken());
+			mApplication.setVideosResult(null);
+			getVideos(mApplication.getToken());
 		}
+
+		Bundle bundle = getIntent().getExtras();
+		boolean isFromSplashScreen = false;
+		if(bundle != null){
+			isFromSplashScreen = bundle.getBoolean("isFromSplashScreen",false);
+		}
+		if(isFromSplashScreen){
+			playVideo();
+		}else{
+			mVideoView.setVisibility(View.GONE);
+		}
+	}
+
+
+	private void setUpProfileImage() {
+		int selectedProfileIndex = mApplication.getSelectedProfileIndex();
+		Db4oHelper db4oProvider  = new Db4oHelper(this);
+		UserProfile userProfile = db4oProvider.getUserProfileById(selectedProfileIndex);
+		if(userProfile != null && userProfile.avatar != null && userProfile.avatar.length() > 0){
+			Bitmap avatarBitmap = BitmapFactory.decodeFile(userProfile.avatar);
+			if(avatarBitmap != null){
+				mActionBarPriofileIV.setImageBitmap(avatarBitmap);
+			}else{
+				setDefaulttImage(selectedProfileIndex);
+			}
+		}else{
+			setDefaulttImage(selectedProfileIndex);
+		}
+	}
+
+
+	private void setDefaulttImage(int selectedProfileIndex) {
+
+		UserProfile userProfile = new Db4oHelper(this).getUserProfiles().get(mApplication.getSelectedProfileIndex());
+
+		if(userProfile.avatar != null && userProfile.avatar.length() > 0){
+			Bitmap myBitmap = BitmapFactory.decodeFile(userProfile.avatar);
+			mActionBarPriofileIV.setImageBitmap(myBitmap);
+
+		}else{
+			mActionBarPriofileIV.setImageURI(Uri.parse(userProfile.deaultAvatar));
+		}
+	}
+
+
+	private void playVideo() {
+		mActionBar.hide();
+		String path = "android.resource://" + getPackageName() + "/" + R.raw.splash_screen_video;
+		mVideoView.setVideoURI(Uri.parse(path));
+		mVideoView.start();
+		mVideoView.setOnCompletionListener(new OnCompletionListener() {
+
+			@Override
+			public void onCompletion(MediaPlayer mp) {
+				mVideoView.setVisibility(View.GONE);
+				mActionBar.show();
+
+			}
+		});
+
 	}
 
 	private void setUpUI() {
@@ -147,10 +225,32 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 	}
 
 	private void init() {
+		try {
+			mActionBar = setUpCustomActionBar(false);
+		} catch (IOException e) {
+			MLogger.logInfo(TAG, "Exception in setUpActionBar() :: "+e.getMessage());
+		}
+
 		mApplication = (MagikFlix)getApplication();
+		mDb4oProvider = new Db4oHelper(this);
+		System.out.println("DB count :: "+mDb4oProvider.getUserProfiles().size());
+		if(mDb4oProvider.getUserProfiles().size() == 0){
+			UserProfile userProfile = new UserProfile();
+			userProfile.childName =  "";
+			userProfile.id = 0;
+			userProfile.age = String.valueOf(mApplication.getDefaultAge());
+			userProfile.email = mApplication.getEmail();
+			userProfile.deaultAvatar =  "android.resource://com.magicflix.goog/" + R.drawable.avatar_blue;
+			mDb4oProvider.store(userProfile);
+			mApplication.setSelectedProfileIndex(0);
+		}
+
+		mUserProfile = mDb4oProvider.getUserProfileById(mApplication.getSelectedProfileIndex());
+
 		mLocalyticsSession = ((MagikFlix)getApplication()).getLocatyticsSession();
 		mLocaliticsAttributes = new HashMap<String, String>();
-		this.fancyCoverFlow = (FancyCoverFlow) this.findViewById(R.id.mainActivity_movie_list);
+
+
 		filteredVideoList = new ArrayList<Videos>();
 		filteredVideoList.clear();
 		mFavIntentFilter = new IntentFilter("com.magikflic.goog.FAVOURITE_CHANGE");
@@ -170,19 +270,13 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 		}
 	}
 
-	private void setUpActionBar() {
-		try {
-			mActionBar = setUpCustomActionBar(false);
-		} catch (IOException e) {
-			MLogger.logInfo(TAG, "Exception in setUpActionBar() :: "+e.getMessage());
-		}
-	}
-
 	private void setListnersToViews() {
 		mPlayListListView.setOnItemClickListener(this);
-		mTermsOfUseIV.setOnClickListener(this);
+		mSettingsLayout.setOnClickListener(this);
+		mProfileLayout.setOnClickListener(this);
 		mActionBarSubscribeBtn.setOnClickListener(this);
 		mActionBarAppTimerBtn.setOnClickListener(this);
+		mActionBarPriofileIV.setOnClickListener(this);
 		mTimerValueTV.setOnClickListener(this);
 	}
 
@@ -198,8 +292,15 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 		this.fancyCoverFlow.setMaxRotation(0);
 		this.fancyCoverFlow.setScaleDownGravity(0.5f);
 		fancyCoverFlow.setAnimationDuration(500);
-		this.fancyCoverFlow.setSelection((movieVideos.size()) > 1 ? 1 :0, true);
 		fancyCoverFlow.setOnItemClickListener(this);
+		try {
+			this.fancyCoverFlow.setSelection((movieVideos.size()) > 1 ? 1 :0, true);
+		} catch (Exception e) {
+			MLogger.logInfo(TAG, "Exception :: "+e.getLocalizedMessage());
+		}
+
+
+
 	}
 
 	private ArrayList<Videos>  getRecommendedVideos() {
@@ -209,7 +310,9 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 				for (String videoId : playlist.videoIds) {
 					for (Videos videos : ((MagikFlix)getApplicationContext()).getVideoResult().videos) {
 						if(videoId.equalsIgnoreCase(videos.videoId)){
-							recommendedVideos.add(videos);
+							if((videos.minAge <= Integer.parseInt(mUserProfile.age)) && (videos.maxAge >= Integer.parseInt(mUserProfile.age)) ){
+								recommendedVideos.add(videos);
+							}
 						}
 					}
 				}
@@ -219,16 +322,23 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 	}
 
 	private void setIdsToViews() {
+		mVideoView = (VideoView)findViewById(R.id.main_screen_video_view);
 		mCategoryNameTv = (TextView)findViewById(R.id.category_name_tv);
 		mCategoryListView = (HListView)findViewById(R.id.main_screen_category_list);
 		mPlayListListView = (HListView)findViewById(R.id.main_screen_play_list);
 		mProgressBar = (ProgressBar)findViewById(R.id.home_screen_pb);
-		mTermsOfUseIV = (ImageView)mActionBar.getCustomView().findViewById(R.id.actionBar_terms_of_use_iv);
+		mSettingsLayout = (RelativeLayout)mActionBar.getCustomView().findViewById(R.id.actionBar_family_settings_layout);
+		mProfileLayout = (RelativeLayout)mActionBar.getCustomView().findViewById(R.id.actionBar_profile_layout);
 		mNoVideoFoundTV = (TextView)findViewById(R.id.main_screen_no_videos_tv);
 		noNetworkTV  = (TextView)findViewById(R.id.main_screen_no_network_tv);
 		mTimerValueTV = (Button)mActionBar.getCustomView().findViewById(R.id.actionBar_timer_value_tv);
 		mActionBarSubscribeBtn = (Button)mActionBar.getCustomView().findViewById(R.id.actionBar_subscribe_btn);
 		mActionBarAppTimerBtn = (Button)mActionBar.getCustomView().findViewById(R.id.actionBar_app_timer_btn);
+		mActionBarPriofileIV =  (ImageView)mActionBar.getCustomView().findViewById(R.id.actionBar_profile_iv);
+		if(CompatibilityUtil.isTablet(this)){
+			this.fancyCoverFlow = (FancyCoverFlow) this.findViewById(R.id.mainActivity_movie_list);
+		}
+		mPlayListLayout = (RelativeLayout)findViewById(R.id.play_list_layout);
 	}
 
 
@@ -316,7 +426,6 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 		if (requestCode == 1) {
 			if(resultCode == RESULT_OK){
 				mRecentVideoId =data.getStringExtra("recentVideoId");
-				MLogger.logInfo(TAG, "RecentVideo :"+mRecentVideoId);
 				getRecentPlayList("Recent Videos");
 			}
 		}else if (requestCode == 10001) {           
@@ -348,7 +457,7 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 		loginRequest.appversion = Utils.getAppVersion(this);
 		loginRequest.requestDelegate = new MFlixJsonBuilder();
 		loginRequest.requestType =  WebRequestType.GET_VIDEOS;	
-		new DataApiAsyncTask(true, this, videosHandler, null).execute(loginRequest);
+		mVideoAsycTask = new DataApiAsyncTask(true, this, videosHandler, null).execute(loginRequest);
 	}
 
 	private Handler videosHandler = new Handler(){
@@ -362,50 +471,58 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 
 	private void processVideoResults(DataResult<VideoResult> obj) {
 		if(obj.entity != null ){
-			mTermsOfUseIV.setVisibility(View.VISIBLE);
-			Playlists[] playLists = obj.entity.playlists;
-			ArrayList<Playlists> categoriesList = new ArrayList<Playlists>();
-
-			for (Playlists playList : playLists) {
-				if(playList.playlistType.equalsIgnoreCase(this.getResources().getString(R.string.category_header))){
-					categoriesList.add(playList);
-				}
-			}
-			mCategoryPlayLists = categoriesList.toArray(new Playlists[categoriesList.size()]);
-			((MagikFlix)getApplicationContext()).setVideosResult(obj.entity);
-			setCategoryAdapter();
-			setFavoriteVideos();
-
-			setUpUI();
-
-			if(Constants.IS_SUBSCRIPTION_ENABLED){
-				boolean isSubscriptionRestored = ((MagikFlix)getApplicationContext()).isSubscriptionRestored();
-				if (mTimerValueTV != null){
-					mTimerValueTV.setVisibility((mIsUserSubscribed || isSubscriptionRestored) ? View.GONE :View.VISIBLE);
-				}
-				if (mActionBarSubscribeBtn != null){
-					mActionBarSubscribeBtn.setVisibility((mIsUserSubscribed || isSubscriptionRestored) ? View.GONE :View.VISIBLE);
-				}
-
-				if(!mIsUserSubscribed || !(((MagikFlix)getApplicationContext()).isSubscriptionRestored())){
-					Constants.TIMERLIMIT = Integer.parseInt(obj.entity.appConfig.Settings[6].SettingValue);
-					MagikFlix app = (MagikFlix)getApplicationContext();
-					app.setFreeTrailPeriod(Constants.TIMERLIMIT);
-					if(app.isTrialPeriodExpired()){
-						PopupWindow popupWindow = getTrialExpiredPopUp(getString(R.string.times_up_txt));
-						popupWindow.showAtLocation(popupWindow.getContentView(), Gravity.CENTER, 0, 0);
-					}else{
-						mTimerValueTV.setVisibility(View.VISIBLE);
-						setFreeTrialValue();
-						showCustomAlert("Enjoy your free trial of " +Constants.TIMERLIMIT+" min(s) today.");
-					}
-				}
-			}
-			runAppTimer();
+			mPlayListLayout.setVisibility(View.VISIBLE);
+			mCategoryNameTv.setVisibility(View.VISIBLE);
+			VideoResult videoResult = obj.entity;
+			mApplication.setVideosResult(videoResult);
+			setUpUI(videoResult);
 		}else{
 			mIsDataLoading = false;
 			((MagikFlix)getApplicationContext()).setVideosResult(null);
 		}
+	}
+
+	private void setUpUI(VideoResult videoResult) {
+		mSettingsLayout.setVisibility(View.VISIBLE);
+		mProfileLayout.setVisibility(View.VISIBLE);
+		Playlists[] playLists = videoResult.playlists;
+		ArrayList<Playlists> categoriesList = new ArrayList<Playlists>();
+
+		for (Playlists playList : playLists) {
+			if(playList.playlistType.equalsIgnoreCase(this.getResources().getString(R.string.category_header))){
+				categoriesList.add(playList);
+			}
+		}
+		mCategoryPlayLists = categoriesList.toArray(new Playlists[categoriesList.size()]);
+		setCategoryAdapter();
+		setFavoriteVideos();
+
+		setUpUI();
+
+		if(Constants.IS_SUBSCRIPTION_ENABLED){
+			boolean isSubscriptionRestored = ((MagikFlix)getApplicationContext()).isSubscriptionRestored();
+			if (mTimerValueTV != null){
+				mTimerValueTV.setVisibility((mIsUserSubscribed || isSubscriptionRestored) ? View.GONE :View.VISIBLE);
+			}
+			if (mActionBarSubscribeBtn != null){
+				mActionBarSubscribeBtn.setVisibility((mIsUserSubscribed || isSubscriptionRestored) ? View.GONE :View.VISIBLE);
+			}
+
+			if(!mIsUserSubscribed || !(((MagikFlix)getApplicationContext()).isSubscriptionRestored())){
+				Constants.TIMERLIMIT = Integer.parseInt(videoResult.appConfig.Settings[6].SettingValue);
+				MagikFlix app = (MagikFlix)getApplicationContext();
+				app.setFreeTrailPeriod(Constants.TIMERLIMIT);
+				if(app.isTrialPeriodExpired()){
+					PopupWindow popupWindow = getTrialExpiredPopUp(getString(R.string.times_up_txt));
+					popupWindow.showAtLocation(popupWindow.getContentView(), Gravity.CENTER, 0, 0);
+				}else{
+					mTimerValueTV.setVisibility(View.VISIBLE);
+					setFreeTrialValue();
+					showCustomAlert("Enjoy your free trial of " +Constants.TIMERLIMIT+" min(s) today.");
+				}
+			}
+		}
+		runAppTimer();
 	}
 
 	private void setFreeTrialValue() {
@@ -434,7 +551,9 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 	private void setCategoryAdapter() {
 		mCategoryListView.setAdapter(new CategoryAdapter(this,mCategoryPlayLists));
 		setPlayList(3);
-		setMovieAdapter();
+		if(CompatibilityUtil.isTablet(this)){
+			setMovieAdapter();
+		}
 		mProgressBar.setVisibility(View.GONE);
 	}
 
@@ -454,7 +573,9 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 		}else{
 			for (Videos video : ((MagikFlix)getApplicationContext()).getVideoResult().videos) {
 				if(video.category.equalsIgnoreCase(categoryName)){
-					videosList.add(video);
+					if((video.minAge <= Integer.parseInt(mUserProfile.age)) && (video.maxAge >= Integer.parseInt(mUserProfile.age)) ){
+						videosList.add(video);
+					}
 				}
 			}
 		}
@@ -466,6 +587,13 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 		}else{
 			mPlayListListView.setVisibility(View.GONE);
 			mNoVideoFoundTV.setVisibility(View.VISIBLE);
+			if(categoryName.contains("My Videos")){
+				mNoVideoFoundTV.setText(R.string.my_videos_empty_list_msg);
+			}else if(categoryName.contains("Favorite Videos")){
+				mNoVideoFoundTV.setText(R.string.favorite_videos_empty_list_msg);
+			}else{
+				mNoVideoFoundTV.setText(R.string.info_no_videos_found);
+			}
 		}
 
 	}
@@ -490,7 +618,9 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 		for (Videos videos : ((MagikFlix)getApplicationContext()).getVideoResult().videos) {
 			if(videos.isFavorite){
 				videos.isFavorite = true;
-				favVideosList.add(videos);
+				if((videos.minAge <= Integer.parseInt(mUserProfile.age)) && (videos.maxAge >= Integer.parseInt(mUserProfile.age)) ){
+					favVideosList.add(videos);
+				}
 			}
 		}
 		HashSet<Videos> hashSet = new HashSet<Videos>(favVideosList);
@@ -504,7 +634,9 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 					for (String videoId : playlist.videoIds) {
 						for (Videos videos : ((MagikFlix)getApplicationContext()).getVideoResult().videos) {
 							if(videoId.equalsIgnoreCase(videos.videoId)){
-								filteredVideoList.add(videos);
+								if((videos.minAge <= Integer.parseInt(mUserProfile.age)) && (videos.maxAge >= Integer.parseInt(mUserProfile.age)) ){
+									filteredVideoList.add(videos);
+								}
 							}
 						}
 					}
@@ -541,8 +673,8 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 	@Override
 	public void onClick(View view) {
 		switch (view.getId()) {
-		case R.id.actionBar_terms_of_use_iv:
-			startActivity(new Intent(this,TermsOfUseActivity.class));
+		case R.id.actionBar_family_settings_layout:
+			startActivity(new Intent(this,OnBoardingScreen.class));
 			break;
 		case R.id.actionBar_subscribe_btn:
 			showSubscriptionPopUp();
@@ -564,6 +696,9 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 		case R.id.actionBar_app_timer_btn:
 			startActivity(new Intent(this,SettingsActivity.class));
 			break;
+		case R.id.actionBar_profile_iv:
+			startActivity(new Intent(this,ProfileSelectionActivity.class));
+			break;
 		default:
 			break;
 		}
@@ -572,12 +707,18 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 	@Override
 	public void onBackPressed() {
 		super.onBackPressed();
+
+		if(mVideoAsycTask != null){
+			mVideoAsycTask.cancel(true);
+		}
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
 		try {
+			registerReceiver(mFavouriteChangeListner, mFavIntentFilter);
+			registerReceiver(mConnReceiver,  new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
 
 			if(Constants.IS_SUBSCRIPTION_ENABLED)
 				setFreeTrialValue();
@@ -587,12 +728,25 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 				Constants.TIMER_LIMIT_UPDATED = false;
 				runAppTimer();
 			}
-			registerReceiver(mFavouriteChangeListner, mFavIntentFilter);
-			registerReceiver(mConnReceiver,  new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+
+			setUpProfileImage();
+			doAgeFilter();
+
 		} catch (Exception e) {
 			MLogger.logInfo(TAG, "Exception in onResume() :: "+e.getMessage());
 		}
 	}
+
+	private void doAgeFilter() {
+		if(Constants.IS_PROFILE_SELECTION_CHANGED){
+			mUserProfile = mDb4oProvider.getUserProfileById(mApplication.getSelectedProfileIndex());
+			setPlayList(Constants.CATEGORY_SELECTED_POSITION);
+			Constants.IS_PROFILE_SELECTION_CHANGED = false;
+
+		}
+
+	}
+
 
 	@Override
 	protected void onRestart() {
@@ -605,7 +759,7 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 		unregisterReceiver(mConnReceiver);
 	}
 
-	private BroadcastReceiver mConnReceiver = new BroadcastReceiver() {
+	/*private BroadcastReceiver mConnReceiver = new BroadcastReceiver() {
 		public void onReceive(Context context, Intent intent) {
 			NetworkInfo currentNetworkInfo = (NetworkInfo) intent.getParcelableExtra(ConnectivityManager.EXTRA_NETWORK_INFO);
 			if(!currentNetworkInfo.isConnected()){
@@ -624,6 +778,32 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 				}
 			}
 		}
+	};*/
+
+	private BroadcastReceiver mConnReceiver = new BroadcastReceiver() {
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			if(!NetworkConnection.isConnected(context)){
+				mProgressBar.setVisibility(View.GONE);
+				if(((MagikFlix)getApplicationContext()).getVideoResult() == null)
+					noNetworkTV.setVisibility(View.VISIBLE);
+				else
+					noNetworkTV.setVisibility(View.GONE);
+			}else{
+				noNetworkTV.setVisibility(View.GONE);
+				if(((MagikFlix)getApplicationContext()).getVideoResult() == null && !mIsDataLoading){
+					mProgressBar.setVisibility(View.VISIBLE);
+					if(Constants.IS_SUBSCRIPTION_ENABLED){
+						getUserSubscription();
+					}else{
+						getVideos(((MagikFlix)getApplicationContext()).getToken());
+					}
+				}
+			}
+
+		}
+
 	};
 
 	@Override
@@ -682,7 +862,6 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 	private void processUserSubscriptionResults(DataResult<SubscriptionResult> obj) {
 		if(obj.entity != null ){
 			boolean isSubscribed = obj.entity.isSubscribed;
-			MLogger.logInfo(TAG, "isUserSubscribed :: "+isSubscribed);
 			mIsUserSubscribed = isSubscribed;
 			((MagikFlix)getApplicationContext()).setIsUserSubscribed(mIsUserSubscribed);
 			getVideos(((MagikFlix)getApplicationContext()).getToken());
@@ -916,14 +1095,12 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 
 		@Override
 		public void onFinish() {
-			MLogger.logInfo(TAG, "On Finish");
 			mActionBarAppTimerBtn.setTextColor(Color.RED);
 			mActionBarAppTimerBtn.setText("0");
 		}
 
 		@Override
 		public void onTick(long millisUntilFinished) {
-			MLogger.logInfo(TAG, "On tick :: "+((int) (millisUntilFinished / 1000))/60);
 			setAppTimer(millisUntilFinished);
 		}
 	}
@@ -975,7 +1152,11 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 					mActionBarAppTimerBtn.setText(String.valueOf(msg.arg1/60000));
 					if (timerValue > 0){
 						if(timerValue < 5){
+							Constants.IS_APP_TIMER_SHOWN = true;
+							dismissTimerPopUp();
 							mActionBarAppTimerBtn.setTextColor(HomeActivity.this.getResources().getColor(R.color.category_disable_color));
+							Intent intnet = new Intent(Constants.INTENT_APP_ALERT_DISMISS);
+							sendBroadcast(intnet);
 						}else if(timerValue == 5){
 							Constants.APP_TIMER_VALUE = 5;
 							Intent intnet = new Intent(Constants.INTENT_APP_TIMER_EXPIRED);
@@ -1004,6 +1185,7 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 						mActionBarAppTimerBtn.setTextColor(Color.RED);
 						handler.removeCallbacksAndMessages(null);
 					}
+
 				} catch (Exception e) {
 					MLogger.logInfo(TAG, "Exception :: Timer Handler "+ e.getMessage());
 				}
@@ -1015,7 +1197,7 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 	};
 
 	private void dismissTimerPopUp() {
-		if(mAppTimerPopupWindow != null && mAppTimerPopupWindow.isShowing()){
+		if(Constants.IS_APP_TIMER_SHOWN && mAppTimerPopupWindow != null && mAppTimerPopupWindow.isShowing()){
 			mAppTimerPopupWindow.dismiss();
 		}
 	}

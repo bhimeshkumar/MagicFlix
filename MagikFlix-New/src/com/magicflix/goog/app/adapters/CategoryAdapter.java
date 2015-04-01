@@ -21,8 +21,6 @@ import com.magicflix.goog.R;
 import com.magicflix.goog.app.activities.HomeActivity;
 import com.magicflix.goog.app.api.results.Playlists;
 import com.magicflix.goog.app.utils.Constants;
-import com.magicflix.goog.utils.CompatibilityUtil;
-import com.magicflix.goog.utils.MLogger;
 import com.squareup.picasso.Picasso;
 
 public class CategoryAdapter extends BaseAdapter{
@@ -108,40 +106,20 @@ public class CategoryAdapter extends BaseAdapter{
 		if (selectedStates.get(position)){
 			holder.movieThumbnailTV.requestLayout();
 			holder.mInnerCircleLayout.requestLayout();
-
-
-
-			//			if(CompatibilityUtil.isTablet(mContext)){
-			//				holder.movieThumbnailTV.requestLayout();
-			//				holder.movieThumbnailTV.getLayoutParams().height = enableCategoryWidthHeight;
-			//				holder.movieThumbnailTV.getLayoutParams().width = enableCategoryWidthHeight;
-			//				holder.mInnerCircleLayout .getLayoutParams().height = enableCategoryWidthHeight;
-			//				holder.mInnerCircleLayout .getLayoutParams().width = enableCategoryWidthHeight;
-			//			}else{
 			holder.movieThumbnailTV.requestLayout();
 			holder.movieThumbnailTV.getLayoutParams().height = enableCategoryWidthHeight;
 			holder.movieThumbnailTV.getLayoutParams().width = enableCategoryWidthHeight;
 			holder.mInnerCircleLayout .getLayoutParams().height = enableCategoryWidthHeight;
 			holder.mInnerCircleLayout .getLayoutParams().width = enableCategoryWidthHeight;
-			//			}
 			holder.mInnerCircleLayout.setBackground(mContext.getResources().getDrawable(R.drawable.icon_outline_color_selected));
 		}
 		else {
 			holder.mInnerCircleLayout.requestLayout();
-//			if(CompatibilityUtil.isTablet(mContext)){
-//				holder.movieThumbnailTV.requestLayout();
-//				holder.movieThumbnailTV.getLayoutParams().height = dpToPx(80);
-//				holder.movieThumbnailTV.getLayoutParams().width = dpToPx(80);
-//				holder.mInnerCircleLayout .getLayoutParams().height = dpToPx(80);
-//				holder.mInnerCircleLayout .getLayoutParams().width = dpToPx(80);
-//			}else{
-				holder.movieThumbnailTV.requestLayout();
-				holder.movieThumbnailTV.getLayoutParams().height = disableCategoryWidthHeight;
-				holder.movieThumbnailTV.getLayoutParams().width = disableCategoryWidthHeight;
-				holder.mInnerCircleLayout .getLayoutParams().height = disableCategoryWidthHeight;
-				holder.mInnerCircleLayout .getLayoutParams().width = disableCategoryWidthHeight;
-//			}
-
+			holder.movieThumbnailTV.requestLayout();
+			holder.movieThumbnailTV.getLayoutParams().height = disableCategoryWidthHeight;
+			holder.movieThumbnailTV.getLayoutParams().width = disableCategoryWidthHeight;
+			holder.mInnerCircleLayout .getLayoutParams().height = disableCategoryWidthHeight;
+			holder.mInnerCircleLayout .getLayoutParams().width = disableCategoryWidthHeight;
 			holder.mInnerCircleLayout.setBackground(mContext.getResources().getDrawable(R.drawable.icon_outline_color_unselected));
 		}
 		holder.category_title_tv.setVisibility(View.GONE);
@@ -161,7 +139,6 @@ public class CategoryAdapter extends BaseAdapter{
 		public TextView category_title_tv;
 		public TextView movieNameTV;
 		public ImageView movieThumbnailTV;
-		//		public RelativeLayout mOuterCircleLayout;
 		public RelativeLayout mInnerCircleLayout;
 	}
 

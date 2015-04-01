@@ -125,10 +125,8 @@ public class MFlixJsonBuilder extends BaseBuilder {
 		String data = "{"+"videoid:"+gson.toJson(dataRequest.videoId)+"}";
 		HttpResult httpResult ;
 		if(dataRequest.isFavorite){
-			System.out.println("favourite--");
 			httpResult = httpHelper.postString(MFlixUrlBuilder.postFavVideos(dataRequest), data);
 		}else{
-			System.out.println("Un favourite--");
 			httpResult = httpHelper.deleteString(MFlixUrlBuilder.removeFavVideoURL(dataRequest));
 		}
 		DataResult<String> result= new DataResult<String>();
@@ -179,7 +177,6 @@ public class MFlixJsonBuilder extends BaseBuilder {
 
 		Gson gson = new Gson();
 		String json = gson.toJson(dataRequest.subscriptionModel);
-		System.out.println("Json subscription-->"+json);
 		HttpResult httpResult = httpHelper.postString(MFlixUrlBuilder.getAddSubcriptionURL(dataRequest), json,Constants.AUTH_KEY);
 		DataResult<AddSubscriptionResult> result= new DataResult<AddSubscriptionResult>();
 		result.successful = isResultSuccesfull(httpResult);

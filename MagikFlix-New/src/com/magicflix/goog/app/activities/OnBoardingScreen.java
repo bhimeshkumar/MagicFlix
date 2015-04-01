@@ -1,9 +1,13 @@
 package com.magicflix.goog.app.activities;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -12,6 +16,8 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.PopupWindow;
+import android.widget.PopupWindow.OnDismissListener;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -31,9 +37,14 @@ import com.magicflix.goog.app.api.results.GuestResult;
 import com.magicflix.goog.app.asyntasks.DataApiAsyncTask;
 import com.magicflix.goog.app.utils.Constants;
 import com.magicflix.goog.app.utils.Utils;
+import com.magicflix.goog.broadcasts.AppTimerBroadCastReceiver;
+import com.magicflix.goog.broadcasts.PopUpDismissBroadCastReceiver;
+import com.magicflix.goog.utils.MLogger;
+import com.magicflix.goog.utils.NetworkConnection;
 
-public class OnBoardingScreen extends BaseActivity implements OnClickListener, OnEditorActionListener{
+public class OnBoardingScreen extends BaseActivity implements OnClickListener, OnEditorActionListener, OnDismissListener{
 
+	private static String TAG = HomeActivity.class.getName();
 	private Button mParentControlBtn;
 	private Handler handel = new Handler();
 	private LinearLayout mEmailLayout;
@@ -43,6 +54,15 @@ public class OnBoardingScreen extends BaseActivity implements OnClickListener, O
 	private ProgressBar mProgressBar;
 	private RelativeLayout mParentGateWayLayout;
 	private Button mSkipBtn;
+	private TextView mNoNetworkTV;
+
+	private boolean mIsDataLoaded = false;
+	private MagikFlix mApplication;
+	private boolean isFromSplashScreen = false;
+	private AppTimerBroadCastReceiver mAppTimerBroadCastReceiver;
+	private IntentFilter mAppTimerIntent,mPopUpDismissIntent;
+	private PopUpDismissBroadCastReceiver mPopUpDismissBroadCastReceiver;
+	private PopupWindow popupWindow;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -51,9 +71,14 @@ public class OnBoardingScreen extends BaseActivity implements OnClickListener, O
 		init();
 		setIdsToViews();
 		setListnersToViews();
-		getAppConfiguration();
+		if(isFromSplashScreen){
+			getAppConfiguration();
+		}else{
+			mProgressBar.setVisibility(View.GONE);
+			mParentGateWayLayout.setVisibility(View.VISIBLE);
+		}
 	}
-	
+
 	private void getAppConfiguration(){
 		mParentGateWayLayout.setVisibility(View.GONE);
 		mProgressBar.setVisibility(View.VISIBLE);
@@ -80,7 +105,7 @@ public class OnBoardingScreen extends BaseActivity implements OnClickListener, O
 			getUserIdAndToken();
 		}
 	}
-	
+
 	private void getUserIdAndToken(){
 		MagikFlix app = (MagikFlix) getApplicationContext();
 		String token = app.getToken();
@@ -91,7 +116,7 @@ public class OnBoardingScreen extends BaseActivity implements OnClickListener, O
 			mParentGateWayLayout.setVisibility(View.VISIBLE);
 		}
 	}
-	
+
 	private void createGuestUser() {
 		GuestRequest  guestRequest = new GuestRequest();
 		guestRequest.appid = getPackageName();
@@ -118,6 +143,7 @@ public class OnBoardingScreen extends BaseActivity implements OnClickListener, O
 			String userId = obj.entity.user;
 			String token = obj.entity.token;
 			saveUserIdAndToken(userId,token);
+			mIsDataLoaded = true;
 		}
 		mProgressBar.setVisibility(View.GONE);
 		mParentGateWayLayout.setVisibility(View.VISIBLE);
@@ -130,6 +156,7 @@ public class OnBoardingScreen extends BaseActivity implements OnClickListener, O
 	}
 	private void saveConfigSettings(AppConfigResult entity) {
 		MagikFlix app = (MagikFlix) getApplication();
+		app.setAppConfiguration(entity);
 		app.setIsEmailOptional(entity.appConfig.Settings[3].SettingValue);
 		app.setDefaultAge(entity.appConfig.Settings[2].SettingValue);
 		app.setMinAge(entity.appConfig.Settings[0].SettingValue);
@@ -142,22 +169,25 @@ public class OnBoardingScreen extends BaseActivity implements OnClickListener, O
 		mEmailLayout.setOnClickListener(this);
 		mSkipBtn.setOnClickListener(this);
 		mParentControlBtn.setOnTouchListener(new View.OnTouchListener() {
-	        @Override
-	        public boolean onTouch(View arg0, MotionEvent arg1) {
-	            switch (arg1.getAction()) {
-	            case MotionEvent.ACTION_DOWN:
-	                handel.postDelayed(run, 3000/* OR the amount of time you want */);
-	                break;
-	            case MotionEvent.ACTION_CANCEL:
-	                handel.removeCallbacks(run);
-	                break;
-	            case MotionEvent.ACTION_UP:
-	                handel.removeCallbacks(run);
-	                break;
-	            }
-	            return true;
-	        }
-	    });
+			@Override
+			public boolean onTouch(View arg0, MotionEvent arg1) {
+				switch (arg1.getAction()) {
+				case MotionEvent.ACTION_DOWN:
+					mParentControlBtn.setBackground(getResources().getDrawable(R.drawable.shape_circular_selected));
+					handel.postDelayed(run, 3000/* OR the amount of time you want */);
+					break;
+				case MotionEvent.ACTION_CANCEL:
+					mParentControlBtn.setBackground(getResources().getDrawable(R.drawable.shape_circular));
+					handel.removeCallbacks(run);
+					break;
+				case MotionEvent.ACTION_UP:
+					mParentControlBtn.setBackground(getResources().getDrawable(R.drawable.shape_circular));
+					handel.removeCallbacks(run);
+					break;
+				}
+				return true;
+			}
+		});
 	}
 
 	private void setIdsToViews() {
@@ -167,25 +197,69 @@ public class OnBoardingScreen extends BaseActivity implements OnClickListener, O
 		mProgressBar = (ProgressBar)findViewById(R.id.on_boarding_screen_pb);
 		mParentGateWayLayout = (RelativeLayout)findViewById(R.id.on_boarding_parent_gate_way_layout);
 		mSkipBtn = (Button)findViewById(R.id.on_board_screen_skip_btn);
+		mNoNetworkTV  = (TextView)findViewById(R.id.on_boarding_screen_no_network_tv);
+
 	}
 
 	private void init() {
-		getActionBar().hide();	
+		Bundle bundle = getIntent().getExtras();
+		if(bundle != null){
+			isFromSplashScreen = bundle.getBoolean("isFromSplashScreen",false);
+		}
+		getActionBar().hide();
+		mApplication = (MagikFlix)getApplication();
 		APP_VERSION = Utils.getAppVersion(this);
 		mLocalyticsSession = ((MagikFlix)getApplicationContext()).getLocatyticsSession();
 		if(mLocalyticsSession != null)
 			mLocalyticsSession.tagEvent(Constants.PARENT_GATE_OPEN);
+		
+		mAppTimerIntent = new IntentFilter(Constants.INTENT_APP_TIMER_EXPIRED);
+		
+		 mAppTimerBroadCastReceiver = new AppTimerBroadCastReceiver() {
+			
+			@Override
+			protected void onTimerExpired() {
+				showTimerAlert();
+				
+			}
+		};
+		
+		mPopUpDismissIntent = new IntentFilter(Constants.INTENT_APP_ALERT_DISMISS);
+		mPopUpDismissBroadCastReceiver = new PopUpDismissBroadCastReceiver() {
+
+			@Override
+			protected void dismissPopUp() {
+				try {
+					if(popupWindow != null && popupWindow.isShowing()){
+						popupWindow.dismiss();
+					}
+				} catch (Exception e) {
+					MLogger.logInfo(TAG, "Exception in mPopUpDismissBroadCastReceiver ::"+e.getLocalizedMessage());
+				}
+			}
+		};
+	}
+	
+	private void showTimerAlert() {
+		popupWindow =getTrialExpiredPopUp((Constants.APP_TIMER_VALUE == 0) ? getString(R.string.times_up_txt) : getString(R.string.app_timer_msg));
+		popupWindow.showAtLocation(popupWindow.getContentView(), Gravity.CENTER, 0, 0);
+		popupWindow.setOnDismissListener(this);
 	}
 
 	Runnable run = new Runnable() {
 		@Override
 		public void run() {
-			if(mLocalyticsSession != null)
-				mLocalyticsSession.tagEvent(Constants.PARENT_GATE_PASSED);
-			mEmailLayout.setVisibility(View.VISIBLE);
-			mParentControlBtn.setVisibility(View.GONE);
-			if(((MagikFlix)getApplication()).isEmailOptional()){
-				mSkipBtn.setVisibility(View.VISIBLE);
+			if(isFromSplashScreen){
+				if(mLocalyticsSession != null)
+					mLocalyticsSession.tagEvent(Constants.PARENT_GATE_PASSED);
+				mEmailLayout.setVisibility(View.VISIBLE);
+				mParentControlBtn.setVisibility(View.GONE);
+				if(((MagikFlix)getApplication()).isEmailOptional()){
+					mSkipBtn.setVisibility(View.VISIBLE);
+				}
+			}else{
+				OnBoardingScreen.this.finish();
+				startActivity(new Intent(OnBoardingScreen.this,FamilySetUpActivity.class));
 			}
 		}
 	};
@@ -204,30 +278,25 @@ public class OnBoardingScreen extends BaseActivity implements OnClickListener, O
 	@Override
 	public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 		if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE)) {
-			validateEmail(mEmailEt.getText().toString());
+			String email = mEmailEt.getText().toString();
+			if(email != null && email.length() >0){
+				if(Utils.isValidEmail(email)){
+					if(mLocalyticsSession != null)
+						mLocalyticsSession.tagEvent(Constants.EMAIL_IS_VALID);
+					registerEmail(email);
+				}else{
+					if(mLocalyticsSession != null)
+						mLocalyticsSession.tagEvent(Constants.EMAIL_INVALID);
+					showShortToast("Please enter valid email address");
+				}
+			}else{
+				showShortToast("Please enter your email");	
+			}
+
 		}  
 		return false;
 	}
 
-	private void validateEmail(String email) {
-
-		if(email != null && email.length() >0){
-			String EMAIL_REGEX = "^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$";
-			Boolean isValidEmail = email.matches(EMAIL_REGEX);
-
-			if(isValidEmail){
-				if(mLocalyticsSession != null)
-					mLocalyticsSession.tagEvent(Constants.EMAIL_IS_VALID);
-				registerEmail(email);
-			}else{
-				if(mLocalyticsSession != null)
-					mLocalyticsSession.tagEvent(Constants.EMAIL_INVALID);
-				showShortToast("Please enter valid email address");
-			}
-		}else{
-			showShortToast("Please enter your email");
-		}
-	}
 
 
 	public void registerEmail(String email) {
@@ -267,4 +336,52 @@ public class OnBoardingScreen extends BaseActivity implements OnClickListener, O
 		this.finish();
 		startActivity(new Intent(OnBoardingScreen.this,AgeSelectionActivity.class));
 	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		registerReceiver(mConnReceiver,  new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
+		registerReceiver(mAppTimerBroadCastReceiver, mAppTimerIntent);
+		registerReceiver(mPopUpDismissBroadCastReceiver, mPopUpDismissIntent);
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		unregisterReceiver(mConnReceiver);
+		unregisterReceiver(mAppTimerBroadCastReceiver);
+		unregisterReceiver(mPopUpDismissBroadCastReceiver);
+	}
+
+	private BroadcastReceiver mConnReceiver = new BroadcastReceiver() {
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			MLogger.logInfo(TAG, "isNetworkConnected :: "+NetworkConnection.isConnected(context));
+			//			mParentGateWayLayout.setVisibility(View.GONE);
+			//			if(!NetworkConnection.isConnected(context)){
+			//				mProgressBar.setVisibility(View.GONE);
+			//				mNoNetworkTV.setVisibility(View.VISIBLE);
+			//			}else if(mApplication.getAppConfiguration() == null){
+			//				mNoNetworkTV.setVisibility(View.GONE);
+			//				mProgressBar.setVisibility(View.VISIBLE);
+			//				getAppConfiguration();
+			//			}else {
+			//				mNoNetworkTV.setVisibility(View.GONE);
+			//				mProgressBar.setVisibility(View.VISIBLE);
+			//				getUserIdAndToken();
+			//			}
+
+		}
+
+	};
+	
+	@Override
+	public void onDismiss() {
+		Constants.IS_APP_TIMER_SHOWN = true;
+		
+	}
+
+	
+	
 }

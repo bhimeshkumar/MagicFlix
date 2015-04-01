@@ -4,15 +4,17 @@ import java.io.IOException;
 
 import android.annotation.SuppressLint;
 import android.app.ActionBar;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -48,13 +50,13 @@ public class BaseActivity extends YouTubeBaseActivity{
 	public Typeface getMagikFlixFontRegular(){
 		return Typeface.createFromAsset(getAssets(), "fonts/proxima_nova_regular.otf");
 	}
-	
+
 	public ProgressDialog getProgressDialog() {
 		ProgressDialog progressDialog = getProgressDialogInternal();
 		progressDialog.setMessage("Please wait...");
 		return progressDialog;
 	}
-	
+
 	private ProgressDialog getProgressDialogInternal() {
 		ProgressDialog progressDialog = new ProgressDialog(this);
 		return progressDialog;
@@ -62,12 +64,13 @@ public class BaseActivity extends YouTubeBaseActivity{
 
 
 
-	
+
 	@SuppressLint("InflateParams") public ActionBar setUpCustomActionBar(boolean homeButtonEnabled) throws IOException{
 		ActionBar actionBar = getActionBar();
-		actionBar.setDisplayShowCustomEnabled(true);
 		actionBar.setDisplayShowTitleEnabled(false);
 		actionBar.setDisplayShowHomeEnabled(false);
+		actionBar.setDisplayShowCustomEnabled(true);
+		actionBar.setDisplayUseLogoEnabled(false);
 		LayoutInflater inflator = (LayoutInflater) this .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		View v = inflator.inflate(R.layout.magikflix_actionbar, null);
 		actionBar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.app_bg)));
@@ -78,20 +81,20 @@ public class BaseActivity extends YouTubeBaseActivity{
 
 	public void showShortToast(String message) {
 		Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
-		
+
 	}
-	
+
 	public void showLongToast(String message) {
 		Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
-		
+
 	}
-	
+
 	@SuppressLint("InflateParams") @SuppressWarnings("deprecation")
 	public PopupWindow getTrialExpiredPopUp(String message){
-		
+
 		LayoutInflater layoutInflater = (LayoutInflater)getBaseContext().getSystemService(LAYOUT_INFLATER_SERVICE);  
 		View popupView = layoutInflater.inflate(R.layout.time_up_pop_up, null);  
-	
+
 		TextView messsageLabel = (TextView)popupView.findViewById(R.id.times_up_tv);
 		messsageLabel.setText(message);
 		final PopupWindow popupMessage = new PopupWindow(popupView, LayoutParams.MATCH_PARENT,
@@ -102,18 +105,18 @@ public class BaseActivity extends YouTubeBaseActivity{
 		popupMessage.setBackgroundDrawable(new BitmapDrawable());
 		popupMessage.setOutsideTouchable(true);
 		popupMessage.getContentView().setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View arg0) {
 				popupMessage.dismiss();
-				
+
 			}
 		});
 		return popupMessage;
-		
-		
+
+
 	}
-	
+
 	public void showInvalidDateDialog(){
 
 		LayoutInflater layoutInflater = (LayoutInflater)getBaseContext().getSystemService(LAYOUT_INFLATER_SERVICE);  
@@ -135,5 +138,19 @@ public class BaseActivity extends YouTubeBaseActivity{
 		trailDialog.show();
 	}
 
+	public void showInvalidEmailDialog(){
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+		alertDialogBuilder.setMessage(R.string.email_invalid_msg);
+		alertDialogBuilder.setPositiveButton("OK", 
+				new DialogInterface.OnClickListener() {
+
+			@Override
+			public void onClick(DialogInterface arg0, int arg1) {
+			}
+		});
+
+		AlertDialog alertDialog = alertDialogBuilder.create();
+		alertDialog.show();
+	}
 
 }

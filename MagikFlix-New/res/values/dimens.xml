@@ -8,7 +8,6 @@
     <dimen name="fpp_back_left_margin">140dp</dimen>
     <dimen name="fpp_category_name_bottom_margin">6dp</dimen>
     <dimen name="actionBar_app_timer_width">30dp</dimen>
-    
 
     <!-- List -->
     <dimen name="fpp_margin_top">6dp</dimen>
@@ -54,6 +53,8 @@
     <dimen name="marginMediumExtraPlusPlus">20dp</dimen>
     <dimen name="marginLarge">30dp</dimen>
     <dimen name="marginExtraLarge">40dp</dimen>
+    <dimen name="marginExtraLargePlus">50dp</dimen>
+    <dimen name="marginBottomFavIcon">50dp</dimen>
 
     <!-- age_selection_screen_dimentions -->
 
@@ -120,7 +121,7 @@
 
     <!-- main_activity_play_list_item_dimentions -->
 
-    <dimen name="play_list_item_width">150dp</dimen>
+    <dimen name="play_list_item_width">230dp</dimen>
     <dimen name="play_list_item_height">75dp</dimen>
     <dimen name="play_list_item_marginRight">10dp</dimen>
 
@@ -159,10 +160,23 @@
     <dimen name="onBoardingBallonHeight">70dp</dimen>
     <dimen name="marginTopAgeSelection">30dp</dimen>
     <dimen name="ageSelectionSeekBarWidth">300dp</dimen>
-    
     <dimen name="textSizeCategoryName">14sp</dimen>
     <dimen name="movieItemWidth">160dp</dimen>
-    <dimen name="enabledCategoryItemWidthHeight">70dp</dimen>
-    <dimen name="disabledCategoryItemWidthHeight">60dp</dimen>
+    <dimen name="enabledCategoryItemWidthHeight">90dp</dimen>
+    <dimen name="disabledCategoryItemWidthHeight">80dp</dimen>
+    <dimen name="cameraPreviewWidthHeight">250dp</dimen>
+    <dimen name="cameraPreviewPadding">30dp</dimen>
+
+    <!-- FamilySetUp screen dimens -->
+
+    <dimen name="familyScreenProfileAvatarCircleSize">140dp</dimen>
+    <dimen name="familyScreenProfileAvatarSize">80dp</dimen>
+    <dimen name="childNameLabelWidth">200dp</dimen>
+    <dimen name="childNameLabelHeight">40dp</dimen>
+    <dimen name="marginTopCameraPlayListLayout">5dp</dimen>
+    <dimen name="marginTopChildInfoLayout">20dp</dimen>
+    <dimen name="familyScreenTakePictureTxtSize">20sp</dimen>
+    <dimen name="marginChildProfileAdapter">20dp</dimen>
+    <dimen name="familyProfileDeleteBtnWidthHeight">50dp</dimen>
 
 </resources>
