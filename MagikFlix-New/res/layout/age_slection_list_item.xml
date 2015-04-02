@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.magicflix.goog.app.views.MagicflixTextView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/com.magicflix.goog"
+    android:id="@+id/age_selection_value_tv"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:background="@drawable/dialog_btn_selector"
+    android:textColor="@color/black_gray"
+    android:textSize="@dimen/textSizeExtrsLargePlusPlus"
+    app:fontName="avenirnext_medium_lt.otf" />

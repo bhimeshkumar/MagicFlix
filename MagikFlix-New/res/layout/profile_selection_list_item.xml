@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/com.magicflix.goog"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:paddingRight="@dimen/marginMediumPlus" >
+
+    <RelativeLayout
+        android:id="@+id/profile_selection_circle_layout"
+        android:layout_width="@dimen/familyScreenProfileAvatarCircleSize"
+        android:layout_height="@dimen/familyScreenProfileAvatarCircleSize"
+        android:background="@drawable/camera_bg" >
+
+        <RelativeLayout
+            android:id="@+id/profile_selected_circle_layout"
+            android:layout_width="@dimen/familyScreenProfileAvatarCircleSize"
+            android:layout_height="@dimen/familyScreenProfileAvatarCircleSize"
+            android:background="@drawable/circle_green" >
+        </RelativeLayout>
+
+        <com.magicflix.goog.app.views.RoundedImageView
+            android:id="@+id/profile_screen_profile_iv"
+            android:layout_width="@dimen/familyScreenProfileAvatarCircleSize"
+            android:layout_height="@dimen/familyScreenProfileAvatarCircleSize"
+            android:layout_margin="@dimen/paddingMediumExtraPlus"
+            android:src="@drawable/avatar_blue" />
+    </RelativeLayout>
+
+    <com.magicflix.goog.app.views.MagicflixTextView
+        android:id="@+id/profile_name_tv"
+        android:layout_width="@dimen/familyScreenProfileAvatarCircleSize"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_marginTop="@dimen/marginMediumExtraPlus"
+        android:textColor="@color/white"
+        android:textSize="@dimen/textSizeMedium"
+        app:fontName="avenirnext_medium_lt.otf" />
+
+</LinearLayout>

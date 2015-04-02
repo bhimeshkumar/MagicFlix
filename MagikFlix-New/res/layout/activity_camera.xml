@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/com.magicflix.goog"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/app_bg" >
+
+    <com.magicflix.goog.app.views.MagicflixTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/age_selection_screen_ok_btn_layout_margin"
+        android:gravity="center"
+        android:text="@string/info_profile_pic"
+        android:textColor="@color/white"
+        android:textSize="@dimen/textSizeExtrsLargePlusPlus"
+        app:fontName="avenirnext_medium_lt.otf" />
+
+    <com.magicflix.goog.app.views.MagicflixButton
+        android:id="@+id/camera_screen_close_btn"
+        android:layout_width="@dimen/age_selection_screen_ok_btn_width"
+        android:layout_height="@dimen/age_selection_screen_ok_btn_height"
+        android:layout_alignParentRight="true"
+        android:layout_margin="@dimen/age_selection_screen_ok_btn_layout_margin"
+        android:background="@drawable/button_selector"
+        android:gravity="center"
+        android:text="Close"
+        android:textColor="@color/white"
+        android:textSize="@dimen/textSizeLargeSubscriptionBuyBtn"
+        app:fontName="avenirnext_medium_lt.otf" />
+
+    <com.magicflix.goog.app.views.MagicflixButton
+        android:id="@+id/camera_screen_swap_btn"
+        android:layout_width="@dimen/age_selection_screen_ok_btn_width"
+        android:layout_height="@dimen/age_selection_screen_ok_btn_height"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:layout_margin="@dimen/age_selection_screen_ok_btn_layout_margin"
+        android:background="@drawable/button_selector"
+        android:gravity="center"
+        android:text="Swap"
+        android:textColor="@color/white"
+        android:textSize="@dimen/textSizeLargeSubscriptionBuyBtn"
+        app:fontName="avenirnext_medium_lt.otf" />
+
+    <com.magicflix.goog.app.views.MagicflixButton
+        android:id="@+id/camera_screen_snap_btn"
+        android:layout_width="@dimen/age_selection_screen_ok_btn_width"
+        android:layout_height="@dimen/age_selection_screen_ok_btn_height"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_margin="@dimen/age_selection_screen_ok_btn_layout_margin"
+        android:background="@drawable/button_selector"
+        android:gravity="center"
+        android:text="Snap"
+        android:textColor="@color/white"
+        android:textSize="@dimen/textSizeLargeSubscriptionBuyBtn"
+        app:fontName="avenirnext_medium_lt.otf" />
+
+    <FrameLayout
+        android:id="@+id/layout"
+        android:layout_width="@dimen/cameraPreviewWidthHeight"
+        android:layout_height="@dimen/cameraPreviewWidthHeight"
+        android:padding="@dimen/cameraPreviewPadding"
+        android:background="@drawable/camera_bg"
+        android:layout_centerInParent="true" >
+    </FrameLayout>
+
+</RelativeLayout>

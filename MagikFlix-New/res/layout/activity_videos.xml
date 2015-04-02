@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/com.magicflix.goog"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/landing_screen_bg"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="@dimen/paddingMediumPlus" >
+
+        <com.magicflix.goog.app.views.MagicflixButton
+            android:id="@+id/video_list_screen_ok_btn"
+            android:layout_width="@dimen/subscription_btn_width"
+            android:layout_height="@dimen/subscription_btn_width"
+            android:layout_marginLeft="@dimen/marginMediumExtraPlusPlus"
+            android:background="@drawable/button_selector"
+            android:text="OK"
+            android:textColor="@color/white"
+            android:textSize="@dimen/textSizeSubscriptionTitle"
+            app:fontName="avenirnext_medium_lt.otf" />
+        
+         <com.magicflix.goog.app.views.MagicflixTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center|top"
+                android:paddingLeft="@dimen/paddingMedium"
+                android:text="Make a playlist from your camera roll.These videos will never leave your device."
+                android:textColor="@color/white"
+                android:textSize="@dimen/familyScreenTakePictureTxtSize"
+                android:textStyle="normal"
+                app:fontName="avenirnext_medium_lt.otf" />
+    </LinearLayout>
+
+    <GridView
+        android:id="@+id/video_list_grid"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="@dimen/marginMediumPlus"
+        android:numColumns="auto_fit" >
+    </GridView>
+
+</LinearLayout>

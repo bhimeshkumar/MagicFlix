@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/com.magicflix.goog"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/transparent"
+    android:gravity="center"
+    android:paddingLeft="@dimen/marginExtraLarge"
+    android:paddingRight="@dimen/marginExtraLarge"
+    android:orientation="vertical" >
+
+    <com.magicflix.goog.app.views.MagicflixTextView
+        android:id="@+id/delete_title_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:background="@color/white"
+        android:text="@string/delete_profile_msg"
+        android:textColor="@color/gray"
+        android:paddingTop="@dimen/paddingMedium"
+        android:paddingBottom="@dimen/paddingMedium"
+        android:textSize="@dimen/textSizeExtrsLargePlusPlus"
+        app:fontName="avenirnext_medium_lt.otf" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/gray" />
+
+    <com.magicflix.goog.app.views.MagicflixTextView
+         android:id="@+id/delete_no_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/delete_profile_no_txt"
+        android:textColor="@color/gray"
+        android:background="@drawable/dialog_btn_selector"
+        android:paddingTop="@dimen/paddingMedium"
+        android:paddingBottom="@dimen/paddingMedium"
+        android:textSize="@dimen/textSizeExtrsLargePlusPlus"
+        app:fontName="avenirnext_medium_lt.otf" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/gray" />
+
+    <com.magicflix.goog.app.views.MagicflixTextView
+         android:id="@+id/delete_yes_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/dialog_btn_selector"
+        android:gravity="center"
+        android:text="@string/delete_profile_yes_txt"
+        android:textColor="@color/gray"
+        android:paddingTop="@dimen/paddingMedium"
+        android:paddingBottom="@dimen/paddingMedium"
+        android:textSize="@dimen/textSizeExtrsLargePlusPlus"
+        app:fontName="avenirnext_medium_lt.otf" />
+
+</LinearLayout>
