@@ -119,6 +119,7 @@ public class FamilySetUpActivity extends BaseActivity implements OnClickListener
 		mCameraRollBtn.setOnClickListener(this);
 		mProfileDeteteIV.setOnClickListener(this);
 		mEmailEt.setOnEditorActionListener(this);
+		mChildNameEt.setOnEditorActionListener(this);
 
 	}
 
@@ -295,12 +296,12 @@ public class FamilySetUpActivity extends BaseActivity implements OnClickListener
 					}
 					return true;
 				}else{
-					showInvalidEmailDialog();
+					showAlertDialog(getString(R.string.email_invalid_msg));
 					return false;
 					//showShortToast("Please enter valid email");
 				}
 			}else{
-				showInvalidEmailDialog();
+				showAlertDialog(getString(R.string.email_invalid_msg));
 				return false;
 				//showShortToast("Please enter email");
 			}
@@ -519,19 +520,36 @@ public class FamilySetUpActivity extends BaseActivity implements OnClickListener
 	@Override
 	public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 		if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE)) {
-			String email = mEmailEt.getText().toString();
-			if(email != null && email.length() >0){
-				if(Utils.isValidEmail(email)){
-					UserProfile userProfile = mDb4oProvider.getUserProfileById(mApplication.getSelectedProfileIndex());
-					userProfile.email = email;
-					mDb4oProvider.store(userProfile);
+			if(v == mEmailEt){
+				String email = mEmailEt.getText().toString();
+				if(email != null && email.length() >0){
+					if(Utils.isValidEmail(email)){
+						UserProfile userProfile = mDb4oProvider.getUserProfileById(mApplication.getSelectedProfileIndex());
+						userProfile.email = email;
+						mDb4oProvider.store(userProfile);
+					}else{
+						//showShortToast("Please enter valid email address");
+						showAlertDialog(getString(R.string.email_invalid_msg));
+					}
 				}else{
-					//showShortToast("Please enter valid email address");
-					showInvalidEmailDialog();
+					showAlertDialog(getString(R.string.email_invalid_msg));
+					//showShortToast("Please enter your email");	
 				}
-			}else{
-				showInvalidEmailDialog();
-				//showShortToast("Please enter your email");	
+			}
+			else if(v == mChildNameEt){
+				
+				String name = mChildNameEt.getText().toString();
+				if(name != null && name.length() >0){
+//					if(Utils.isValidUserName((name))){
+						UserProfile userProfile = mDb4oProvider.getUserProfileById(mApplication.getSelectedProfileIndex());
+						userProfile.childName = name;
+						mDb4oProvider.store(userProfile);
+//					}else{
+//						//showShortToast("Please enter valid email address");
+//						showAlertDialog(getString(R.string.info_valid_username_msg));
+//					}
+				}
+
 			}
 
 		}  

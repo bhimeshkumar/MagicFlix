@@ -138,9 +138,9 @@ public class BaseActivity extends YouTubeBaseActivity{
 		trailDialog.show();
 	}
 
-	public void showInvalidEmailDialog(){
+	public void showAlertDialog(String message){
 		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-		alertDialogBuilder.setMessage(R.string.email_invalid_msg);
+		alertDialogBuilder.setMessage(message);
 		alertDialogBuilder.setPositiveButton("OK", 
 				new DialogInterface.OnClickListener() {
 

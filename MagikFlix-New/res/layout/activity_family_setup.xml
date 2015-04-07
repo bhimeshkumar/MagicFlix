@@ -136,10 +136,12 @@
                         android:focusableInTouchMode="true"
                         android:gravity="center"
                         android:hint="Child Name"
+                        android:imeOptions="actionDone"
                         android:padding="@dimen/paddingMedium"
                         android:singleLine="true"
                         android:textColor="@color/white_gray"
                         android:textSize="30sp"
+                        android:maxLength="50"
                         app:fontName="avenirnext_medium_lt.otf" />
 
                     <com.magicflix.goog.app.views.MagicflixEditText
@@ -240,6 +242,7 @@
             android:focusable="true"
             android:focusableInTouchMode="true"
             android:gravity="center"
+            android:inputType="textEmailAddress"
             android:paddingBottom="@dimen/paddingMedium"
             android:paddingLeft="@dimen/paddingMediumExtraPlus"
             android:paddingRight="@dimen/paddingMediumExtraPlus"
@@ -249,6 +252,7 @@
             android:textColor="@color/white"
             android:textColorHint="@color/white"
             android:textSize="30sp"
+            android:imeOptions="actionDone"
             app:fontName="avenirnext_medium_lt.otf" />
 
         <com.magicflix.goog.app.views.MagicflixButton

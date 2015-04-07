@@ -57,6 +57,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
+                android:linksClickable="true"
                 android:text="@string/info_no_videos_found"
                 android:textColor="@color/white"
                 android:textSize="@dimen/textSizeMedium"

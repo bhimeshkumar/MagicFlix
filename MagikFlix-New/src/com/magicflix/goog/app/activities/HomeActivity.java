@@ -37,6 +37,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.RemoteException;
+import android.text.method.LinkMovementMethod;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -233,7 +234,6 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 
 		mApplication = (MagikFlix)getApplication();
 		mDb4oProvider = new Db4oHelper(this);
-		System.out.println("DB count :: "+mDb4oProvider.getUserProfiles().size());
 		if(mDb4oProvider.getUserProfiles().size() == 0){
 			UserProfile userProfile = new UserProfile();
 			userProfile.childName =  "";
@@ -587,6 +587,7 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 		}else{
 			mPlayListListView.setVisibility(View.GONE);
 			mNoVideoFoundTV.setVisibility(View.VISIBLE);
+			mNoVideoFoundTV.setMovementMethod(LinkMovementMethod.getInstance());
 			if(categoryName.contains("My Videos")){
 				mNoVideoFoundTV.setText(R.string.my_videos_empty_list_msg);
 			}else if(categoryName.contains("Favorite Videos")){

@@ -16,6 +16,7 @@
         android:hint="@string/email_help_txt"
         android:padding="@dimen/paddingMedium"
         android:singleLine="true"
+        android:inputType="textEmailAddress"
         app:fontName="avenirnext_medium_lt.otf" />
 
     <com.magicflix.goog.app.views.MagicflixTextView

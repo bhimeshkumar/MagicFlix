@@ -114,8 +114,9 @@
     <string name="delete_profile_no_txt">No</string>
     <string name="delete_profile_yes_txt">Yes</string>
     <string name="email_invalid_msg">Enter a valid email.</string>
-    <string name="my_videos_empty_list_msg">Go to magicflix.com/parents to create your personalized playlist.</string>
+    <string name="my_videos_empty_list_msg">Go to <a STYLE="text-decoration:none" href="http://www.magicflix.com/parents/"><b>magicflix.com/parents</b></a> to create your personalized playlist.</string>
     <string name="favorite_videos_empty_list_msg">Go ahead and favorite videos to make your own playlist.</string>
     <string name="info_profile_pic">Take a picture for your profile</string>
+    <string name="info_valid_username_msg">Please enter valid name</string>
 
 </resources>
