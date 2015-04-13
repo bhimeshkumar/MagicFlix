@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/com.magikflix.kurio"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/familyScreenBg"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:id="@+id/on_boarding_parent_gate_way_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/familyScreenBg" >
+
+        <LinearLayout
+            android:id="@+id/on_board_parent_gate_help_txt_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/marginTopOnBoarding"
+            android:orientation="vertical"
+            android:paddingLeft="30dp" >
+
+            <com.magikflix.kurio.app.views.MagicflixTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/marginMedium"
+                android:gravity="center"
+                android:text="Personalize Magicflix with \nyour family account"
+                android:textColor="@color/white"
+                android:textSize="@dimen/textSizeOnBoarding"
+                app:fontName="avenirnext_medium_lt.otf" />
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/onBoardingBallonHeight"
+                android:scaleType="fitXY"
+                android:src="@drawable/magicflix_baloon_three" />
+        </LinearLayout>
+
+        <com.magikflix.kurio.app.views.MagicflixButton
+            android:id="@+id/on_boarding_parent_ctrl_btn"
+            android:layout_width="@dimen/parentControlButtonWidth"
+            android:layout_height="@dimen/parentControlButtonHeight"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/marginLarge"
+            android:background="@drawable/parent_gate_btn_selector"
+            android:padding="10dp"
+            android:text="@string/parent_control_txt"
+            android:textColor="@color/text_selector"
+            android:textSize="@dimen/textSizeOnBoarding"
+            app:fontName="avenirnext_medium_lt.otf" />
+
+        <ImageView
+            android:id="@+id/on_board_avatar"
+            android:layout_width="@dimen/onBoardingAvatarWidth"
+            android:layout_height="@dimen/onBoardingAvatarHeight"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/mflix_baoon_on_boarding"
+            android:scaleType="fitXY" />
+
+        <LinearLayout
+            android:id="@+id/on_boarding_email_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:layout_below="@id/on_board_parent_gate_help_txt_layout"
+            android:layout_marginRight="@dimen/marginLarge"
+            android:layout_toRightOf="@id/on_board_avatar"
+            android:gravity="right|center|top"
+            android:visibility="gone" >
+
+            <include layout="@layout/on_boarding_email_layout" />
+        </LinearLayout>
+    </RelativeLayout>
+
+    <ProgressBar
+        android:id="@+id/on_boarding_screen_pb"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="@dimen/progressbar_height_width"
+        android:layout_height="@dimen/progressbar_height_width"
+        android:layout_centerInParent="true"
+        android:layout_gravity="center" />
+
+    <com.magikflix.kurio.app.views.MagicflixButton
+        android:id="@+id/on_board_screen_skip_btn"
+        android:layout_width="@dimen/age_selection_screen_ok_btn_width"
+        android:layout_height="@dimen/age_selection_screen_ok_btn_height"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_margin="@dimen/age_selection_screen_ok_btn_layout_margin"
+        android:background="@drawable/button_selector"
+        android:gravity="center"
+        android:text="SKIP"
+        android:textColor="@color/white"
+        android:textSize="@dimen/textSizeLargeSubscriptionBuyBtn"
+        android:visibility="gone"
+        app:fontName="avenirnext_medium_lt.otf" />
+
+    <com.magikflix.kurio.app.views.MagicflixTextView
+        android:id="@+id/on_boarding_screen_no_network_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="@string/internet_failure_msg"
+        android:textColor="@color/white"
+        android:textSize="@dimen/textSizeMedium"
+        android:visibility="gone"
+        app:fontName="avenirnext_medium_lt.otf" />
+
+</RelativeLayout>

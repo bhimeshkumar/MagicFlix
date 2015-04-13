@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/com.magikflix.kurio"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/familyScreenBg"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:orientation="vertical"
+    android:weightSum="1" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.3"
+        android:gravity="center_vertical"
+        android:orientation="horizontal" >
+
+        <com.magikflix.kurio.app.views.MagicflixButton
+            android:id="@+id/family_screen_ok_btn"
+            android:layout_width="@dimen/subscription_btn_width"
+            android:layout_height="@dimen/subscription_btn_width"
+            android:layout_marginLeft="@dimen/marginMediumExtraPlusPlus"
+            android:background="@drawable/button_selector"
+            android:text="OK"
+            android:textColor="@color/white"
+            android:textSize="@dimen/textSizeSubscriptionTitle"
+            app:fontName="avenirnext_medium_lt.otf" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="horizontal" >
+
+            <it.sephiroth.android.library.widget.HListView
+                android:id="@+id/family_setup_screen_profile_list"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_marginLeft="@dimen/marginMediumPlus"
+                android:layout_marginRight="@dimen/marginMediumPlus"
+                android:background="@android:color/transparent"
+                android:paddingLeft="@dimen/paddingMediumPlus"
+                android:paddingRight="@dimen/paddingMediumPlus" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.47"
+        android:background="@color/app_bg"
+        android:orientation="horizontal" >
+
+        <RelativeLayout
+            android:id="@+id/family_screen_delete_layout"
+            android:layout_width="@dimen/familyProfileDeleteBtnWidthHeight"
+            android:layout_height="@dimen/familyProfileDeleteBtnWidthHeight"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="@dimen/marginMediumExtraPlusPlus"
+            android:layout_marginRight="@dimen/marginMedium"
+            android:background="@drawable/camera_bg"
+            android:padding="@dimen/paddingMedium"
+            android:visibility="invisible" >
+
+            <ImageView
+                android:id="@+id/family_screen_delete_iv"
+                android:layout_width="@dimen/familyScreenProfileAvatarSize"
+                android:layout_height="@dimen/familyScreenProfileAvatarSize"
+                android:src="@drawable/profile_delete_btn_selector" />
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/app_bg"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal" >
+
+            <LinearLayout
+                android:layout_width="@dimen/familyScreenProfileAvatarCircleSize"
+                android:layout_height="@dimen/familyScreenProfileAvatarCircleSize"
+                android:layout_gravity="center_vertical"
+                android:background="@drawable/camera_bg"
+                android:gravity="center"
+                android:orientation="vertical" >
+
+                <com.magikflix.kurio.app.views.MagicflixTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center|top"
+                    android:text="Take"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/familyScreenTakePictureTxtSize"
+                    android:textStyle="normal"
+                    app:fontName="avenirnext_medium_lt.otf" />
+
+                <com.magikflix.kurio.app.views.RoundedImageView
+                    android:id="@+id/family_screen_take_picture_iv"
+                    android:layout_width="@dimen/familyScreenProfileAvatarSize"
+                    android:layout_height="@dimen/familyScreenProfileAvatarSize"
+                    android:src="@drawable/avatar_blue" />
+
+                <com.magikflix.kurio.app.views.MagicflixTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center|top"
+                    android:gravity="center"
+                    android:text="Picture"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/familyScreenTakePictureTxtSize"
+                    android:textStyle="normal"
+                    app:fontName="avenirnext_medium_lt.otf" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" >
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/marginTopChildInfoLayout"
+                    android:orientation="horizontal" >
+
+                    <com.magikflix.kurio.app.views.MagicflixEditText
+                        android:id="@+id/family_screen_child_name_et"
+                        android:layout_width="@dimen/childNameLabelWidth"
+                        android:layout_height="@dimen/childNameLabelHeight"
+                        android:layout_margin="@dimen/marginMedium"
+                        android:background="@color/familyEditTextBg"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
+                        android:gravity="center"
+                        android:hint="Child Name"
+                        android:imeOptions="actionDone"
+                        android:padding="@dimen/paddingMedium"
+                        android:singleLine="true"
+                        android:textColor="@color/white_gray"
+                        android:textSize="30sp"
+                        android:maxLength="50"
+                        app:fontName="avenirnext_medium_lt.otf" />
+
+                    <com.magikflix.kurio.app.views.MagicflixEditText
+                        android:id="@+id/family_screen_child_age_et"
+                        android:layout_width="60dp"
+                        android:layout_height="@dimen/childNameLabelHeight"
+                        android:layout_margin="@dimen/marginMedium"
+                        android:background="@color/familyEditTextBg"
+                        android:focusable="false"
+                        android:focusableInTouchMode="false"
+                        android:gravity="center"
+                        android:hint="10"
+                        android:padding="@dimen/paddingMedium"
+                        android:singleLine="true"
+                        android:textColor="@color/white_gray"
+                        android:textSize="30sp"
+                        android:visibility="visible"
+                        app:fontName="avenirnext_medium_lt.otf" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right"
+                    android:layout_marginTop="@dimen/marginTopCameraPlayListLayout"
+                    android:orientation="vertical"
+                     >
+
+                    <RelativeLayout
+                        android:layout_width="@dimen/subscription_btn_width"
+                        android:layout_height="@dimen/subscription_btn_width"
+                        android:layout_marginLeft="@dimen/marginMediumExtraPlusPlus" >
+
+                        <com.magikflix.kurio.app.views.MagicflixButton
+                            android:layout_width="@dimen/subscription_btn_width"
+                            android:layout_height="@dimen/subscription_btn_width"
+                            android:background="@drawable/icon_outline_color_selected"
+                            app:fontName="avenirnext_medium_lt.otf" />
+
+                        <com.magikflix.kurio.app.views.MagicflixButton
+                            android:id="@+id/family_screen_camera_roll_btn"
+                            android:layout_width="@dimen/subscription_btn_width"
+                            android:layout_height="@dimen/subscription_btn_width"
+                            android:background="@drawable/camera_roll_btn_selector"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/textSizeSubscriptionTitle"
+                            app:fontName="avenirnext_medium_lt.otf" />
+                    </RelativeLayout>
+
+                    <com.magikflix.kurio.app.views.MagicflixTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center|top"
+                        android:gravity="center"
+                        android:padding="@dimen/paddingMedium"
+                        android:text="Camera Roll Playlist"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/textSizeCameraRollPlaList"
+                        android:textStyle="normal"
+                        app:fontName="avenirnext_medium_lt.otf" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|right"
+                android:layout_marginRight="@dimen/marginMedium"
+                android:orientation="vertical" >
+
+                <com.magikflix.kurio.app.views.MagicflixButton
+                    android:id="@+id/family_screen_add_profile_btn"
+                    android:layout_width="@dimen/subscription_btn_width"
+                    android:layout_height="@dimen/subscription_btn_width"
+                    android:layout_marginLeft="@dimen/marginMediumExtraPlusPlus"
+                    android:background="@drawable/button_selector"
+                    android:text="+"
+                    android:textColor="@color/white"
+                    android:textSize="50sp"
+                    app:fontName="avenirnext_medium_lt.otf" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.23"
+        android:gravity="right|bottom|center"
+        android:orientation="horizontal" >
+
+        <com.magikflix.kurio.app.views.MagicflixEditText
+            android:id="@+id/family_screen_child_email_et"
+            android:layout_width="@dimen/childNameLabelWidth"
+            android:layout_height="@dimen/childNameLabelHeight"
+            android:layout_marginRight="@dimen/marginMedium"
+            android:background="@color/viewSelectedColor"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:gravity="center"
+            android:inputType="textEmailAddress"
+            android:paddingBottom="@dimen/paddingMedium"
+            android:paddingLeft="@dimen/paddingMediumExtraPlus"
+            android:paddingRight="@dimen/paddingMediumExtraPlus"
+            android:paddingTop="@dimen/paddingMedium"
+            android:singleLine="true"
+            android:text="santhosh@gmail.com"
+            android:textColor="@color/white"
+            android:textColorHint="@color/white"
+            android:textSize="30sp"
+            android:imeOptions="actionDone"
+            app:fontName="avenirnext_medium_lt.otf" />
+
+        <com.magikflix.kurio.app.views.MagicflixButton
+            android:id="@+id/family_screen_info_btn"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center_vertical|bottom"
+            android:layout_marginLeft="@dimen/marginMediumExtraPlusPlus"
+            android:background="@drawable/icon_category_terms_of_use"
+            android:textColor="@color/white"
+            android:textSize="@dimen/textSizeSubscriptionTitle"
+            app:fontName="avenirnext_medium_lt.otf" />
+    </LinearLayout>
+
+</LinearLayout>

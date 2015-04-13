@@ -4,6 +4,7 @@
     android:layout_height="match_parent" >
 
     <RelativeLayout
+        android:id="@+id/youtubePlayerLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@android:color/black" >
@@ -55,8 +56,8 @@
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:layout_marginBottom="@dimen/marginMediumPlus"
-            android:layout_marginRight="@dimen/marginMediumPlus"
+            android:layout_marginBottom="@dimen/marginBottomFavIcon"
+            android:layout_marginRight="@dimen/marginExtraLargePlus"
             android:scaleType="fitXY"
             android:src="@drawable/icon_outline_favorites" />
     </RelativeLayout>

@@ -44,8 +44,8 @@ public class RoundedImageView extends ImageView {
 
 		if(attributes.getBoolean(R.styleable.CircularImageView_border, true)) {
 			int defaultBorderSize = (int) (2 * getContext().getResources().getDisplayMetrics().density + 0.9f);
-			setBorderWidth(attributes.getDimensionPixelOffset(R.styleable.CircularImageView_border_width, defaultBorderSize));
-			setBorderColor(attributes.getColor(R.styleable.CircularImageView_border_color, getResources().getColor(R.color.app_bg)));
+//			setBorderWidth(attributes.getDimensionPixelOffset(R.styleable.CircularImageView_border_width, defaultBorderSize));
+//			setBorderColor(attributes.getColor(R.styleable.CircularImageView_border_color, getResources().getColor(R.color.app_bg)));
 		}
 
 	}

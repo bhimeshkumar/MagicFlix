@@ -1,17 +1,17 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
     <gradient 
-        android:startColor="#FF555555" 
-        android:centerColor="#FF555555"
-        android:endColor="#FF555555" 
+        android:startColor="@color/white" 
+        android:centerColor="@color/white"
+        android:endColor="@color/white" 
         android:angle="90" />
 
     <corners android:radius="5px" />
 
     <stroke 
         android:width="2dp" 
-        android:color="#50999999" />
+        android:color="@color/white" />
 
     <stroke 
         android:width="0dp" 
-        android:color="#70555555" />
+        android:color="@color/white" />
 </shape>

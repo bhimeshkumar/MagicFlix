@@ -89,7 +89,7 @@
             android:layout_alignParentRight="true"
             android:layout_gravity="bottom|right"
             android:layout_margin="@dimen/email_send_screen_ok_btn_layout_margin"
-            android:background="@drawable/circle_with_white_border"
+            android:background="@drawable/button_selector"
             android:gravity="center"
             android:text="@string/email_send_screen_ok_btn_text"
             android:textColor="@color/white" />
@@ -102,8 +102,9 @@
             android:layout_gravity="bottom|right"
             android:layout_margin="@dimen/email_send_screen_skip_btn_layout_margin"
             android:layout_toLeftOf="@id/email_send_screen_ok_btn"
-            android:background="@drawable/circle_with_white_border"
+            android:background="@drawable/button_selector"
             android:gravity="center"
+            android:textSize="@dimen/textSizeLargeSubscriptionBuyBtn"
             android:text="@string/email_send_screen_skip_btn_text"
             android:textColor="@color/white" />
     </RelativeLayout>

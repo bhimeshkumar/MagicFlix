@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/com.magikflix.kurio"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_centerHorizontal="true"
+    android:layout_marginTop="@dimen/marginTopOnBoarding"
+    android:orientation="vertical"
+    android:paddingLeft="30dp" >
+
+    <com.magikflix.kurio.app.views.MagicflixEditText
+        android:id="@+id/on_boarding_email_et"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:hint="@string/email_help_txt"
+        android:padding="@dimen/paddingMedium"
+        android:singleLine="true"
+        android:inputType="textEmailAddress"
+        app:fontName="avenirnext_medium_lt.otf" />
+
+    <com.magikflix.kurio.app.views.MagicflixTextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/marginMedium"
+        android:layout_marginTop="@dimen/marginLarge"
+        android:gravity="left|center"
+        android:text="@string/magicflix_help_txt"
+        android:textColor="@color/white"
+        android:textSize="@dimen/textSizeOnBoarding"
+        app:fontName="avenirnext_medium_lt.otf" />
+
+</LinearLayout>

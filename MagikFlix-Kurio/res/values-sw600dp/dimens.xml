@@ -4,13 +4,15 @@
          Customize dimensions originally defined in res/values/dimens.xml (such as
          screen margins) for sw600dp devices (e.g. 7" tablets) here.
     -->
-     <!-- Default screen margins, per the Android Design guidelines. -->
+    <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="fpp_drawer_width">250dp</dimen>
     <dimen name="fpp_back_width">45dp</dimen>
     <dimen name="fpp_back_left_margin">140dp</dimen>
     <dimen name="fpp_category_name_bottom_margin">6dp</dimen>
+    <dimen name="actionBar_app_timer_width">40dp</dimen>
+    <dimen name="marginBottomFavIcon">90dp</dimen>
 
     <!-- List -->
     <dimen name="fpp_margin_top">6dp</dimen>
@@ -45,6 +47,7 @@
     <dimen name="textSizeMedium">16sp</dimen>
     <dimen name="textSizeSmall">15sp</dimen>
     <dimen name="textSizeLargePlus">20sp</dimen>
+    <dimen name="textSizeExtrsLargePlusPlus">30sp</dimen>
     <dimen name="marginMedium">5dp</dimen>
     <dimen name="marginMediumPlus">10dp</dimen>
     <dimen name="marginMediumExtraPlus">15dp</dimen>
@@ -52,7 +55,6 @@
     <dimen name="marginLarge">30dp</dimen>
     <dimen name="marginExtraLarge">40dp</dimen>
     <dimen name="sizeOfEighty">80dp</dimen>
-    
     <dimen name="coverFlowItemHeight">340dp</dimen>
     <dimen name="coverFlowItemWidth">191dp</dimen>
     <dimen name="categoryThumbnailWidth">340dp</dimen>
@@ -82,7 +84,6 @@
     <dimen name="slider_linearlayout_Ten_labeltv_width">180dp</dimen>
     <dimen name="slider_linearlayout_Ten_labeltv_height">1dp</dimen>
     <dimen name="slider_linearlayout_labeltv_textSize">16dp</dimen>
-
     <dimen name="slider_linearlayout_valuetv_width">160dp</dimen>
     <dimen name="slider_linearlayout_valuetv_height">1dp</dimen>
     <dimen name="slider_linearlayout_valuetv_marginLeft">10dp</dimen>
@@ -100,17 +101,12 @@
     <dimen name="email_baloon_iv_width">230dp</dimen>
     <dimen name="email_baloon_iv_height">70dp</dimen>
     <dimen name="email_baloon_iv_marginLeft">300dp</dimen>
-
-
     <dimen name="email_send_screen_skip_btn_width">120dp</dimen>
     <dimen name="email_send_screen_skip_btn_height">120dp</dimen>
     <dimen name="email_send_screen_skip_btn_layout_margin">10dp</dimen>
-
-
     <dimen name="email_send_screen_ok_btn_width">120dp</dimen>
     <dimen name="email_send_screen_ok_btn_height">120dp</dimen>
     <dimen name="email_send_screen_ok_btn_layout_margin">10dp</dimen>
-
 
     <!-- acitvity_terms_of_use_dimentions -->
 
@@ -127,8 +123,71 @@
 
     <!-- main_activity_play_list_item -->
 
-    <dimen name="play_list_item_width">240dp</dimen>
+    <dimen name="play_list_item_width">230dp</dimen>
     <dimen name="play_list_item_height">130dp</dimen>
     <dimen name="play_list_item_marginRight">10dp</dimen>
+
+    <!-- Movie adapter dimens -->
+
+    <dimen name="movie_list_item_width">380dp</dimen>
+    <dimen name="movie_list_item_height">190dp</dimen>
+
+    <!-- Subscription screen dimens -->
+
+    <dimen name="textSizeSubscriptionTitle">22sp</dimen>
+    <dimen name="marginMediumPlusSubscription">10dp</dimen>
+    <dimen name="marginLargeSubscription">30dp</dimen>
+    <dimen name="marginMediumPlusSubscription">10dp</dimen>
+    <dimen name="textSizeExtrsLargePlusSubscription">20sp</dimen>
+    <dimen name="subscription_btn_width">90dp</dimen>
+    <dimen name="subscription_btn_width">90dp</dimen>
+    <dimen name="textSizeLargeSubscriptionBtn">16sp</dimen>
+    <dimen name="textSizeLargeSubscriptionBuyBtn">18sp</dimen>
+
+    <!-- Times up popup dimens -->
+
+    <dimen name="timesPopUpAvatarWidth">350dp</dimen>
+    <dimen name="timesPopUpAvatarHeight">350dp</dimen>
+    <dimen name="timesPopUpBalloonWidth">180dp</dimen>
+    <dimen name="timesPopUpBalloonHeight">100dp</dimen>
+    <dimen name="marginTimesPopUpBalloon">300dp</dimen>
+    <dimen name="textSizeTimesUp">30sp</dimen>
+    <dimen name="marginTopOnBoarding">40dp</dimen>
+    <dimen name="onBoardingAvatarWidth">400dp</dimen>
+    <dimen name="onBoardingAvatarHeight">400dp</dimen>
+    <dimen name="parentControlButtonWidth">250dp</dimen>
+    <dimen name="parentControlButtonHeight">250dp</dimen>
+    <dimen name="textSizeOnBoarding">25sp</dimen>
+    <dimen name="onBoardingBallonHeight">90dp</dimen>
+    <dimen name="marginTopAgeSelection">60dp</dimen>
+    <dimen name="ageSelectionSeekBarWidth">400dp</dimen>
+    <dimen name="textSizeCategoryName">14sp</dimen>
+    <dimen name="movieItemWidth">340dp</dimen>
+    <dimen name="enabledCategoryItemWidthHeight">95dp</dimen>
+    <dimen name="disabledCategoryItemWidthHeight">80dp</dimen>
+
+    <!-- Camera screen dimens -->
+    <dimen name="cameraPreviewWidthHeight">450dp</dimen>
+    <dimen name="cameraPreviewPadding">50dp</dimen>
+
+    <!-- FamilySetUp screen dimens -->
+    <dimen name="familyScreenProfileAvatarCircleSize">200dp</dimen>
+    <dimen name="familyScreenProfileAvatarSize">100dp</dimen>
+    <dimen name="childNameLabelWidth">350dp</dimen>
+    <dimen name="childNameLabelHeight">60dp</dimen>
+    <dimen name="familyProfileDeleteBtnWidthHeight">70dp</dimen>
+    <dimen name="marginTopCameraPlayListLayout">10dp</dimen>
+    <dimen name="marginTopChildInfoLayout">40dp</dimen>
+    <dimen name="familyScreenTakePictureTxtSize">25sp</dimen>
+    <dimen name="marginChildProfileAdapter">30dp</dimen>
+    <dimen name="marginExtraLargePlus">50dp</dimen>
+    
+     <!-- Local play list dimens -->
+
+    <dimen name="local_play_list_item_width">380dp</dimen>
+    <dimen name="local_play_list_item_height">220dp</dimen>
+    <dimen name="textSizeCameraRollPlaList">20sp</dimen>
+    
+    
 
 </resources>

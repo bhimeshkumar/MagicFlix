@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+   xmlns:app="http://schemas.android.com/apk/res/com.magikflix.kurio"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/app_bg" >
+
+    <com.magikflix.kurio.app.views.MagicflixTextView
+        android:id="@+id/settings_screen_title_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerInParent="true"
+        android:paddingTop="@dimen/paddingMediumExtraPlus"
+        android:text="Minutes to watch"
+        android:textColor="@color/white"
+        android:textSize="@dimen/textSizeSubscriptionTitle"
+        app:fontName="avenirnext_medium_lt.otf" />
+
+    <com.magikflix.kurio.app.views.MagicflixButton
+        android:id="@+id/settings_screen_ok_btn"
+        android:layout_width="@dimen/subscription_btn_width"
+        android:layout_height="@dimen/subscription_btn_width"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="@dimen/marginMediumExtraPlusPlus"
+        android:background="@drawable/button_selector"
+        android:text="OK"
+        android:textColor="@color/white"
+        android:textSize="@dimen/textSizeSubscriptionTitle" 
+        app:fontName="avenirnext_medium_lt.otf"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/settings_screen_title_tv"
+        android:layout_centerInParent="true" >
+
+        <com.magikflix.kurio.app.views.CircularSeekBar
+            android:id="@+id/settings_circular_sb"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/settings_screen_title_tv"
+            android:layout_centerInParent="true"
+            android:layout_marginBottom="@dimen/marginLargeSubscription"
+            android:layout_marginTop="@dimen/marginLargeSubscription"
+            app:max="60"
+            app:pointer_color="@color/white"
+            app:pointer_halo_color="@color/white"
+            app:pointer_size="30"
+            app:text_color="@color/white"
+            app:text_size="65"
+            app:fontName="avenirnext_medium_lt.otf"
+            app:wheel_active_color="#EF661B"
+            app:wheel_unactive_color="@color/white" >
+        </com.magikflix.kurio.app.views.CircularSeekBar>
+    </RelativeLayout>
+
+</RelativeLayout>

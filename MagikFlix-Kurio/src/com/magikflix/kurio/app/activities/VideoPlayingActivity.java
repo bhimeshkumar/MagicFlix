@@ -7,18 +7,19 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.PopupWindow;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.youtube.player.YouTubeInitializationResult;
@@ -43,38 +44,46 @@ import com.magikflix.kurio.app.api.results.VideoResult;
 import com.magikflix.kurio.app.api.results.Videos;
 import com.magikflix.kurio.app.asyntasks.DataApiAsyncTask;
 import com.magikflix.kurio.app.utils.Constants;
+import com.magikflix.kurio.app.utils.TrialExpiredBroadCastReceiver;
+import com.magikflix.kurio.broadcasts.AppTimerBroadCastReceiver;
+import com.magikflix.kurio.broadcasts.PopUpDismissBroadCastReceiver;
+import com.magikflix.kurio.utils.MLogger;
 
-public class VideoPlayingActivity extends BaseActivity implements OnInitializedListener, PlayerStateChangeListener, PlaybackEventListener,OnClickListener{
+public class VideoPlayingActivity extends BaseActivity implements OnInitializedListener, PlayerStateChangeListener, PlaybackEventListener, OnClickListener{
+
 	private static String TAG = VideoPlayingActivity.class.getName();
-	private boolean showingFullScreen = false;
 	private ArrayList<Videos> videosList;
 	private String mVideoId;
 	private ProgressBar mProgressBar;
 	private Timer videoTimer;
 	private int mSelectedPostion = -1;
-	public static final String SCHEME_YOUTUBE_VIDEO = "ytv";
-	public static final String SCHEME_YOUTUBE_PLAYLIST = "ytpl";
-	protected TextView    mProgressMessage;
-	private String mToken,mCategoryName;
+	//	protected TextView mProgressMessage;
+	private String mToken;
 	private String mRecentVideoId = Constants.EMPTY_STRING;
 	private static final int RECOVERY_DIALOG_REQUEST = 1;
 	private YouTubePlayerView myYouTubePlayerView;
 	private YouTubePlayer YPlayer;
-	private boolean mIsVideoPaused = false;
+	private boolean mIsVideoPaused = false, mIsBackbtnPressed = false;
 	private int mVideoPausePostion = 0;
 	private RelativeLayout mTransparentLayout;
 	private ImageView mPlayIV,mBackToGalleryIV,mFavIV;
-
-
+	private TrialExpiredBroadCastReceiver mTrialExpiredBroadCastReceiver ;
+	private AppTimerBroadCastReceiver mAppTimerBroadCastReceiver;
+	private IntentFilter mTrialExpireIntent,mAppTimerIntent,mPopUpDismissIntent; 
+	private TimerTask videoTimerTask ;
+	private boolean mVideoIsStarted = false;
+	private PopUpDismissBroadCastReceiver mPopUpDismissBroadCastReceiver;
+	private PopupWindow popupWindow ;
+	private ArrayList<Integer> avgTimeVideoVatched = new ArrayList<Integer>();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		//		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		setContentView(R.layout.video_playing_screen);
 		init();
-		setIdsToViews();
 		getVideoLink();
+		setIdsToViews();
 		setListnersToViews();
 	}
 
@@ -84,45 +93,123 @@ public class VideoPlayingActivity extends BaseActivity implements OnInitializedL
 		mPlayIV.setOnClickListener(this);
 		mBackToGalleryIV.setOnClickListener(this);
 		mFavIV.setOnClickListener(this);
+
+		mTrialExpiredBroadCastReceiver = new TrialExpiredBroadCastReceiver() {
+			@Override
+			protected void onTrialExpired() {
+				//popupWindow = getTimerAlert();
+				//popupWindow.showAtLocation(popupWindow.getContentView(), Gravity.CENTER, 0, 0);			
+				}
+
+		};
+		mTrialExpireIntent = new IntentFilter(Constants.INTENT_TRIAL_EXPIRED);
+		mAppTimerIntent = new IntentFilter(Constants.INTENT_APP_TIMER_EXPIRED);
+
+		mAppTimerBroadCastReceiver = new AppTimerBroadCastReceiver() {
+
+			@Override
+			protected void onTimerExpired() {
+				showTimerPopUp();
+
+			}
+		};
 	}
 
+	private void showTimerPopUp() {
+		if(YPlayer != null){
+			if(YPlayer.isPlaying()){
+				mTransparentLayout.setVisibility(View.VISIBLE);
+				YPlayer.pause();
+			}
+		}
+		popupWindow = getTimerAlert();
+		popupWindow.showAtLocation(popupWindow.getContentView(), Gravity.CENTER, 0, 0);
+	}
 	private void init() {
 		getActionBar().hide();
+		mAppTimerIntent = new IntentFilter(Constants.INTENT_APP_TIMER_EXPIRED);
+
+		mAppTimerBroadCastReceiver = new AppTimerBroadCastReceiver() {
+
+			@Override
+			protected void onTimerExpired() {
+				popupWindow = getTimerAlert();
+				popupWindow.showAtLocation(popupWindow.getContentView(), Gravity.CENTER, 0, 0);
+
+			}
+		};
+		mPopUpDismissIntent = new IntentFilter(Constants.INTENT_APP_ALERT_DISMISS);
+		mPopUpDismissBroadCastReceiver = new PopUpDismissBroadCastReceiver() {
+
+			@Override
+			protected void dismissPopUp() {
+				try {
+					if(popupWindow != null && popupWindow.isShowing()){
+						popupWindow.dismiss();
+					}
+				} catch (Exception e) {
+					MLogger.logInfo(TAG, "Exception in mPopUpDismissBroadCastReceiver ::"+e.getLocalizedMessage());
+				}
+			}
+		};
+	}
+
+
+	/*private void showTrialExpiredDialog(String title,String message){
+		AlertDialog.Builder timerBuilder = new AlertDialog.Builder(this);
+		timerBuilder.setTitle(title);
+		timerBuilder.setCancelable(false);
+		timerBuilder.setMessage(message);
+		timerBuilder.setPositiveButton("OK",
+				new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int id) {
+				dialog.cancel();
+				VideoPlayingActivity.this.finish();
+			}
+		});
+
+		AlertDialog timerAlert = timerBuilder.create();
+		timerAlert.show();
+	}*/
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		((MagikFlix)getApplication()).setIsAppRunningBackground(false);	
+		registerReceiver(mTrialExpiredBroadCastReceiver, mTrialExpireIntent);
+		registerReceiver(mAppTimerBroadCastReceiver, mAppTimerIntent);
+		registerReceiver(mPopUpDismissBroadCastReceiver, mPopUpDismissIntent);
 
 	}
 
+	@Override
+	protected void onPause() {
+		super.onPause();
+		if(!mIsBackbtnPressed){
+			((MagikFlix)getApplication()).setIsAppRunningBackground(true);
+		}
+		unregisterReceiver(mTrialExpiredBroadCastReceiver);
+		unregisterReceiver(mAppTimerBroadCastReceiver);
+		unregisterReceiver(mPopUpDismissBroadCastReceiver);
+	}
+	@SuppressWarnings("unchecked")
 	private void getVideoLink() {
 		Bundle bundle = getIntent().getExtras();
 		videosList  = (ArrayList<Videos>) bundle.getSerializable("videosList");
-		mCategoryName = bundle.getString("categeoryName", "");
 		mVideoId = bundle.getString("videoId");
 		mSelectedPostion = bundle.getInt("selectedPosition", 0);
-
-		System.out.println("Selected position :: onCreate---"+mSelectedPostion);
 		mToken = ((MagikFlix)getApplicationContext()).getToken();
-		//		mVideoListView .setAdapter(new VideoPlayBackAdapter(this,videosList));
-		//		mVideoListView.setSelection(mSelectedPostion);
-		myYouTubePlayerView.initialize(Constants.YOUTUBE_DEVELOPER_KEY, this);
-		//		VideoId lYouTubeId = new VideoId(mVideoId);
-		//		new ProcesYouTubeTask().execute(lYouTubeId);
-
 	}
 
 	private void selecetNextVideoToPlay(){
-		System.out.println("videosList.size()---"+videosList.size());
-
 		if (mSelectedPostion < (videosList.size()-1)){
 			mSelectedPostion = mSelectedPostion + 1;
 			mVideoId = videosList.get(mSelectedPostion).videoId;
-			System.out.println("Selected position :: increment---"+mSelectedPostion);
-
 		}else{
 			mSelectedPostion = 0;
 			mVideoId = videosList.get(mSelectedPostion).videoId;
 		}
-
 		YPlayer.loadVideo(mVideoId);
-
 	}
 
 	@Override
@@ -144,15 +231,21 @@ public class VideoPlayingActivity extends BaseActivity implements OnInitializedL
 		mPlayIV = (ImageView)findViewById(R.id.play_btn);
 		mBackToGalleryIV = (ImageView)findViewById(R.id.back_to_main_gallery_btn);
 		mFavIV = (ImageView)findViewById(R.id.favourite_btn);
+		myYouTubePlayerView.initialize(Constants.YOUTUBE_DEVELOPER_KEY, this);
+		myYouTubePlayerView.setFocusableInTouchMode(false);
+		myYouTubePlayerView.setFocusable(false);
+
+		if(videosList.get(mSelectedPostion).isFavorite){
+			mFavIV.setBackground(VideoPlayingActivity.this.getResources().getDrawable(R.drawable.icon_outline_color_selected));
+		}else{
+			mFavIV.setBackground(null);
+		}
 	}
 
 
-	private void startVideoTimer()
-	{
-		try
-		{
-			if (null != videoTimer)
-			{
+	private void startVideoTimer(){
+		try{
+			if (null != videoTimer){
 				videoTimer.cancel();
 				videoTimer = null;
 			}
@@ -160,15 +253,28 @@ public class VideoPlayingActivity extends BaseActivity implements OnInitializedL
 			videoTimer = new Timer();
 			final int delayTime = 1000;
 			int period = 1000;
-			TimerTask videoTimerTask = new TimerTask()
-			{
+			videoTimerTask = new TimerTask(){
 				int videoPlayedSecs = 0;
 				public void run(){
-
 					try{
 						videoPlayedSecs++;
 						if(videoPlayedSecs == 10){
 							postRecentVideos(mVideoId);
+						}
+						MagikFlix app = (MagikFlix)getApplicationContext();
+						if(Constants.IS_SUBSCRIPTION_ENABLED && !(app.isUserSubscribed())){
+							if(YPlayer != null && YPlayer.isPlaying()){
+								app.setVideoPlayTime(app.getVideoPlayTime()+1);
+							}
+
+							int trialPeriod = Constants.TIMERLIMIT;
+							int trialPeriodinSecs = trialPeriod * 60;
+							if(app.getVideoPlayTime() >= trialPeriodinSecs){
+								app.setIsTrialPeriod(true);
+								this.cancel();
+								Intent intnet = new Intent("com.magikflic.goog.TRIALEXPIRED");
+								sendBroadcast(intnet);
+							}
 						}
 					}
 					catch (Exception e){
@@ -179,8 +285,9 @@ public class VideoPlayingActivity extends BaseActivity implements OnInitializedL
 			};
 			videoTimer.schedule(videoTimerTask, delayTime, period);
 		}
-		catch (Exception e)
-		{}
+		catch (Exception e){
+			Log.e(TAG, "Exception :: startVideoTimer");
+		}
 	}
 
 	private void postRecentVideos(String videoId) {
@@ -204,9 +311,7 @@ public class VideoPlayingActivity extends BaseActivity implements OnInitializedL
 	};
 
 	private void processRecentVideoResults(DataResult<String> obj) {
-		//		if(obj.entity != null && obj.entity != null ){
 		try{
-			//				System.out.println("Recent Result ::---->"+obj.entity);
 			Videos mRecentVideo = null;
 			for (Videos videos : videosList) {
 				if(mRecentVideoId.equalsIgnoreCase(videos.videoId)){
@@ -215,15 +320,10 @@ public class VideoPlayingActivity extends BaseActivity implements OnInitializedL
 				}
 
 			}
-			//			HomeFragment homeFragment = ((MainActivity)getActivity()).getHomeFragment();
-			//			homeFragment.updateRecentVideosAdapter(mRecentVideo);
 
 		}catch (Exception e) {
 			Log.e(TAG,"Exception :: processRecentVideoResults"+e);
 		}
-
-
-		//		}
 	}
 
 
@@ -254,7 +354,9 @@ public class VideoPlayingActivity extends BaseActivity implements OnInitializedL
 		if (!wasRestored) {
 			YPlayer = player;
 			YPlayer.setPlayerStyle(PlayerStyle.CHROMELESS);
-			YPlayer.setFullscreenControlFlags(YouTubePlayer.FULLSCREEN_FLAG_CUSTOM_LAYOUT);
+			YPlayer.setFullscreenControlFlags(YouTubePlayer.FULLSCREEN_FLAG_CONTROL_ORIENTATION
+					| YouTubePlayer.FULLSCREEN_FLAG_CONTROL_SYSTEM_UI
+					| YouTubePlayer.FULLSCREEN_FLAG_CUSTOM_LAYOUT);
 			YPlayer.setFullscreen(true);
 			YPlayer.setShowFullscreenButton(true);
 			//			YPlayer.setOnFullscreenListener(this);
@@ -272,19 +374,20 @@ public class VideoPlayingActivity extends BaseActivity implements OnInitializedL
 
 	@Override
 	public void onAdStarted() {
+		MLogger.logInfo(TAG, "AD STARTED ----->");
 
 	}
 
 	@Override
 	public void onError(ErrorReason arg0) {
-
-		System.out.println("======ON Error======");
+		mVideoIsStarted = false;
 		Timestamp timeStamp = new Timestamp(new Date().getTime());
 		VideoInfo videoInfo = new VideoInfo();
 		videoInfo.type = 4;
 		videoInfo.video_id = mVideoId;
 		videoInfo.watched_time = 0;
-		videoInfo.isComplete = false;
+		//		videoInfo.isComplete = false;
+		videoInfo.user_id = ((MagikFlix)getApplicationContext()).getUserId();
 		videoInfo.time_stamp = (timeStamp.getTime()/1000);
 		postCustomLogging(videoInfo);
 
@@ -302,25 +405,25 @@ public class VideoPlayingActivity extends BaseActivity implements OnInitializedL
 
 	@Override
 	public void onVideoEnded() {
-		System.out.println("======ON ENDED======");
+		mVideoIsStarted = false;
 		if(YPlayer != null){
 			Timestamp timeStamp = new Timestamp(new Date().getTime());
 			VideoInfo videoInfo = new VideoInfo();
 			videoInfo.type = 2;
 			videoInfo.video_id = mVideoId;
-			videoInfo.isComplete = true;
-			System.out.println("paused position--->"+mVideoPausePostion);
-			System.out.println("current position-->"+(YPlayer.getDurationMillis()/1000 ));
+			//			videoInfo.isComplete = true;
 			int totalTimeWatched=0;
 			if(mVideoPausePostion > 0){
 				totalTimeWatched = (YPlayer.getDurationMillis()/1000 )-mVideoPausePostion;
 			}else{
-				totalTimeWatched  = (YPlayer.getDurationMillis()/1000 );
+				totalTimeWatched  = (YPlayer.getDurationMillis()/1000 )+1; // YPlayer is giving 1 sec less to total time so adding +1
 			}
+
 			mVideoPausePostion = 0;
 
 			videoInfo.watched_time = totalTimeWatched;
 			videoInfo.time_stamp = (timeStamp.getTime()/1000);
+			videoInfo.user_id = ((MagikFlix)getApplicationContext()).getUserId();
 			postCustomLogging(videoInfo);
 		}
 		selecetNextVideoToPlay();
@@ -330,16 +433,17 @@ public class VideoPlayingActivity extends BaseActivity implements OnInitializedL
 
 	@Override
 	public void onVideoStarted() {
-		System.out.println("======ON STARTED======");
 		startVideoTimer();
 		Timestamp timeStamp = new Timestamp(new Date().getTime());
 		VideoInfo videoInfo = new VideoInfo();
 		videoInfo.type = 0;
 		videoInfo.video_id = mVideoId;
 		videoInfo.watched_time = 0;
-		videoInfo.isComplete = false;
+		//		videoInfo.isComplete = false;
+		videoInfo.user_id = ((MagikFlix)getApplicationContext()).getUserId();
 		videoInfo.time_stamp = (timeStamp.getTime()/1000);
 		postCustomLogging(videoInfo);
+		//mVideoIsStarted = true;
 
 	}
 
@@ -351,47 +455,33 @@ public class VideoPlayingActivity extends BaseActivity implements OnInitializedL
 
 	@Override
 	public void onPaused() {
+		if(!mIsBackbtnPressed)
+			mTransparentLayout.setVisibility(View.VISIBLE);
 		mIsVideoPaused = true;
-		System.out.println("======ON PAUSED======");
 		if(YPlayer != null){
 			Timestamp timeStamp = new Timestamp(new Date().getTime());
 			VideoInfo videoInfo = new VideoInfo();
 			videoInfo.type = 1;
 			videoInfo.video_id = mVideoId;
-			System.out.println("paused position ::--->"+mVideoPausePostion);
 			if(mVideoPausePostion > 0)
 				videoInfo.watched_time = (YPlayer.getCurrentTimeMillis()/1000 - mVideoPausePostion);
 			else
 				videoInfo.watched_time = (YPlayer.getCurrentTimeMillis()/1000);
+			avgTimeVideoVatched.add(videoInfo.watched_time);
 
 			mVideoPausePostion = (YPlayer.getCurrentTimeMillis()/1000);
-
-			System.out.println("current position--->"+mVideoPausePostion);
-
-			System.out.println("Watched Time--->"+videoInfo.watched_time);
-
 			videoInfo.time_stamp = (timeStamp.getTime()/1000);
-			videoInfo.isComplete = false;
-			postCustomLogging(videoInfo);
+			//			videoInfo.isComplete = false;
+			videoInfo.user_id = ((MagikFlix)getApplicationContext()).getUserId();
+			if(videoInfo.watched_time > 0 && mVideoIsStarted)
+				postCustomLogging(videoInfo);
 		}
 
 	}
 
 	@Override
 	public void onPlaying() {
-		if(mIsVideoPaused){
-			System.out.println("======ON Started after pause======");
-			Timestamp timeStamp = new Timestamp(new Date().getTime());
-			VideoInfo videoInfo = new VideoInfo();
-			videoInfo.type = 0;
-			videoInfo.video_id = mVideoId;
-			videoInfo.watched_time = 0;
-			videoInfo.isComplete = false;
-			videoInfo.time_stamp = (timeStamp.getTime()/1000);
-			postCustomLogging(videoInfo);
-
-			mIsVideoPaused = false;
-		}
+		mVideoIsStarted = true;
 
 	}
 
@@ -427,7 +517,7 @@ public class VideoPlayingActivity extends BaseActivity implements OnInitializedL
 	private void processLoggingResults(DataResult<String> obj) {
 		if(obj.entity != null && obj.entity != null ){
 			try{
-				String loggingResult = obj.entity;
+				//String loggingResult = obj.entity;
 			}catch (Exception e) {
 				Log.e(TAG,"Exception :: processRecentVideoResults"+e);
 			}
@@ -436,28 +526,47 @@ public class VideoPlayingActivity extends BaseActivity implements OnInitializedL
 
 	@Override
 	public void onStop() {
-		System.out.println("======ON STOP :: BACKPRESS======");
 		super.onStop();
+		sendExitLogs();
+	}
 
-		if(YPlayer != null){//onBackPress,this will be called
+	private void sendExitLogs() {
+		MLogger.logInfo(TAG, "Video Started :: "+mVideoIsStarted +"\n" + "Back btn prssed :: "+mIsBackbtnPressed);
+		if(mVideoIsStarted && mIsBackbtnPressed && YPlayer != null){//onBackPress,this will be called
+
+			int avgTime = 0;
+			if(YPlayer != null && YPlayer.isPlaying()){
+				avgTimeVideoVatched.clear();
+				avgTimeVideoVatched.add(YPlayer.getCurrentTimeMillis()/1000);
+			}
+			for (Integer watchedtime : avgTimeVideoVatched) {
+				avgTime  = avgTime +watchedtime;
+
+			}
+
+
 			Timestamp timeStamp = new Timestamp(new Date().getTime());
 			VideoInfo videoInfo = new VideoInfo();
 			videoInfo.type = 3;
 			videoInfo.video_id = mVideoId;
-			System.out.println("paused position--->"+mVideoPausePostion);
-			System.out.println("current position-->"+(YPlayer.getCurrentTimeMillis()/1000));
 			if(mVideoPausePostion > 0)
 				videoInfo.watched_time = (YPlayer.getCurrentTimeMillis()/1000) - mVideoPausePostion;
 			else
 				videoInfo.watched_time = (YPlayer.getCurrentTimeMillis()/1000);
 			videoInfo.time_stamp = (timeStamp.getTime()/1000);
-			videoInfo.isComplete = false;
+			//			videoInfo.isComplete = false;
+			videoInfo.user_id = ((MagikFlix)getApplicationContext()).getUserId();
 			postCustomLogging(videoInfo);
+		}else{
+			mIsBackbtnPressed = false;
 		}
+		mVideoIsStarted = false;
 	}
 
 	@Override
 	public void onBackPressed() {
+
+		mIsBackbtnPressed = true;
 		Intent returnIntent = new Intent();
 		returnIntent.putExtra("recentVideoId",mRecentVideoId);
 		setResult(RESULT_OK,returnIntent);
@@ -470,7 +579,6 @@ public class VideoPlayingActivity extends BaseActivity implements OnInitializedL
 	public void onClick(View view) {
 		switch (view.getId()) {
 		case R.id.youtube_view:
-			System.out.println("on click :: youtube");
 			if(YPlayer != null){
 				if(YPlayer.isPlaying()){
 					mTransparentLayout.setVisibility(View.VISIBLE);
@@ -483,14 +591,21 @@ public class VideoPlayingActivity extends BaseActivity implements OnInitializedL
 			break;
 		case R.id.play_btn:
 			if(YPlayer != null){
+				if(((MagikFlix)getApplicationContext()).isTrialPeriodExpired()){
+					PopupWindow popupWindow = getTrialExpiredPopUp(getString(R.string.times_up_txt));
+					popupWindow.showAtLocation(popupWindow.getContentView(), Gravity.CENTER, 0, 0);
+					return;
+				}
 				mTransparentLayout.setVisibility(View.GONE);
 				YPlayer.play();
 			}
 			break;
 		case R.id.back_to_main_gallery_btn:
-			this.finish();
+			//			this.finish();
+			onBackPressed();
 			break;
 		case R.id.favourite_btn:
+
 			if(!videosList.get(mSelectedPostion).isFavorite){
 				videosList.get(mSelectedPostion).isFavorite = true;
 				mFavIV.setBackground(VideoPlayingActivity.this.getResources().getDrawable(R.drawable.icon_outline_color_selected));
@@ -503,8 +618,6 @@ public class VideoPlayingActivity extends BaseActivity implements OnInitializedL
 		default:
 			break;
 		}
-
-
 	}
 
 
@@ -548,6 +661,18 @@ public class VideoPlayingActivity extends BaseActivity implements OnInitializedL
 				video.isFavorite = isFavorite;
 			}	
 		}
+		Intent intnet = new Intent("com.magikflic.goog.FAVOURITE_CHANGE");
+		sendBroadcast(intnet);
 	}
+
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		if(videoTimerTask != null)
+			videoTimerTask.cancel();
+
+	}
+
 
 }

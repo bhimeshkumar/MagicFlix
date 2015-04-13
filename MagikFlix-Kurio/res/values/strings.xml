@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">MagicFlix</string>
+    <string name="app_name">Magicflix</string>
     <string name="imagedescription">imagedescription</string>
     <string name="flurry_api_key">6YKH2ZN4SVFF8B2C3V2R</string>
 
@@ -56,7 +56,6 @@
     <string name="video_play_error_msg">Oops, video couldn\'t play, on to the next!</string>
     <string name="facebook_app_id">688395307918500</string>
     <string name="register_email_message">Magicflix will send you personalized reports.You can skip this step and register later in the Family Setup Menu</string>
-    <string name="terms_of_use_info"></string>
     <string name="terms_of_use_welcome_msg">Magicflix is a positively safe video service for kids to play and learn!</string>
     <string name="category_header">Category</string>
 
@@ -81,9 +80,45 @@
     <string name="email_send_screen_ok_btn_text">OK</string>
     <string name="terms_of_use_ok_btn_text">OK</string>
 
-    <!-- acitvity_terms_of_use_dimentions -->
+    <!-- acitvity_terms_of_use_strings -->
     <string name="terms_of_use_ok_btn_text">OK</string>
-    <string name="terms_of_use_tv_text">MagicFlix Terms Of Use</string>
+    <string name="terms_of_use_tv_text">Magicflix Terms Of Use</string>
     <string name="terms_of_use_wv_text">MagicFlix Terms Of Use</string>
+    <string name="info_no_videos_found">No Videos Found</string>
+    <string name="subscription_promo_code_apply_btn_txt">APPLY</string>
+    <string name="subscription_popup_buy_btn_txt">BUY</string>
+    <string name="susbscription_popup_cancel_btn">CANCEL</string>
+    <string name="magicflix_auto_renewable_subscription_msg">Magicflix premium monthly\nsubscription</string>
+    <string name="subscription_cancel_anytime_txt">Cancel Anytime!</string>
+    <string name="subscription_promo_code_txt">Promo Code</string>
+    <string name="subscription_unlock_content_txt">Your Magicflix subscription unlocks unlimited videos!</string>
+    <string name="free_trail_msg">Enjoy your free trial of 20 mins today.</string>
+    <string name="free_trial_dialog_title">Free Trial</string>
+    <string name="invalid_age_dialog_title">Invalid age</string>
+    <string name="times_up_txt">Time\'s up!</string>
+    <string name="internet_failure_msg">Please check network connection.</string>
+    <string name="localitics_app_key">8de53e6ecca3c615c37a2f7-59ec36c4-b7f2-11e4-a934-005cf8cbabd8</string>
+    <string name="parent_control_txt">Are you a grown-up?\nTap here and hold for\n5 seconds</string>
+    <string name="email_help_txt">Tap here to enter your email</string>
+    <string name="magicflix_help_txt">Your Magicflix account allows you to customize video playlists for your family.New videos are added every week.Enjoy!</string>
+    <string name="age_selection_help_txt">Please enter your child\'s age.This helps us find the best videos for your child.</string>
+    <string name="min_age_label_txt">2</string>
+    <string name="max_age_label_txt">10+</string>
+    <string name="magicflix_app_info">Magicflix is in no way affiliated with Youtube. All videos are the copyright of their respective owners. You can review the complete terms of use and privacy policy at <a STYLE="text-decoration:none" href="http://magicflix.com/termsofuse"><b>http://magicflix.com/termsofuse</b></a> and <a STYLE="text-decoration:none" href="http://magicflix.com/privacy"><b>http://magicflix.com/privacy</b></a>.</string>
+    <string name="subscribe_btn_txt">Subscribe</string>
+    <string name="app_timer_msg">You still have 5 \nminutes!</string>
+    <string name="app_timer_at_five_mins_msg">You have 5 \nminutes!</string>
+    <string name="category_vimeo_title">Vimeo</string>
+    <string name="please_enter_promo_code_msg">Please enter Promo Code</string>
+    <string name="delete_profile_msg">Are you sure you want to remove this profile ?</string>
+    <string name="delete_profile_no_txt">No</string>
+    <string name="delete_profile_yes_txt">Yes</string>
+    <string name="email_invalid_msg">Enter a valid email.</string>
+    <string name="my_videos_empty_list_msg">Go to <a STYLE="text-decoration:none" href="http://www.magicflix.com/parents/"><b>magicflix.com/parents</b></a> to create your personalized playlist.</string>
+    <string name="favorite_videos_empty_list_msg">Go ahead and favorite videos to make your own playlist.</string>
+    <string name="info_profile_pic">Take a picture for your profile</string>
+    <string name="info_valid_username_msg">Please enter valid name</string>
+    <string name="category_camera_roll_title">Camera Roll Videos</string>
+    <string name="camera_roll_screen_msg">Make a playlist from your camera roll.</string>
 
 </resources>

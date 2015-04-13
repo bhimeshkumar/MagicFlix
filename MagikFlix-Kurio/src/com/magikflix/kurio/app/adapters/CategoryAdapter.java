@@ -1,5 +1,7 @@
 package com.magikflix.kurio.app.adapters;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Vector;
 
 import android.app.Activity;
@@ -13,26 +15,36 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.localytics.android.LocalyticsAmpSession;
+import com.magikflix.kurio.MagikFlix;
 import com.magikflix.kurio.R;
 import com.magikflix.kurio.app.activities.HomeActivity;
 import com.magikflix.kurio.app.api.results.Playlists;
-import com.magikflix.kurio.utils.CompatibilityUtil;
+import com.magikflix.kurio.app.utils.Constants;
 import com.squareup.picasso.Picasso;
 
 public class CategoryAdapter extends BaseAdapter{
 
+	private static String TAG = CategoryAdapter.class.getName();
 	private Activity mContext;
 	private String[] mList;
 	int m_w, m_h;
 	protected Vector<Boolean> selectedStates;
 	private Playlists[] mPlayLists;
+	private LocalyticsAmpSession mLocalyticsSession;
+	private Map<String, String> mCategorySelectorEvent ;
+	private int enableCategoryWidthHeight,disableCategoryWidthHeight;
 
 	public CategoryAdapter(Activity context, Playlists[] playLists) {
+		mCategorySelectorEvent = new HashMap<String, String>();
 		mContext = context;
+		mLocalyticsSession = ((MagikFlix)mContext.getApplicationContext()).getLocatyticsSession();
 		selectedStates = new Vector<Boolean>();
 		mPlayLists = playLists;
 		clearSelectedState();
 		selectedStates.set(3, new Boolean(true));
+		enableCategoryWidthHeight = (int) mContext.getResources().getDimension(R.dimen.enabledCategoryItemWidthHeight);
+		disableCategoryWidthHeight = (int) mContext.getResources().getDimension(R.dimen.disabledCategoryItemWidthHeight);
 	}
 
 	@Override
@@ -63,8 +75,8 @@ public class CategoryAdapter extends BaseAdapter{
 			viewHolder.category_title_tv = (TextView) rowView
 					.findViewById(R.id.category_title_tv);
 
-//			viewHolder.mOuterCircleLayout = (RelativeLayout) rowView
-//					.findViewById(R.id.category_outline_layout);
+			//			viewHolder.mOuterCircleLayout = (RelativeLayout) rowView
+			//					.findViewById(R.id.category_outline_layout);
 			viewHolder.mInnerCircleLayout = (RelativeLayout) rowView
 					.findViewById(R.id.category_inline_layout);
 			rowView.setTag(viewHolder);
@@ -78,10 +90,10 @@ public class CategoryAdapter extends BaseAdapter{
 			@Override
 			public void onClick(View v) {
 				clearSelectedState();
+				sendLocalyticsForCategory(position);
 				selectedStates.set(position, new Boolean(true));
 				((HomeActivity)mContext).setPlayList(position);
 				CategoryAdapter.this.notifyDataSetChanged();
-
 			}
 		});
 
@@ -90,40 +102,24 @@ public class CategoryAdapter extends BaseAdapter{
 		else
 			holder.movieThumbnailTV .setImageDrawable(mContext.getResources().getDrawable(R.drawable.icon_outline_bg));
 
+
 		if (selectedStates.get(position)){
 			holder.movieThumbnailTV.requestLayout();
 			holder.mInnerCircleLayout.requestLayout();
-			if(CompatibilityUtil.isTablet(mContext)){
-				holder.movieThumbnailTV.requestLayout();
-				holder.movieThumbnailTV.getLayoutParams().height = dpToPx(90);
-				holder.movieThumbnailTV.getLayoutParams().width = dpToPx(90);
-				holder.mInnerCircleLayout .getLayoutParams().height = dpToPx(90);
-				holder.mInnerCircleLayout .getLayoutParams().width = dpToPx(90);
-			}else{
-				holder.movieThumbnailTV.requestLayout();
-				holder.movieThumbnailTV.getLayoutParams().height = dpToPx(60);
-				holder.movieThumbnailTV.getLayoutParams().width = dpToPx(60);
-				holder.mInnerCircleLayout .getLayoutParams().height = dpToPx(60);
-				holder.mInnerCircleLayout .getLayoutParams().width = dpToPx(60);
-			}
+			holder.movieThumbnailTV.requestLayout();
+			holder.movieThumbnailTV.getLayoutParams().height = enableCategoryWidthHeight;
+			holder.movieThumbnailTV.getLayoutParams().width = enableCategoryWidthHeight;
+			holder.mInnerCircleLayout .getLayoutParams().height = enableCategoryWidthHeight;
+			holder.mInnerCircleLayout .getLayoutParams().width = enableCategoryWidthHeight;
 			holder.mInnerCircleLayout.setBackground(mContext.getResources().getDrawable(R.drawable.icon_outline_color_selected));
 		}
 		else {
 			holder.mInnerCircleLayout.requestLayout();
-			if(CompatibilityUtil.isTablet(mContext)){
-				holder.movieThumbnailTV.requestLayout();
-				holder.movieThumbnailTV.getLayoutParams().height = dpToPx(80);
-				holder.movieThumbnailTV.getLayoutParams().width = dpToPx(80);
-				holder.mInnerCircleLayout .getLayoutParams().height = dpToPx(80);
-				holder.mInnerCircleLayout .getLayoutParams().width = dpToPx(80);
-			}else{
-				holder.movieThumbnailTV.requestLayout();
-				holder.movieThumbnailTV.getLayoutParams().height = dpToPx(50);
-				holder.movieThumbnailTV.getLayoutParams().width = dpToPx(50);
-				holder.mInnerCircleLayout .getLayoutParams().height = dpToPx(50);
-				holder.mInnerCircleLayout .getLayoutParams().width = dpToPx(50);
-			}
-			
+			holder.movieThumbnailTV.requestLayout();
+			holder.movieThumbnailTV.getLayoutParams().height = disableCategoryWidthHeight;
+			holder.movieThumbnailTV.getLayoutParams().width = disableCategoryWidthHeight;
+			holder.mInnerCircleLayout .getLayoutParams().height = disableCategoryWidthHeight;
+			holder.mInnerCircleLayout .getLayoutParams().width = disableCategoryWidthHeight;
 			holder.mInnerCircleLayout.setBackground(mContext.getResources().getDrawable(R.drawable.icon_outline_color_unselected));
 		}
 		holder.category_title_tv.setVisibility(View.GONE);
@@ -143,7 +139,6 @@ public class CategoryAdapter extends BaseAdapter{
 		public TextView category_title_tv;
 		public TextView movieNameTV;
 		public ImageView movieThumbnailTV;
-//		public RelativeLayout mOuterCircleLayout;
 		public RelativeLayout mInnerCircleLayout;
 	}
 
@@ -164,6 +159,14 @@ public class CategoryAdapter extends BaseAdapter{
 		DisplayMetrics displayMetrics =mContext.getResources().getDisplayMetrics();
 		int px = Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));       
 		return px;
+	}
+
+	private void sendLocalyticsForCategory(final int position) {
+		mCategorySelectorEvent.clear();
+		mCategorySelectorEvent.put(Constants.CATEGORY, mPlayLists[position].name);
+		mCategorySelectorEvent.put(Constants.INDEX, String.valueOf(position));
+		if(mLocalyticsSession != null)
+			mLocalyticsSession.tagEvent(Constants.CATEGORY_SELECTOR_EVENT, mCategorySelectorEvent);
 	}
 
 

@@ -6,8 +6,9 @@ public class FavourireVideoRequest extends AbstractDataRequest{
 
 //	public String[] favs ;
 //	public String[] unFavs ;
-	public String videoId;
+//	public String userId;
 	public String token;
+	public String videoId;
 	public boolean isFavorite;
 
 }

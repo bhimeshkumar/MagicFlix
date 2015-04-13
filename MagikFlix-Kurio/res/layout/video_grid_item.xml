@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+     xmlns:app="http://schemas.android.com/apk/res/com.magikflix.kurio"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center" >
+
+    <LinearLayout
+        android:layout_width="@dimen/local_play_list_item_width"
+        android:layout_height="@dimen/local_play_list_item_height"
+        android:orientation="vertical"
+        android:weightSum="1" >
+
+        <RelativeLayout
+            android:layout_width="@dimen/local_play_list_item_width"
+            android:layout_height="0dp"
+            android:layout_weight="0.88" >
+
+            <ImageView
+                android:id="@+id/video_grid_iv"
+                android:layout_width="@dimen/local_play_list_item_width"
+                android:layout_height="@dimen/local_play_list_item_height"
+                android:layout_centerInParent="true"
+                android:layout_gravity="center"
+                android:scaleType="fitXY" />
+
+            <ImageView
+                android:id="@+id/video_grid_iv_select"
+                android:layout_width="@dimen/local_play_list_item_width"
+                android:layout_height="@dimen/local_play_list_item_height"
+                android:layout_centerInParent="true"
+                android:layout_gravity="center"
+                android:scaleType="fitXY"
+                android:src="@drawable/border_stars_local_movie"
+                android:visibility="gone" />
+        </RelativeLayout>
+        
+         <com.magikflix.kurio.app.views.MagicflixTextView
+            android:id="@+id/video_list_title_tv"
+            android:layout_width="@dimen/local_play_list_item_width"
+            android:layout_height="0dp"
+            android:layout_weight="0.12"
+            android:background="@color/transparent"
+            android:gravity="center"
+            android:singleLine="true"
+            android:textColor="@color/white"
+            app:fontName="avenirnext_medium_lt.otf" />
+    </LinearLayout>
+
+</RelativeLayout>

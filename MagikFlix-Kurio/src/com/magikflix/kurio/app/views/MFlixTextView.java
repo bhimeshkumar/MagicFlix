@@ -28,8 +28,8 @@ public class MFlixTextView extends TextView {
 	
 	private void init(AttributeSet attrs) {
 		if (attrs!=null) {
-			 TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.MFlixTextView);
-			 String fontName = a.getString(R.styleable.MFlixTextView_fontName);
+			 TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.MflixTextView);
+			 String fontName = a.getString(R.styleable.MflixTextView_fontName);
 			 if (fontName!=null) {
 				 Typeface myTypeface = Typeface.createFromAsset(getContext().getAssets(), fontName);
 				 setTypeface(myTypeface);

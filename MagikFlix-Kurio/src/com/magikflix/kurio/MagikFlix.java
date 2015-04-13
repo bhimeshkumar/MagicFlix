@@ -3,20 +3,33 @@ package com.magikflix.kurio;
 import android.app.Application;
 import android.text.TextUtils;
 
+import com.localytics.android.LocalyticsActivityLifecycleCallbacks;
+import com.localytics.android.LocalyticsAmpSession;
+import com.magikflix.kurio.app.api.results.AppConfigResult;
 import com.magikflix.kurio.app.api.results.VideoResult;
 import com.magikflix.kurio.app.utils.Constants;
 import com.magikflix.kurio.utils.PrefManager;
 
 public class MagikFlix  extends Application {
-	
+
 	private VideoResult mVideoResult;
-	
+	private boolean mIsSubscriptionRestored;
+	private LocalyticsAmpSession localyticsSession;
+	private AppConfigResult mAppConfiguration;
+	private boolean mIsAppRuniingInBg = false;
+
 	@Override
 	public void onCreate() {
 		super.onCreate();
-//		BackBone bb = new BackBone();
-//		bb.setup(this,false, 0);
-		
+
+		this.localyticsSession = new LocalyticsAmpSession(
+				this.getApplicationContext());  // Context used to access device resources
+		this.registerActivityLifecycleCallbacks(new LocalyticsActivityLifecycleCallbacks(this.localyticsSession));
+
+	}
+
+	public LocalyticsAmpSession getLocatyticsSession(){
+		return this.localyticsSession;
 	}
 
 
@@ -55,11 +68,11 @@ public class MagikFlix  extends Application {
 		}
 
 	}
-	
+
 	public String getEmail(){
 		return PrefManager.getString(getApplicationContext(), Constants.PREF_EMAIL, "");
 	}
-	
+
 	public void setDefaultAge(String defaultAge) {
 		if(!TextUtils.isEmpty(defaultAge)){
 			PrefManager.saveString(getApplicationContext(), Constants.DEFAULT_AGE, defaultAge);
@@ -103,17 +116,145 @@ public class MagikFlix  extends Application {
 			PrefManager.saveString(getApplicationContext(), Constants.AGE_SELECTED, ageSelected);
 		}
 	}
-	
+
 	public String  getSelectedAge(){
 		return PrefManager.getString(getApplicationContext(), Constants.AGE_SELECTED, "");
 	}
 
 	public void setVideosResult(VideoResult videoResult){
 		this.mVideoResult = videoResult;
-		
+
 	}
-	
+
 	public VideoResult getVideoResult(){
 		return mVideoResult;
 	}
+
+
+	public void setIsSubscriptionRestored(boolean isSubscriptionRestored) {
+
+		PrefManager.saveBool(getApplicationContext(), Constants.IS_SUBSCRIPTION_RESTORED, Boolean.valueOf(isSubscriptionRestored));
+
+	}
+
+	public boolean isSubscriptionRestored() {
+		return PrefManager.getBool(getApplicationContext(), Constants.IS_SUBSCRIPTION_RESTORED, false);
+
+	}
+
+
+	public void setVideoPlayTime(int videoPlayTime) {
+		PrefManager.saveInt(getApplicationContext(), "videoPlayTime", videoPlayTime);
+	}
+
+	public int getVideoPlayTime() {
+		return PrefManager.getInt(getApplicationContext(), "videoPlayTime", 0);
+	}
+
+
+	public void setIsAppInstalled(boolean isAppInstalled) {
+		PrefManager.saveBool(getApplicationContext(), "isAppInsatlled", isAppInstalled);
+	}
+
+	public boolean isAppInstalled(boolean isAppInstalled) {
+		return PrefManager.getBool(getApplicationContext(), "isAppInsatlled", false);
+	}
+
+
+	public boolean isTrialPeriodExpired() {
+		return PrefManager.getBool(getApplicationContext(), "isTrialPeriodExpired", false);
+	}
+
+	public void setIsTrialPeriod(boolean isTrialPeriodExpired) {
+		PrefManager.saveBool(getApplicationContext(), "isTrialPeriodExpired", isTrialPeriodExpired);
+	}
+
+
+	public void setFreeTrailPeriod(int freeTrialPeriod) {
+		PrefManager.saveInt(getApplicationContext(), "freeTrialPeriod", freeTrialPeriod);
+
+	}
+
+	public int getFreeTrailPeriod() {
+		return PrefManager.getInt(getApplicationContext(), "freeTrialPeriod", 0);
+
+	}
+
+
+	public void setApplicationActiveTime(int activeTime) {
+		PrefManager.saveInt(getApplicationContext(), "appActive", activeTime);
+
+	}
+
+	public int getApplicationActiveTime() {
+		return PrefManager.getInt(getApplicationContext(), "appActive", 0);
+
+	}
+
+	public void setAgeIsSelected(boolean selectedAge) {
+		PrefManager.saveBool(getApplicationContext(), "isAgeSelected", selectedAge);
+
+	}
+
+	public boolean isAgeSelected() {
+		return PrefManager.getBool(getApplicationContext(), "isAgeSelected", false);
+
+	}
+
+	public void setIsUserSubscribed(boolean isUserSubscribed) {
+		PrefManager.saveBool(getApplicationContext(), "isUserSubscribed", isUserSubscribed);
+
+	}
+
+	public boolean isUserSubscribed() {
+		return PrefManager.getBool(getApplicationContext(), "isUserSubscribed", false);
+
+	}
+
+	public void setAppTimerValue(String timerString) {
+		PrefManager.saveString(getApplicationContext(), "appTimerValue", timerString);
+
+	}
+
+	public String getAppTimerValue(){
+		return PrefManager.getString(getApplicationContext(), "appTimerValue", "20");
+	}
+
+	public void setAppConfiguration(AppConfigResult entity) {
+		mAppConfiguration = entity;
+
+	}
+
+	public AppConfigResult getAppConfiguration() {
+		return mAppConfiguration;
+
+	}
+
+	public void setSelectedProfileIndex(int index){
+		PrefManager.saveInt(getApplicationContext(), "selectedProfile", index);
+	}
+
+	public int getSelectedProfileIndex() {
+		return PrefManager.getInt(getApplicationContext(), "selectedProfile", 0);
+
+	}
+
+	public  boolean isAppRunningInBackgroud() {
+		return mIsAppRuniingInBg;
+	}  
+	
+	public  void setIsAppRunningBackground(boolean isAppRunningInBackground) {
+		 mIsAppRuniingInBg = isAppRunningInBackground;
+	}
+
+	public void setSeekBarValue(String value) {
+		PrefManager.saveString(getApplicationContext(), "seekBarValue", value);
+		
+	} 
+	
+	public String getSeekBarValue() {
+		return PrefManager.getString(getApplicationContext(), "seekBarValue", "20");
+	}
+
+
 }

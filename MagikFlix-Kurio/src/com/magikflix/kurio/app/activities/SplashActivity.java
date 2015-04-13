@@ -1,95 +1,90 @@
 package com.magikflix.kurio.app.activities;
 
-import android.app.Activity;
 import android.content.Intent;
+import android.media.MediaPlayer;
+import android.media.MediaPlayer.OnCompletionListener;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.text.TextUtils;
-import android.view.Window;
-import android.view.WindowManager;
-import android.widget.ImageView;
 import android.widget.Toast;
+import android.widget.VideoView;
 
 import com.magikflix.kurio.MagikFlix;
 import com.magikflix.kurio.R;
-import com.magikflix.kurio.animation.FasterAnimationsContainer;
-import com.magikflix.kurio.animation.FasterAnimationsContainer.OnAnimationStoppedListener;
-import com.magikflix.kurio.app.asyntasks.SetupAsyncTask;
-import com.magikflix.kurio.app.utils.Constants;
+import com.magikflix.kurio.app.db.Db4oHelper;
 
-public class SplashActivity extends Activity implements  OnAnimationStoppedListener{
+public class SplashActivity extends BaseActivity implements  OnCompletionListener{
 
-	private ImageView mAnimatedImageView;
-	private FasterAnimationsContainer mFasterAnimationsContainer;
-	private static final int ANIMATION_INTERVAL = 30;
+	private VideoView mVideoView;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setUpScreen();
-				new SetupAsyncTask(this).execute();
-//		startAnimation();
-				mAnimatedImageView = (ImageView) findViewById(R.id.magikflix_logo);
-				mAnimatedImageView.setImageDrawable(this.getResources().getDrawable(R.drawable.blux_appear_26));
+		getActionBar().hide();
+		MagikFlix app = (MagikFlix) getApplicationContext();
+		String token = app.getToken();
+		if( token.length() <= 0 || (!app.isEmailOptional() && TextUtils.isEmpty(app.getEmail())) || (token.length() <= 0 || !(app.isAgeSelected())) ){
+			new Db4oHelper(this).delete(); // deleting old db
+			setUpScreen();
+		}else{
+			Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+			intent.putExtra("isFromSplashScreen", true);
+			startActivity(intent);
+			this.finish();
+		}
 
 	}
 
-	/**
-	 * To setup application such as checking the connections and creating DB
-	 */
-	/*private void setUpApp() {
-
-		new SetupAsyncTask(this).execute();
-	}*/
-
-	private void startAnimation() {
-		mAnimatedImageView = (ImageView) findViewById(R.id.magikflix_logo);
-		mFasterAnimationsContainer = null;
-		mFasterAnimationsContainer = FasterAnimationsContainer
-				.getInstance(mAnimatedImageView);
-		mFasterAnimationsContainer.addAllFrames(Constants.SPLASH_IMAGE_RESOURCES,
-				ANIMATION_INTERVAL);
-		mFasterAnimationsContainer.setOnAnimationStoppedListener(this);
-		mFasterAnimationsContainer.start();
-	}
-
-
-	/**
-	 * TO setup layout and the screen settings 
-	 */
 	private void setUpScreen() {
-		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		getActionBar().hide();
 		setContentView(R.layout.activity_splash);
+		setIdsToViews();
+		setListnersToViews();
+		playVideo();
+	}
+
+	private void setListnersToViews() {
+		mVideoView.setOnCompletionListener(this);
+
+	}
+
+	private void playVideo() {
+		String path = "android.resource://" + getPackageName() + "/" + R.raw.splash_screen_video;
+		mVideoView.setVideoURI(Uri.parse(path));
+		mVideoView.start();
+
+	}
+
+	private void setIdsToViews() {
+		mVideoView = (VideoView)findViewById(R.id.splash_screen_video_view);
+
 	}
 
 	public void goToNextScreen() {
-		new CountDownTimer(4000, 1000) {
-			@Override
-			public void onFinish() {
-
-				navigateToHome();
-			}
-
-			@Override
-			public void onTick(long millisUntilFinished) {
-			}
-		}.start();
+		if(isFinishing())
+			return;
+		navigateToHome();
+		finish();
 	}
+
 	/**
 	 * TO redirect next screen
 	 */
 	public void navigateToHome() {
 		MagikFlix app = (MagikFlix) getApplicationContext();
 		String token = app.getToken();
-
+		Intent intent ;
 		if( token.length() <= 0 || (!app.isEmailOptional() && TextUtils.isEmpty(app.getEmail())) ){
-			startActivity(new Intent(getApplicationContext(), LandingScreen.class));
-		}else{
-			startActivity(new Intent(getApplicationContext(), HomeActivity.class));
+			intent = new Intent(getApplicationContext(), OnBoardingScreen.class);
+			intent.putExtra("isFromSplashScreen", true);
+			startActivity(intent);
+		}else if( token.length() <= 0 || !(app.isAgeSelected())){
+			intent = new Intent(getApplicationContext(), AgeSelectionActivity.class);
+			intent.putExtra("isFromSplashScreen", true);
+			startActivity(intent);
 		}
 		finish();
-
 	}
 
 
@@ -103,10 +98,8 @@ public class SplashActivity extends Activity implements  OnAnimationStoppedListe
 		new CountDownTimer(4000, 1000) {
 			@Override
 			public void onFinish() {
-
 				finish();
 			}
-
 			@Override
 			public void onTick(long millisUntilFinished) {
 			}
@@ -117,31 +110,9 @@ public class SplashActivity extends Activity implements  OnAnimationStoppedListe
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		//		mFasterAnimationsContainer.stop();
-		//		mFasterAnimationsContainer.clearInstance();
 	}
 
-	@Override
-	public void onBackPressed() {
-		this.finish();
-		super.onBackPressed();
+	public void onCompletion(MediaPlayer mp) {
+		goToNextScreen();
 	}
-
-
-	@Override
-	public void onAnimationStopped() {
-		mAnimatedImageView.setImageDrawable(this.getResources().getDrawable(R.drawable.blux_appareance_skew20));
-		new CountDownTimer(5000, 1000) {
-			@Override
-			public void onFinish() {
-
-				goToNextScreen();
-			}
-
-			@Override
-			public void onTick(long millisUntilFinished) {
-			}
-		}.start();
-	}
-
 }

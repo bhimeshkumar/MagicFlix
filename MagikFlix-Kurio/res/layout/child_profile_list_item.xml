@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="center_vertical"
+    android:gravity="center_vertical"
+    android:orientation="vertical"
+    android:paddingRight="15dp" >
+
+    <RelativeLayout
+        android:id="@+id/child_profile_inline_layout"
+        android:layout_width="105dp"
+        android:layout_height="105dp"
+        android:layout_marginRight="@dimen/marginChildProfileAdapter"
+        android:background="@drawable/camera_bg" >
+
+        <com.magikflix.kurio.app.views.RoundedImageView
+            android:id="@+id/child_profile_thumbnail_iv"
+            android:layout_width="103dp"
+            android:layout_height="103dp"
+            android:layout_centerInParent="true"
+            android:layout_margin="5dp"
+            android:gravity="center"
+            android:scaleType="fitXY"
+            android:src="@drawable/avatar_blue" />
+
+        <ImageView
+            android:id="@+id/child_profile_slected_iv"
+            android:layout_width="104dp"
+            android:layout_height="104dp"
+            android:layout_margin="1dp"
+            android:background="@drawable/circle_green" />
+        
+        <ImageView android:id="@+id/selection_check_mark"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerInParent="true"
+            android:src="@drawable/check_mark"
+            android:layout_marginBottom="@dimen/marginMediumPlus"/>
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/child_profile_title_tv"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_centerInParent="true"
+        android:layout_margin="@dimen/paddingMedium"
+        android:gravity="center"
+        android:text="Cagegory"
+        android:visibility="gone" />
+
+</RelativeLayout>

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/com.magikflix.kurio"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/app_bg"
@@ -13,15 +14,16 @@
         android:layout_marginTop="@dimen/activity_terms_use_marginTop"
         android:orientation="vertical" >
 
-        <TextView
+        <com.magikflix.kurio.app.views.MagicflixTextView
             android:id="@+id/terms_of_use_wellcome_tv"
             android:layout_width="@dimen/terms_of_use_wellcome_tv_width"
             android:layout_height="wrap_content"
             android:lineSpacingExtra="@dimen/paddingMedium"
             android:text="@string/terms_of_use_welcome_msg"
             android:textColor="@color/white"
-            android:textSize="@dimen/textSizeMedium"
-            android:textStyle="bold" />
+            android:textSize="@dimen/textSizeExtrsLarge"
+            android:textStyle="bold"
+            app:fontName="avenirnext_medium_lt.otf" />
 
         <ImageView
             android:id="@+id/baloon_iv"
@@ -37,41 +39,57 @@
         android:layout_width="@dimen/terms_of_use_avatar_width"
         android:layout_height="@dimen/terms_of_use_avatar_height"
         android:layout_centerHorizontal="true"
-        android:background="@drawable/age_selection_avatar"
+        android:src="@drawable/age_selection_avatar"
         android:scaleType="fitXY" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/terms_of_use_avatar"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
         android:gravity="center_horizontal"
         android:orientation="vertical"
         android:weightSum="1" >
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_centerHorizontal="true"
-            android:layout_gravity="center_horizontal"
-            android:layout_weight="0.15"
-            android:text="@string/terms_of_use_tv_text"
-            android:textColor="@color/white"
-            android:textSize="@dimen/textSizeLarge" />
-
-        <WebView
-            android:id="@+id/terms_of_use_wv"
+        <com.magikflix.kurio.app.views.MagicflixTextView
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_centerHorizontal="true"
-            android:layout_margin="@dimen/marginMediumExtraPlus"
-            android:layout_weight="0.79"
-            android:background="@color/white"
-            android:padding="@dimen/paddingMedium"
-            android:text="@string/terms_of_use_wv_text"
-            android:textColor="@color/black_gray"
-            android:textSize="@dimen/textSizeMedium" />
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="0.20"
+            android:gravity="center"
+            android:text="@string/terms_of_use_tv_text"
+            android:textColor="@color/white"
+            android:textSize="@dimen/textSizeLarge"
+            app:fontName="avenirnext_medium_lt.otf" />
 
-        <TextView
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="@dimen/marginMediumExtraPlus"
+            android:layout_weight="0.74" >
+
+            <com.magikflix.kurio.app.views.MagicflixTextView
+                android:id="@+id/terms_of_use_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:layout_centerHorizontal="true"
+                android:clickable="false"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:linksClickable="true"
+                android:padding="@dimen/paddingMedium"
+                android:scrollbars="vertical"
+                android:text="@string/magicflix_app_info"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/textSizeExtrsLarge"
+                app:fontName="avenirnext_medium_lt.otf" />
+        </LinearLayout>
+
+        <com.magikflix.kurio.app.views.MagicflixTextView
             android:id="@+id/terms_of_use_secret_code_tv"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
@@ -80,21 +98,23 @@
             android:layout_marginRight="@dimen/marginMediumExtraPlus"
             android:layout_weight="0.11"
             android:textColor="@color/white"
-            android:textSize="@dimen/textSizeSmall" />
+            android:textSize="@dimen/textSizeSmall"
+            app:fontName="avenirnext_medium_lt.otf" />
     </LinearLayout>
 
-    <Button
+    <com.magikflix.kurio.app.views.MagicflixButton
         android:id="@+id/terms_of_use_ok_btn"
         android:layout_width="@dimen/terms_of_use_ok_btn_width"
         android:layout_height="@dimen/terms_of_use_ok_btn_height"
         android:layout_alignParentLeft="true"
         android:layout_margin="@dimen/marginMediumPlus"
-        android:background="@drawable/circle_with_white_border"
+        android:background="@drawable/button_selector"
         android:gravity="center"
         android:text="@string/terms_of_use_ok_btn_text"
         android:textColor="@color/white"
         android:textSize="@dimen/textSizeLargePlus"
-        android:textStyle="bold" >
-    </Button>
+        android:textStyle="bold"
+        app:fontName="avenirnext_medium_lt.otf" >
+    </com.magikflix.kurio.app.views.MagicflixButton>
 
 </RelativeLayout>

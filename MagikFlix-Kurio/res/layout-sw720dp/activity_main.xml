@@ -1,0 +1,106 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/com.magikflix.kurio"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/app_bg"
+    android:orientation="vertical"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.magikflix.kurio.MainActivity" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:weightSum="1" >
+
+        <at.technikum.mti.fancycoverflow.FancyCoverFlow
+            android:id="@+id/mainActivity_movie_list"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginLeft="@dimen/fpp_tile_margin"
+            android:layout_marginRight="@dimen/fpp_tile_margin"
+            android:layout_weight="0.44" />
+
+        <it.sephiroth.android.library.widget.HListView
+            android:id="@+id/main_screen_category_list"
+            android:layout_width="fill_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.22"
+            android:background="@android:color/transparent"
+            android:paddingLeft="@dimen/paddingMediumPlus"
+            android:paddingRight="@dimen/paddingMediumPlus" />
+
+        <com.magikflix.kurio.app.views.MagicflixTextView
+            android:id="@+id/category_name_tv"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="0.05"
+            android:background="@android:color/black"
+            android:gravity="center_vertical"
+            android:paddingLeft="@dimen/paddingMediumPlus"
+            android:textColor="@color/white"
+            android:textSize="@dimen/textSizeCategoryName"
+            android:textStyle="normal"
+            android:visibility="gone"
+            app:fontName="avenirnext_medium_lt.otf" />
+
+        <RelativeLayout
+            android:id="@+id/play_list_layout"
+            android:layout_width="fill_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.29"
+            android:background="@android:color/black"
+            android:visibility="gone" >
+
+            <it.sephiroth.android.library.widget.HListView
+                android:id="@+id/main_screen_play_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingLeft="@dimen/fpp_tile_margin" 
+                android:paddingRight="@dimen/fpp_tile_margin" />
+
+            <com.magikflix.kurio.app.views.MagicflixTextView
+                android:id="@+id/main_screen_no_videos_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="@string/info_no_videos_found"
+                android:textColor="@color/white"
+                android:textSize="@dimen/textSizeMedium"
+                android:visibility="gone"
+                app:fontName="avenirnext_medium_lt.otf" />
+        </RelativeLayout>
+    </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/home_screen_pb"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="@dimen/progressbar_height_width"
+        android:layout_height="@dimen/progressbar_height_width"
+        android:layout_centerInParent="true" />
+
+    <com.magikflix.kurio.app.views.MagicflixTextView
+        android:id="@+id/main_screen_no_network_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="@string/internet_failure_msg"
+        android:textColor="@color/white"
+        android:textSize="@dimen/textSizeMedium"
+        android:visibility="gone"
+        app:fontName="avenirnext_medium_lt.otf" />
+
+    <VideoView
+        android:id="@+id/main_screen_video_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_centerInParent="true" >
+    </VideoView>
+
+</RelativeLayout>

@@ -39,12 +39,15 @@
     <color name="actionbar_bg">#EE281C</color>
     <color name="category_disable_color">#F1961C</color>
     <color name="activity_bg">#E0E0E0</color>
-    
     <color name="app_bg">#1F3350</color>
     <color name="landing_screen_bg">#657995</color>
-    
-    
-    
+    <color name="colorRoundBtnPressed">#46BCEA</color>
+    <color name="progress_gray">#FFD8D8D8</color>
+    <color name="progress_gray_dark">#FF383838</color>
+    <color name="viewSelectedColor">#EF661B</color>
+    <color name="familyScreenBg">#2F4161</color>
+    <color name="delete_profile_bg">#51B7DC</color>
+     <color name="familyEditTextBg">#1E1E1E</color>
     
 
 </resources>

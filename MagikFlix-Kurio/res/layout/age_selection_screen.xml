@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res/magicflix.goog.seekbar"
-    xmlns:app1="http://schemas.android.com/apk/res/com.magicflix.goog"
+    xmlns:app1="http://schemas.android.com/apk/res/com.magikflix.kurio"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:isScrollContainer="true"
@@ -334,9 +334,10 @@
             android:layout_alignParentRight="true"
             android:layout_gravity="bottom|right"
             android:layout_margin="@dimen/age_selection_screen_ok_btn_layout_margin"
-            android:background="@drawable/circle_with_white_border"
+            android:background="@drawable/button_selector"
             android:gravity="center"
             android:text="OK"
+            android:textSize="@dimen/textSizeLargeSubscriptionBuyBtn"
             android:textColor="@color/white" />
     </RelativeLayout>
 

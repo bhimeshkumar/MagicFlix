@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-     >
+    android:orientation="vertical" >
 
     <RelativeLayout
         android:id="@+id/seekbar_layout"
@@ -59,7 +59,7 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginBottom="@dimen/marginMediumPlus"
-            android:layout_marginRight="@dimen/marginMediumPlus"
+            android:layout_marginRight="@dimen/marginExtraLargePlus"
             android:scaleType="fitXY"
             android:src="@drawable/icon_outline_favorites" />
     </RelativeLayout>
