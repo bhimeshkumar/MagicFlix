@@ -9,12 +9,12 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -23,13 +23,15 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.PopupWindow;
+import android.widget.PopupWindow.OnDismissListener;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.youtube.player.YouTubeBaseActivity;
 import com.magicflix.goog.R;
+import com.magicflix.goog.app.utils.Constants;
 
-public class BaseActivity extends YouTubeBaseActivity{
+public class BaseActivity extends YouTubeBaseActivity implements OnDismissListener{
 
 	@Override
 	protected void onCreate(Bundle arg0) {
@@ -152,5 +154,16 @@ public class BaseActivity extends YouTubeBaseActivity{
 		AlertDialog alertDialog = alertDialogBuilder.create();
 		alertDialog.show();
 	}
+	
+	public PopupWindow getTimerAlert() {
+		PopupWindow popupWindow =getTrialExpiredPopUp((Constants.APP_TIMER_VALUE == 0) ? getString(R.string.times_up_txt) : getString(R.string.app_timer_msg));
+		popupWindow.setOnDismissListener(this);
+		return popupWindow;
+	}
 
+	@Override
+	public void onDismiss() {
+		Constants.IS_APP_TIMER_SHOWN = true;
+		
+	}
 }

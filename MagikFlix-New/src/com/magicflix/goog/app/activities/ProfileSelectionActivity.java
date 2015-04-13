@@ -5,19 +5,25 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.widget.PopupWindow;
-import android.widget.PopupWindow.OnDismissListener;
 
+import com.magicflix.goog.MagikFlix;
 import com.magicflix.goog.R;
 import com.magicflix.goog.app.adapters.ProfileSelectionAdapter;
 import com.magicflix.goog.app.db.Db4oHelper;
 import com.magicflix.goog.app.utils.Constants;
 import com.magicflix.goog.broadcasts.AppTimerBroadCastReceiver;
+import com.magicflix.goog.broadcasts.PopUpDismissBroadCastReceiver;
+import com.magicflix.goog.utils.MLogger;
 
-public class ProfileSelectionActivity extends BaseActivity implements OnDismissListener {
+public class ProfileSelectionActivity extends BaseActivity  {
 
+	private static String TAG = ProfileSelectionActivity.class.getName();
 	private HListView mProfileList;
+	private boolean mIsBackbtnPressed = false;
 	private AppTimerBroadCastReceiver mAppTimerBroadCastReceiver;
-	private IntentFilter mAppTimerIntent;
+	private IntentFilter mAppTimerIntent,mPopUpDismissIntent;
+	private PopUpDismissBroadCastReceiver mPopUpDismissBroadCastReceiver;
+	private PopupWindow popupWindow ;
 
 	@Override
 	protected void onCreate(Bundle arg0) {
@@ -29,34 +35,51 @@ public class ProfileSelectionActivity extends BaseActivity implements OnDismissL
 
 	private void init() {
 		mAppTimerIntent = new IntentFilter(Constants.INTENT_APP_TIMER_EXPIRED);
-		
 		 mAppTimerBroadCastReceiver = new AppTimerBroadCastReceiver() {
 			
 			@Override
 			protected void onTimerExpired() {
-				showTimerAlert();
+				popupWindow = getTimerAlert();
+				popupWindow.showAtLocation(popupWindow.getContentView(), Gravity.CENTER, 0, 0);
 				
+			}
+		};
+		
+		mPopUpDismissIntent = new IntentFilter(Constants.INTENT_APP_ALERT_DISMISS);
+		mPopUpDismissBroadCastReceiver = new PopUpDismissBroadCastReceiver() {
+
+			@Override
+			protected void dismissPopUp() {
+				try {
+					if(popupWindow != null && popupWindow.isShowing()){
+						popupWindow.dismiss();
+					}
+				} catch (Exception e) {
+					MLogger.logInfo(TAG, "Exception in mPopUpDismissBroadCastReceiver ::"+e.getLocalizedMessage());
+				}
 			}
 		};
 		
 	}
 	
-	private void showTimerAlert() {
-		PopupWindow popupWindow =getTrialExpiredPopUp((Constants.APP_TIMER_VALUE == 0) ? getString(R.string.times_up_txt) : getString(R.string.app_timer_msg));
-		popupWindow.showAtLocation(popupWindow.getContentView(), Gravity.CENTER, 0, 0);
-		popupWindow.setOnDismissListener(this);
-	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
+		((MagikFlix)getApplication()).setIsAppRunningBackground(false);
+		registerReceiver(mAppTimerBroadCastReceiver, mAppTimerIntent);
+		registerReceiver(mPopUpDismissBroadCastReceiver, mPopUpDismissIntent);
 		registerReceiver(mAppTimerBroadCastReceiver, mAppTimerIntent);
 	}
 	
 	@Override
 	protected void onPause() {
 		super.onPause();
+		if(!mIsBackbtnPressed){
+			((MagikFlix)getApplication()).setIsAppRunningBackground(true);
+		}
 		unregisterReceiver(mAppTimerBroadCastReceiver);
+		unregisterReceiver(mPopUpDismissBroadCastReceiver);
 	}
 	private void setIdsToViews() {
 		getActionBar().hide();
@@ -65,10 +88,11 @@ public class ProfileSelectionActivity extends BaseActivity implements OnDismissL
 		mProfileList.setAdapter(new ProfileSelectionAdapter(this,new Db4oHelper(this).getUserProfiles()));
 	}
 
+	
 	@Override
-	public void onDismiss() {
-		Constants.IS_APP_TIMER_SHOWN = true;
-		
+	public void onBackPressed() {
+		mIsBackbtnPressed = true;
+		super.onBackPressed();
 	}
 
 }

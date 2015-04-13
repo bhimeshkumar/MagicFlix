@@ -17,7 +17,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
-import android.widget.PopupWindow.OnDismissListener;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -42,7 +41,7 @@ import com.magicflix.goog.broadcasts.PopUpDismissBroadCastReceiver;
 import com.magicflix.goog.utils.MLogger;
 import com.magicflix.goog.utils.NetworkConnection;
 
-public class OnBoardingScreen extends BaseActivity implements OnClickListener, OnEditorActionListener, OnDismissListener{
+public class OnBoardingScreen extends BaseActivity implements OnClickListener, OnEditorActionListener{
 
 	private static String TAG = HomeActivity.class.getName();
 	private Button mParentControlBtn;
@@ -63,6 +62,7 @@ public class OnBoardingScreen extends BaseActivity implements OnClickListener, O
 	private IntentFilter mAppTimerIntent,mPopUpDismissIntent;
 	private PopUpDismissBroadCastReceiver mPopUpDismissBroadCastReceiver;
 	private PopupWindow popupWindow;
+	private boolean mIsBackbtnPressed = false;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -212,18 +212,19 @@ public class OnBoardingScreen extends BaseActivity implements OnClickListener, O
 		mLocalyticsSession = ((MagikFlix)getApplicationContext()).getLocatyticsSession();
 		if(mLocalyticsSession != null)
 			mLocalyticsSession.tagEvent(Constants.PARENT_GATE_OPEN);
-		
+
 		mAppTimerIntent = new IntentFilter(Constants.INTENT_APP_TIMER_EXPIRED);
-		
-		 mAppTimerBroadCastReceiver = new AppTimerBroadCastReceiver() {
-			
+
+		mAppTimerBroadCastReceiver = new AppTimerBroadCastReceiver() {
+
 			@Override
 			protected void onTimerExpired() {
-				showTimerAlert();
-				
+				popupWindow = getTimerAlert();
+				popupWindow.showAtLocation(popupWindow.getContentView(), Gravity.CENTER, 0, 0);
+
 			}
 		};
-		
+
 		mPopUpDismissIntent = new IntentFilter(Constants.INTENT_APP_ALERT_DISMISS);
 		mPopUpDismissBroadCastReceiver = new PopUpDismissBroadCastReceiver() {
 
@@ -239,12 +240,7 @@ public class OnBoardingScreen extends BaseActivity implements OnClickListener, O
 			}
 		};
 	}
-	
-	private void showTimerAlert() {
-		popupWindow =getTrialExpiredPopUp((Constants.APP_TIMER_VALUE == 0) ? getString(R.string.times_up_txt) : getString(R.string.app_timer_msg));
-		popupWindow.showAtLocation(popupWindow.getContentView(), Gravity.CENTER, 0, 0);
-		popupWindow.setOnDismissListener(this);
-	}
+
 
 	Runnable run = new Runnable() {
 		@Override
@@ -340,6 +336,7 @@ public class OnBoardingScreen extends BaseActivity implements OnClickListener, O
 	@Override
 	protected void onResume() {
 		super.onResume();
+		((MagikFlix)getApplication()).setIsAppRunningBackground(false);
 		registerReceiver(mConnReceiver,  new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
 		registerReceiver(mAppTimerBroadCastReceiver, mAppTimerIntent);
 		registerReceiver(mPopUpDismissBroadCastReceiver, mPopUpDismissIntent);
@@ -348,6 +345,9 @@ public class OnBoardingScreen extends BaseActivity implements OnClickListener, O
 	@Override
 	protected void onPause() {
 		super.onPause();
+		if(!mIsBackbtnPressed){
+			((MagikFlix)getApplication()).setIsAppRunningBackground(true);
+		}
 		unregisterReceiver(mConnReceiver);
 		unregisterReceiver(mAppTimerBroadCastReceiver);
 		unregisterReceiver(mPopUpDismissBroadCastReceiver);
@@ -375,13 +375,12 @@ public class OnBoardingScreen extends BaseActivity implements OnClickListener, O
 		}
 
 	};
-	
+
+
 	@Override
-	public void onDismiss() {
-		Constants.IS_APP_TIMER_SHOWN = true;
-		
+	public void onBackPressed() {
+		mIsBackbtnPressed = true;
+		super.onBackPressed();
 	}
 
-	
-	
 }

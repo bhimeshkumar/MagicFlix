@@ -80,6 +80,8 @@ public class Constants {
 	public static final String INTENT_APP_ALERT_DISMISS = "com.magikflic.goog.ALERT_DISMISS";
 	public static final String INTENT_TRIAL_EXPIRED = "com.magikflic.goog.TRIALEXPIRED";
 	public static boolean IS_PROFILE_SELECTION_CHANGED = false;
+	public static boolean SHOW_TITLES = false;
+	public static boolean SHOW_PLAY_LIST_TITLES = false;
 
 
 	public static String readTxt(Context context, boolean isAboutThisApp){

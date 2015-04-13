@@ -63,9 +63,12 @@ import com.magicflix.goog.app.api.results.VideoResult;
 import com.magicflix.goog.app.api.results.Videos;
 import com.magicflix.goog.app.api.results.VimeoVideoResult;
 import com.magicflix.goog.app.asyntasks.DataApiAsyncTask;
+import com.magicflix.goog.app.db.Db4oHelper;
 import com.magicflix.goog.app.utils.Constants;
 import com.magicflix.goog.app.views.CustomVideoView;
 import com.magicflix.goog.app.views.CustomVideoView.PlayPauseListener;
+import com.magicflix.goog.broadcasts.AppTimerBroadCastReceiver;
+import com.magicflix.goog.broadcasts.PopUpDismissBroadCastReceiver;
 import com.magicflix.goog.medialplayer.CustomMediaController;
 import com.magicflix.goog.utils.MLogger;
 
@@ -89,17 +92,54 @@ public class VideoViewActivity extends BaseActivity implements PlayPauseListener
 
 	private boolean mVideoIsStarted = false, mIsBackbtnPressed = false;
 	private boolean mIsVideoPaused = false;
+	
+	private AppTimerBroadCastReceiver mAppTimerBroadCastReceiver;
+	private PopUpDismissBroadCastReceiver mPopUpDismissBroadCastReceiver;
+	private IntentFilter mAppTimerIntent , mPopUpDismissIntent;
+	private PopupWindow popupWindow ;
 
 	@Override
 	protected void onCreate(Bundle arg0) {
 		super.onCreate(arg0);
 		setContentView(R.layout.magik_flix_video_play_screen_videoview);
-		hideActionBar();
+		init();
 		setIdsToViews();
 		getVideoLink();
 		setListnersToViews();
 	}
 
+	private void init() {
+		getActionBar().hide();
+
+		mAppTimerIntent = new IntentFilter(Constants.INTENT_APP_TIMER_EXPIRED);
+		mAppTimerBroadCastReceiver = new AppTimerBroadCastReceiver() {
+
+			@Override
+			protected void onTimerExpired() {
+				popupWindow = getTimerAlert();
+				popupWindow.showAtLocation(popupWindow.getContentView(), Gravity.CENTER, 0, 0);
+
+			}
+		};
+
+		mPopUpDismissIntent = new IntentFilter(Constants.INTENT_APP_ALERT_DISMISS);
+		mPopUpDismissBroadCastReceiver = new PopUpDismissBroadCastReceiver() {
+
+			@Override
+			protected void dismissPopUp() {
+				try {
+
+					if(popupWindow != null && popupWindow.isShowing()){
+						popupWindow.dismiss();
+					}
+
+				} catch (Exception e) {
+					MLogger.logInfo(TAG, "Exception in mPopUpDismissBroadCastReceiver ::"+e.getLocalizedMessage());
+				}
+
+			}
+		};
+	}
 	private void getVideoLink() {
 		Bundle bundle =getIntent().getExtras();
 		videosList  = (ArrayList<Videos>) bundle.getSerializable("videosList");
@@ -115,6 +155,10 @@ public class VideoViewActivity extends BaseActivity implements PlayPauseListener
 
 		if(mCategoryName.equalsIgnoreCase(getString(R.string.category_vimeo_title))){
 			getVimeoVideoURL(mVideoId);
+		}else if(mCategoryName.equalsIgnoreCase(getString(R.string.category_camera_roll_title))){
+			mVideoView.setVideoPath(mVideoId);
+			mVideoView.requestFocus();
+			mVideoView.start();
 		}else{
 			VideoId lYouTubeId = new VideoId(mVideoId);
 			new ProcesYouTubeTask().execute(lYouTubeId);
@@ -132,6 +176,10 @@ public class VideoViewActivity extends BaseActivity implements PlayPauseListener
 
 		if(mCategoryName.equalsIgnoreCase("Vimeo")){
 			getVimeoVideoURL(mVideoId);
+		}else if(mCategoryName.equalsIgnoreCase(getString(R.string.category_camera_roll_title))){
+			mVideoView.setVideoPath(mVideoId);
+			mVideoView.requestFocus();
+			mVideoView.start();
 		}else{
 
 			VideoId lYouTubeId = new VideoId(mVideoId);
@@ -160,27 +208,9 @@ public class VideoViewActivity extends BaseActivity implements PlayPauseListener
 		mBackToGalleryIV.setOnClickListener(this);
 		mFavIV.setOnClickListener(this);
 		mVideoView.setOnClickListener(this);
-		//		mVideoView.setMediaContrllerListener(new MediaControllerEventListener() {
-		//
-		//			@Override
-		//			public void controllerVisible() {
-		//				//	showActionBar();
-		//			}
-		//
-		//			@Override
-		//			public void controllerHiden() {
-		//				//hideActionBar();
-		//			}
-		//		});
 	}
 
-	private void showActionBar(){
-		getActionBar().show();
-	}
-
-	private void hideActionBar(){
-		getActionBar().hide();
-	}
+	
 	private void setIdsToViews() {
 		mTransparentLayout = (RelativeLayout)findViewById(R.id.transparent_root_layout);
 		mPlayIV = (ImageView)findViewById(R.id.play_btn);
@@ -198,7 +228,6 @@ public class VideoViewActivity extends BaseActivity implements PlayPauseListener
 		mVideoView.setVideoURI(videoUri);
 		mVideoView.requestFocus();
 		mVideoView.start();
-
 	}
 
 	@Override
@@ -688,6 +717,9 @@ public class VideoViewActivity extends BaseActivity implements PlayPauseListener
 	@Override
 	protected void onResume() {
 		super.onResume();
+		((MagikFlix)getApplication()).setIsAppRunningBackground(false);
+		registerReceiver(mAppTimerBroadCastReceiver, mAppTimerIntent);
+		registerReceiver(mPopUpDismissBroadCastReceiver, mPopUpDismissIntent);
 		registerReceiver(mConnReceiver,  new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
 
 	}
@@ -695,10 +727,15 @@ public class VideoViewActivity extends BaseActivity implements PlayPauseListener
 	@Override
 	protected void onPause() {
 		super.onPause();
+		if(!mIsBackbtnPressed){
+			((MagikFlix)getApplication()).setIsAppRunningBackground(true);
+		}
 		if(mVideoIsStarted && mVideoView.isPlaying() && !mIsBackbtnPressed){
 			mVideoView.pause();
 		}
 		unregisterReceiver(mConnReceiver);
+		unregisterReceiver(mAppTimerBroadCastReceiver);
+		unregisterReceiver(mPopUpDismissBroadCastReceiver);
 	}
 
 	private BroadcastReceiver mConnReceiver = new BroadcastReceiver() {

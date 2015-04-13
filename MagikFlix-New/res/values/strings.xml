@@ -118,5 +118,7 @@
     <string name="favorite_videos_empty_list_msg">Go ahead and favorite videos to make your own playlist.</string>
     <string name="info_profile_pic">Take a picture for your profile</string>
     <string name="info_valid_username_msg">Please enter valid name</string>
+    <string name="category_camera_roll_title">Camera Roll Videos</string>
+    <string name="camera_roll_screen_msg">Make a playlist from your camera roll.</string>
 
 </resources>

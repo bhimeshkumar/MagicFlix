@@ -1,10 +1,13 @@
 package com.magicflix.goog.app.activities;
 
+import it.sephiroth.android.library.widget.AbsHListView;
+import it.sephiroth.android.library.widget.AbsHListView.OnScrollListener;
 import it.sephiroth.android.library.widget.AdapterView;
 import it.sephiroth.android.library.widget.AdapterView.OnItemClickListener;
 import it.sephiroth.android.library.widget.AdapterView.OnItemSelectedListener;
 import it.sephiroth.android.library.widget.HListView;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,6 +40,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.RemoteException;
+import android.provider.MediaStore;
 import android.text.method.LinkMovementMethod;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -69,6 +73,7 @@ import com.magicflix.goog.app.adapters.PlayListAdapter;
 import com.magicflix.goog.app.api.MFlixJsonBuilder;
 import com.magicflix.goog.app.api.MFlixJsonBuilder.WebRequestType;
 import com.magicflix.goog.app.api.Model.UserProfile;
+import com.magicflix.goog.app.api.Model.VideoData;
 import com.magicflix.goog.app.api.requests.AddSubscriptionrequest;
 import com.magicflix.goog.app.api.requests.PromoCodeRequest;
 import com.magicflix.goog.app.api.requests.RedeemCodeRequest;
@@ -93,10 +98,11 @@ import com.magicflix.goog.utils.CompatibilityUtil;
 import com.magicflix.goog.utils.MLogger;
 import com.magicflix.goog.utils.NetworkConnection;
 
-public class HomeActivity extends BaseActivity implements OnItemSelectedListener, OnItemClickListener,  OnClickListener, android.widget.AdapterView.OnItemClickListener {
+public class HomeActivity extends BaseActivity implements OnItemSelectedListener, OnItemClickListener,  OnClickListener, android.widget.AdapterView.OnItemClickListener, android.widget.AdapterView.OnItemSelectedListener {
 
 	private static String TAG = HomeActivity.class.getName();
-	private FancyCoverFlow fancyCoverFlow;
+
+	private FancyCoverFlow mFancyCoverFlow;
 	private HListView mCategoryListView;
 	private HListView mPlayListListView;
 	private Playlists[] mCategoryPlayLists;
@@ -118,6 +124,7 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 	private MagikFlix mApplication;
 	private AppConuntDownTimer countDownTimer;
 	private PopupWindow mAppTimerPopupWindow;
+	private MovieAdapter mMovieAdapter;
 
 	//susbcsription 
 
@@ -137,6 +144,7 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 	private UserProfile mUserProfile;
 	private RelativeLayout mPlayListLayout;
 	private Db4oHelper mDb4oProvider;
+	private boolean mIsBackPressed = false,mIsGalleryScrolling = false ;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -278,29 +286,52 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 		mActionBarAppTimerBtn.setOnClickListener(this);
 		mActionBarPriofileIV.setOnClickListener(this);
 		mTimerValueTV.setOnClickListener(this);
+		mPlayListListView.setOnScrollListener(new OnScrollListener() {
+
+			@Override
+			public void onScrollStateChanged(AbsHListView view, int scrollState) {
+				if(scrollState == 1){
+					Constants.SHOW_PLAY_LIST_TITLES = true;
+					((PlayListAdapter)mPlayListListView.getAdapter()).notifyDataSetChanged();
+				}else if(scrollState == 0){
+					mPlayListHandler.removeCallbacksAndMessages(null);
+					Message message = new Message();
+					message.what = 0;
+					message.arg1 = 10000;
+					mPlayListHandler.sendMessageDelayed(message, 1000);
+				}
+
+			}
+
+			@Override
+			public void onScroll(AbsHListView view, int firstVisibleItem,
+					int visibleItemCount, int totalItemCount) {
+
+			}
+		});
 	}
 
 	@SuppressWarnings("deprecation")
 	private void setMovieAdapter() {
-		movieVideos = new ArrayList<Videos>();
-		movieVideos.clear();
-		movieVideos = getRecommendedVideos();
-		this.fancyCoverFlow.setAdapter(new MovieAdapter(this,movieVideos));
-		this.fancyCoverFlow.setUnselectedAlpha(0.9f);
-		this.fancyCoverFlow.setUnselectedScale(0.84f);
-		this.fancyCoverFlow.setSpacing(-10);
-		this.fancyCoverFlow.setMaxRotation(0);
-		this.fancyCoverFlow.setScaleDownGravity(0.5f);
-		fancyCoverFlow.setAnimationDuration(500);
-		fancyCoverFlow.setOnItemClickListener(this);
 		try {
-			this.fancyCoverFlow.setSelection((movieVideos.size()) > 1 ? 1 :0, true);
+			movieVideos = new ArrayList<Videos>();
+			movieVideos.clear();
+			movieVideos = getRecommendedVideos();
+			mMovieAdapter = new MovieAdapter(this,movieVideos);
+			mFancyCoverFlow.setAdapter(mMovieAdapter);
+			mFancyCoverFlow.setUnselectedAlpha(0.95f);
+			mFancyCoverFlow.setUnselectedScale(0.84f);
+			mFancyCoverFlow.setSpacing(-10);
+			mFancyCoverFlow.setMaxRotation(0);
+			mFancyCoverFlow.setScaleDownGravity(0.5f);
+			mFancyCoverFlow.setAnimationDuration(500);
+			mFancyCoverFlow.setOnItemClickListener(this);
+			mFancyCoverFlow.setSelection((movieVideos.size()) > 1 ? 1 :0, true);
+			mFancyCoverFlow.setCallbackDuringFling(true);
+			mFancyCoverFlow.setOnItemSelectedListener(this);
 		} catch (Exception e) {
-			MLogger.logInfo(TAG, "Exception :: "+e.getLocalizedMessage());
+			MLogger.logInfo(TAG, "Exception in setMovieAdapter :: "+e.getLocalizedMessage());
 		}
-
-
-
 	}
 
 	private ArrayList<Videos>  getRecommendedVideos() {
@@ -336,7 +367,7 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 		mActionBarAppTimerBtn = (Button)mActionBar.getCustomView().findViewById(R.id.actionBar_app_timer_btn);
 		mActionBarPriofileIV =  (ImageView)mActionBar.getCustomView().findViewById(R.id.actionBar_profile_iv);
 		if(CompatibilityUtil.isTablet(this)){
-			this.fancyCoverFlow = (FancyCoverFlow) this.findViewById(R.id.mainActivity_movie_list);
+			this.mFancyCoverFlow = (FancyCoverFlow) this.findViewById(R.id.mainActivity_movie_list);
 		}
 		mPlayListLayout = (RelativeLayout)findViewById(R.id.play_list_layout);
 	}
@@ -349,11 +380,11 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 
 	@Override
 	public void onItemClick(it.sephiroth.android.library.widget.AdapterView<?> parent,View view, int position, long id) {
-		mLocaliticsAttributes.clear();
-		mLocaliticsAttributes.put(Constants.CATEGORY, mSelectedCategoryName);
-		mLocaliticsAttributes.put(Constants.INDEX, String.valueOf(position));
-		mLocaliticsAttributes.put(Constants.VIDEO_ID, videosList.get(position).videoId);
-		mLocalyticsSession.tagEvent(Constants.CATEGORY_VIDEO, mLocaliticsAttributes);
+		//		mLocaliticsAttributes.clear();
+		//		mLocaliticsAttributes.put(Constants.CATEGORY, mSelectedCategoryName);
+		//		mLocaliticsAttributes.put(Constants.INDEX, String.valueOf(position));
+		//		mLocaliticsAttributes.put(Constants.VIDEO_ID, videosList.get(position).videoId);
+		//		mLocalyticsSession.tagEvent(Constants.CATEGORY_VIDEO, mLocaliticsAttributes);
 		checkSubscriptionAndNavigate(position,videosList);
 	}
 
@@ -376,7 +407,7 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 		if(!(ConnectionResult.SERVICE_MISSING == GooglePlayServicesUtil.isGooglePlayServicesAvailable(this))){
 			String packageName = "com.google.android.youtube";
 			boolean isYoutubeInstalled = isYouTubeAppInstalled(packageName);
-			if(isYoutubeInstalled && !videoCategory.equalsIgnoreCase(getString(R.string.category_vimeo_title))){
+			if(isYoutubeInstalled && !videoCategory.equalsIgnoreCase(getString(R.string.category_vimeo_title)) && !videoCategory.equalsIgnoreCase(getString(R.string.category_camera_roll_title))){
 				navigateToVideoPlayScreen(position, videosList);
 			}else{
 				navigateToVideoViewScreen(position, videosList,videoCategory);
@@ -483,46 +514,74 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 	}
 
 	private void setUpUI(VideoResult videoResult) {
-		mSettingsLayout.setVisibility(View.VISIBLE);
-		mProfileLayout.setVisibility(View.VISIBLE);
-		Playlists[] playLists = videoResult.playlists;
-		ArrayList<Playlists> categoriesList = new ArrayList<Playlists>();
+		try {
 
-		for (Playlists playList : playLists) {
-			if(playList.playlistType.equalsIgnoreCase(this.getResources().getString(R.string.category_header))){
-				categoriesList.add(playList);
-			}
-		}
-		mCategoryPlayLists = categoriesList.toArray(new Playlists[categoriesList.size()]);
-		setCategoryAdapter();
-		setFavoriteVideos();
+			mSettingsLayout.setVisibility(View.VISIBLE);
+			mProfileLayout.setVisibility(View.VISIBLE);
+			Playlists[] playLists = videoResult.playlists;
+			ArrayList<Playlists> categoriesList = new ArrayList<Playlists>();
 
-		setUpUI();
-
-		if(Constants.IS_SUBSCRIPTION_ENABLED){
-			boolean isSubscriptionRestored = ((MagikFlix)getApplicationContext()).isSubscriptionRestored();
-			if (mTimerValueTV != null){
-				mTimerValueTV.setVisibility((mIsUserSubscribed || isSubscriptionRestored) ? View.GONE :View.VISIBLE);
-			}
-			if (mActionBarSubscribeBtn != null){
-				mActionBarSubscribeBtn.setVisibility((mIsUserSubscribed || isSubscriptionRestored) ? View.GONE :View.VISIBLE);
-			}
-
-			if(!mIsUserSubscribed || !(((MagikFlix)getApplicationContext()).isSubscriptionRestored())){
-				Constants.TIMERLIMIT = Integer.parseInt(videoResult.appConfig.Settings[6].SettingValue);
-				MagikFlix app = (MagikFlix)getApplicationContext();
-				app.setFreeTrailPeriod(Constants.TIMERLIMIT);
-				if(app.isTrialPeriodExpired()){
-					PopupWindow popupWindow = getTrialExpiredPopUp(getString(R.string.times_up_txt));
-					popupWindow.showAtLocation(popupWindow.getContentView(), Gravity.CENTER, 0, 0);
-				}else{
-					mTimerValueTV.setVisibility(View.VISIBLE);
-					setFreeTrialValue();
-					showCustomAlert("Enjoy your free trial of " +Constants.TIMERLIMIT+" min(s) today.");
+			for (Playlists playList : playLists) {
+				if(playList.playlistType.equalsIgnoreCase(this.getResources().getString(R.string.category_header))){
+					categoriesList.add(playList);
 				}
 			}
+			addCameraRollCategory(categoriesList);
+			mCategoryPlayLists = categoriesList.toArray(new Playlists[categoriesList.size()]);
+			setCategoryAdapter();
+			setFavoriteVideos();
+			setUpUI();
+			if(Constants.IS_SUBSCRIPTION_ENABLED){
+				boolean isSubscriptionRestored = ((MagikFlix)getApplicationContext()).isSubscriptionRestored();
+				if (mTimerValueTV != null){
+					mTimerValueTV.setVisibility((mIsUserSubscribed || isSubscriptionRestored) ? View.GONE :View.VISIBLE);
+				}
+				if (mActionBarSubscribeBtn != null){
+					mActionBarSubscribeBtn.setVisibility((mIsUserSubscribed || isSubscriptionRestored) ? View.GONE :View.VISIBLE);
+				}
+
+				if(!mIsUserSubscribed || !(((MagikFlix)getApplicationContext()).isSubscriptionRestored())){
+					Constants.TIMERLIMIT = Integer.parseInt(videoResult.appConfig.Settings[6].SettingValue);
+					MagikFlix app = (MagikFlix)getApplicationContext();
+					app.setFreeTrailPeriod(Constants.TIMERLIMIT);
+					if(app.isTrialPeriodExpired()){
+						PopupWindow popupWindow = getTrialExpiredPopUp(getString(R.string.times_up_txt));
+						popupWindow.showAtLocation(popupWindow.getContentView(), Gravity.CENTER, 0, 0);
+					}else{
+						mTimerValueTV.setVisibility(View.VISIBLE);
+						setFreeTrialValue();
+						showCustomAlert("Enjoy your free trial of " +Constants.TIMERLIMIT+" min(s) today.");
+					}
+				}
+			}
+			runAppTimer(false);
+
+		} catch (Exception e) {
+			MLogger.logInfo(TAG, "Exception in setUpUI ::"+e.getLocalizedMessage());
 		}
-		runAppTimer();
+	}
+
+
+	private void addCameraRollCategory(ArrayList<Playlists> categoriesList) {
+		try {
+
+			UserProfile userProfile = mDb4oProvider.getUserProfileById(mApplication.getSelectedProfileIndex());
+			Playlists playlist = new Playlists();
+			playlist.name = getString(R.string.category_camera_roll_title);
+			playlist.thumbnailUrl = "android.resource://com.magicflix.goog/" + R.drawable.icon_outline_localmovies;
+			ArrayList<String> videoIds = new ArrayList<String>();
+			if(userProfile.playList != null && userProfile.playList.size() > 0){
+				for (VideoData videoData : userProfile.playList) {
+					if(new File(videoData.filePath).exists())
+						videoIds.add(videoData.filePath);
+				}
+			}
+			playlist.videoIds = videoIds.toArray(new String[videoIds.size()]);
+			categoriesList.add(playlist);
+
+		} catch (Exception e) {
+			MLogger.logInfo(TAG, "Exception in addCameraRollCategory :: "+e.getLocalizedMessage());
+		}
 	}
 
 	private void setFreeTrialValue() {
@@ -570,6 +629,8 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 			videosList = getRecommendedVideos();
 		}else if(categoryName.equalsIgnoreCase("Favorite Videos")){
 			videosList = getFavoriteVideos();
+		}else if(categoryName.equalsIgnoreCase(getString(R.string.category_camera_roll_title))){
+			videosList = getCameraRollVideos();
 		}else{
 			for (Videos video : ((MagikFlix)getApplicationContext()).getVideoResult().videos) {
 				if(video.category.equalsIgnoreCase(categoryName)){
@@ -598,6 +659,33 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 		}
 
 	}
+
+	private ArrayList<Videos> getCameraRollVideos() {
+		ArrayList<Videos> localPlayList = new ArrayList<Videos>();
+		try {
+			UserProfile userProfile = mDb4oProvider.getUserProfileById(mApplication.getSelectedProfileIndex());
+			if( userProfile.playList != null &&  userProfile.playList.size() > 0){
+				for (VideoData videoData : userProfile.playList) {
+					File videoFile = new File(videoData.filePath);
+					if(videoFile.exists()){
+						Videos videos = new Videos();
+						videos.category = getString(R.string.category_camera_roll_title);
+						videos.videoId = videoData.filePath;
+						videos.bitmapId = videoData.id;
+						videos.duration = videoData.duration;
+						videos.title = videoData.name; 
+						Bitmap b = MediaStore.Video.Thumbnails.getThumbnail(getContentResolver(),videoData.id,MediaStore.Video.Thumbnails.MINI_KIND,null);
+						localPlayList.add(videos);
+					}
+				}
+			}
+
+		} catch (Exception e) {
+			MLogger.logError(TAG, "Exception in getCameraRollVideos :"+e.getLocalizedMessage());
+		}
+		return localPlayList;
+	}
+
 
 	private void setFavoriteVideos() {
 		Constants.FAV_VIDEOS_LIST.clear();
@@ -707,17 +795,18 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 
 	@Override
 	public void onBackPressed() {
-		super.onBackPressed();
-
+		mIsBackPressed = true;
 		if(mVideoAsycTask != null){
 			mVideoAsycTask.cancel(true);
 		}
+		super.onBackPressed();
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
 		try {
+			mApplication.setIsAppRunningBackground(false);	
 			registerReceiver(mFavouriteChangeListner, mFavIntentFilter);
 			registerReceiver(mConnReceiver,  new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
 
@@ -727,7 +816,7 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 			dismissTimerPopUp();
 			if(Constants.TIMER_LIMIT_UPDATED){
 				Constants.TIMER_LIMIT_UPDATED = false;
-				runAppTimer();
+				runAppTimer(false);
 			}
 
 			setUpProfileImage();
@@ -757,29 +846,12 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 	@Override
 	protected void onPause() {
 		super.onPause();
+		if(!mIsBackPressed){
+			mApplication.setIsAppRunningBackground(true);
+		}
 		unregisterReceiver(mConnReceiver);
 	}
 
-	/*private BroadcastReceiver mConnReceiver = new BroadcastReceiver() {
-		public void onReceive(Context context, Intent intent) {
-			NetworkInfo currentNetworkInfo = (NetworkInfo) intent.getParcelableExtra(ConnectivityManager.EXTRA_NETWORK_INFO);
-			if(!currentNetworkInfo.isConnected()){
-				mProgressBar.setVisibility(View.GONE);
-				if(((MagikFlix)getApplicationContext()).getVideoResult() == null)
-					noNetworkTV.setVisibility(View.VISIBLE);
-			}else{
-				noNetworkTV.setVisibility(View.GONE);
-				if(((MagikFlix)getApplicationContext()).getVideoResult() == null && !mIsDataLoading){
-					mProgressBar.setVisibility(View.VISIBLE);
-					if(Constants.IS_SUBSCRIPTION_ENABLED){
-						getUserSubscription();
-					}else{
-						getVideos(((MagikFlix)getApplicationContext()).getToken());
-					}
-				}
-			}
-		}
-	};*/
 
 	private BroadcastReceiver mConnReceiver = new BroadcastReceiver() {
 
@@ -1124,15 +1196,21 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 		}
 	}
 
-	private void runAppTimer() {
-		mActionBarAppTimerBtn.setVisibility(View.VISIBLE);
-		int timerValue = Integer.valueOf(mApplication.getAppTimerValue());
-		Constants.DEFAULT_APP_TIMER_LIMIT =  timerValue;
-		handler.removeCallbacksAndMessages(null);
-		Message message = new Message();
-		message.what = 0;
-		message.arg1 = (Constants.DEFAULT_APP_TIMER_LIMIT * 60 * 1000);
-		handler.sendMessageDelayed(message, 1000);
+	private void runAppTimer(boolean isFromBackground) {
+		try {
+
+			mActionBarAppTimerBtn.setVisibility(View.VISIBLE);
+			int timerValue = isFromBackground ? Integer.valueOf(mApplication.getAppTimerValue()) : Integer.valueOf(mApplication.getSeekBarValue());
+			Constants.DEFAULT_APP_TIMER_LIMIT =  timerValue;
+			handler.removeCallbacksAndMessages(null);
+			Message message = new Message();
+			message.what = 0;
+			message.arg1 = (Constants.DEFAULT_APP_TIMER_LIMIT * 60 * 1000);
+			handler.sendMessageDelayed(message, 1000);
+
+		} catch (Exception e) {
+			MLogger.logInfo(TAG, "Exception in runAppTimer :: "+e.getLocalizedMessage());
+		}
 	}
 	private void updateTimer(Message msg) {
 		int pending = msg.arg1 - (Constants.APP_TIMER_DELAY * 1000);
@@ -1149,7 +1227,16 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 			case 0:
 				try {
 					dismissTimerPopUp();
+					if(mApplication.isAppRunningInBackgroud()){
+						mApplication.setAppTimerValue(mActionBarAppTimerBtn.getText().toString());
+						handler.removeCallbacksAndMessages(null);
+						Message m = new Message();
+						m.what = 2;
+						handler.sendEmptyMessage(2);
+						return;
+					}
 					int timerValue = (msg.arg1/60000);
+
 					mActionBarAppTimerBtn.setText(String.valueOf(msg.arg1/60000));
 					if (timerValue > 0){
 						if(timerValue < 5){
@@ -1184,6 +1271,7 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 						mAppTimerPopupWindow = getTrialExpiredPopUp(getString(R.string.times_up_txt));
 						mAppTimerPopupWindow.showAtLocation(mAppTimerPopupWindow.getContentView(), Gravity.CENTER, 0, 0);
 						mActionBarAppTimerBtn.setTextColor(Color.RED);
+						//						mApplication.setAppTimerValue("20");
 						handler.removeCallbacksAndMessages(null);
 					}
 
@@ -1191,6 +1279,16 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 					MLogger.logInfo(TAG, "Exception :: Timer Handler "+ e.getMessage());
 				}
 				break;	
+			case 2:
+				if(!mApplication.isAppRunningInBackgroud()){
+					handler.removeCallbacksAndMessages(null);
+					runAppTimer(true);
+				}else{
+					Message m = new Message();
+					m.what = 2;
+					handler.sendMessageDelayed(m,1000);
+				}
+				break;
 			default:
 				break;
 			}
@@ -1202,5 +1300,93 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 			mAppTimerPopupWindow.dismiss();
 		}
 	}
+
+
+	@Override
+	public void onItemSelected(android.widget.AdapterView<?> adapterView, View arg1,
+			int arg2, long arg3) {
+
+		if(!mIsGalleryScrolling){
+			Constants.SHOW_TITLES = true;
+			mIsGalleryScrolling = true;
+			((MovieAdapter)adapterView.getAdapter()).notifyDataSetChanged();
+			mFancyCoverFlow.setCallbackDuringFling(false);
+		}else{
+			mFancyCoverFlow.setCallbackDuringFling(true);
+			mIsGalleryScrolling = false;
+			mTitleHandler.removeCallbacksAndMessages(null);
+			Message message = new Message();
+			message.what = 0;
+			message.arg1 = 10000;
+			mTitleHandler.sendMessageDelayed(message, 1000);
+		}
+
+	}
+
+
+	@Override
+	public void onNothingSelected(android.widget.AdapterView<?> arg0) {
+
+	}
+
+	Handler mTitleHandler = new Handler() {
+		@Override
+		public void handleMessage(Message msg) {
+			switch (msg.what) {
+			case 0:
+				if(msg.arg1 > 0){
+					updateTitlesTimer(msg);
+				}else{
+					mTitleHandler.removeCallbacksAndMessages(null);
+					Constants.SHOW_TITLES = false;
+					mMovieAdapter.notifyDataSetChanged();
+
+				}
+				break;
+
+			default:
+				break;
+			}
+		}
+	};
+
+
+	Handler mPlayListHandler = new Handler() {
+		@Override
+		public void handleMessage(Message msg) {
+			switch (msg.what) {
+			case 0:
+				if(msg.arg1 > 0){
+					updatePlayListTitle(msg);
+				}else{
+					mPlayListHandler.removeCallbacksAndMessages(null);
+					Constants.SHOW_PLAY_LIST_TITLES = false;
+					((PlayListAdapter)mPlayListListView.getAdapter()).notifyDataSetChanged();
+
+				}
+				break;
+			default:
+				break;
+			}
+		}
+	};
+
+	private void updateTitlesTimer(Message msg) {
+		int pending = msg.arg1 -  1000;
+		Message m = new Message();
+		m.what = 0;
+		m.arg1 = pending;
+		mTitleHandler.sendMessageDelayed(m,  1000);
+		
+	}
+	
+	private void updatePlayListTitle(Message msg) {
+		int pending = msg.arg1 -  1000;
+		Message m = new Message();
+		m.what = 0;
+		m.arg1 = pending;
+		mPlayListHandler.sendMessageDelayed(m,  1000);
+	}
+
 
 }

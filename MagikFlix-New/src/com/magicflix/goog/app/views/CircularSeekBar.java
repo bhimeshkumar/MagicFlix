@@ -232,7 +232,7 @@ public class CircularSeekBar extends View {
 		text_size = a.getInteger(R.styleable.CircularSeekBar_text_size, 95);
 
 		init_position = a.getInteger(
-				R.styleable.CircularSeekBar_init_position, Integer.valueOf(((MagikFlix)mContext.getApplicationContext()).getAppTimerValue()));
+				R.styleable.CircularSeekBar_init_position, Integer.valueOf(((MagikFlix)mContext.getApplicationContext()).getSeekBarValue()));
 
 		start_arc = a.getInteger(R.styleable.CircularSeekBar_start_angle, 0);
 		end_wheel = a.getInteger(R.styleable.CircularSeekBar_end_angle, 360);

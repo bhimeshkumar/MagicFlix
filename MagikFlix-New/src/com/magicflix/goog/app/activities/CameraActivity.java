@@ -16,16 +16,15 @@ import android.hardware.Camera.CameraInfo;
 import android.hardware.Camera.PictureCallback;
 import android.hardware.Camera.ShutterCallback;
 import android.os.Bundle;
-import android.os.Environment;
 import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.PopupWindow;
-import android.widget.PopupWindow.OnDismissListener;
 import android.widget.Toast;
 
+import com.magicflix.goog.MagikFlix;
 import com.magicflix.goog.R;
 import com.magicflix.goog.app.camera.CameraPreview;
 import com.magicflix.goog.app.utils.Constants;
@@ -33,7 +32,7 @@ import com.magicflix.goog.broadcasts.AppTimerBroadCastReceiver;
 import com.magicflix.goog.broadcasts.PopUpDismissBroadCastReceiver;
 import com.magicflix.goog.utils.MLogger;
 
-public class CameraActivity extends BaseActivity implements OnClickListener, OnDismissListener {
+public class CameraActivity extends BaseActivity implements OnClickListener {
 	private static final String TAG = "CamTestActivity";
 	private CameraPreview mCameraPreview;
 	private Button mSwapBtn, mSnapBtn, mCancelBtn;
@@ -44,6 +43,7 @@ public class CameraActivity extends BaseActivity implements OnClickListener, OnD
 	private IntentFilter mAppTimerIntent,mPopUpDismissIntent;
 	private PopUpDismissBroadCastReceiver mPopUpDismissBroadCastReceiver;
 	private PopupWindow popupWindow ;
+	private boolean mIsBackbtnPressed = false;
 
 
 	@Override
@@ -82,11 +82,12 @@ public class CameraActivity extends BaseActivity implements OnClickListener, OnD
 
 			@Override
 			protected void onTimerExpired() {
-				showTimerAlert();
+				popupWindow = getTimerAlert();
+				popupWindow.showAtLocation(popupWindow.getContentView(), Gravity.CENTER, 0, 0);
 
 			}
 		};
-		
+
 		mPopUpDismissIntent = new IntentFilter(Constants.INTENT_APP_ALERT_DISMISS);
 		mPopUpDismissBroadCastReceiver = new PopUpDismissBroadCastReceiver() {
 
@@ -104,15 +105,11 @@ public class CameraActivity extends BaseActivity implements OnClickListener, OnD
 
 	}
 
-	private void showTimerAlert() {
-		popupWindow =getTrialExpiredPopUp((Constants.APP_TIMER_VALUE == 0) ? getString(R.string.times_up_txt) : getString(R.string.app_timer_msg));
-		popupWindow.showAtLocation(popupWindow.getContentView(), Gravity.CENTER, 0, 0);
-		popupWindow.setOnDismissListener(this);
-	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
+		((MagikFlix)getApplication()).setIsAppRunningBackground(false);
 		registerReceiver(mAppTimerBroadCastReceiver, mAppTimerIntent);
 		registerReceiver(mPopUpDismissBroadCastReceiver, mPopUpDismissIntent);
 		setUpCamera();
@@ -136,9 +133,12 @@ public class CameraActivity extends BaseActivity implements OnClickListener, OnD
 
 	@Override
 	protected void onPause() {
+		if(!mIsBackbtnPressed){
+			((MagikFlix)getApplication()).setIsAppRunningBackground(true);
+		}
 		unregisterReceiver(mAppTimerBroadCastReceiver);
 		unregisterReceiver(mPopUpDismissBroadCastReceiver);
-		
+
 		if(mCamera != null) {
 			mCamera.stopPreview();
 			mCameraPreview.setCamera(null);
@@ -305,12 +305,12 @@ public class CameraActivity extends BaseActivity implements OnClickListener, OnD
 			}
 		}
 	}
-
+	
 	@Override
-	public void onDismiss() {
-		Constants.IS_APP_TIMER_SHOWN = true;
+	public void onBackPressed() {
+		mIsBackbtnPressed = true;
+		super.onBackPressed();
 	}
-
 
 }
 

@@ -123,7 +123,7 @@
 
     <!-- main_activity_play_list_item -->
 
-    <dimen name="play_list_item_width">240dp</dimen>
+    <dimen name="play_list_item_width">230dp</dimen>
     <dimen name="play_list_item_height">130dp</dimen>
     <dimen name="play_list_item_marginRight">10dp</dimen>
 
@@ -181,5 +181,13 @@
     <dimen name="familyScreenTakePictureTxtSize">25sp</dimen>
     <dimen name="marginChildProfileAdapter">30dp</dimen>
     <dimen name="marginExtraLargePlus">50dp</dimen>
+    
+     <!-- Local play list dimens -->
+
+    <dimen name="local_play_list_item_width">380dp</dimen>
+    <dimen name="local_play_list_item_height">220dp</dimen>
+    <dimen name="textSizeCameraRollPlaList">20sp</dimen>
+    
+    
 
 </resources>

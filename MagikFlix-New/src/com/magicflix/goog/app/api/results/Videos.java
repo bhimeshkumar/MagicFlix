@@ -24,6 +24,7 @@ public class Videos  implements Serializable{
 	public Float score;
 	public int minAge;
 	public int maxAge;
+	public int bitmapId;
 	
 	
 //	public String id ;

@@ -49,7 +49,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="0.45"
+        android:layout_weight="0.47"
         android:background="@color/app_bg"
         android:orientation="horizontal" >
 
@@ -168,7 +168,7 @@
                     android:layout_gravity="right"
                     android:layout_marginTop="@dimen/marginTopCameraPlayListLayout"
                     android:orientation="vertical"
-                    android:visibility="gone" >
+                     >
 
                     <RelativeLayout
                         android:layout_width="@dimen/subscription_btn_width"
@@ -199,7 +199,7 @@
                         android:padding="@dimen/paddingMedium"
                         android:text="Camera Roll Playlist"
                         android:textColor="@color/white"
-                        android:textSize="@dimen/textSizeExtrsLargePlus"
+                        android:textSize="@dimen/textSizeCameraRollPlaList"
                         android:textStyle="normal"
                         app:fontName="avenirnext_medium_lt.otf" />
                 </LinearLayout>
@@ -229,7 +229,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="0.25"
+        android:layout_weight="0.23"
         android:gravity="right|bottom|center"
         android:orientation="horizontal" >
 

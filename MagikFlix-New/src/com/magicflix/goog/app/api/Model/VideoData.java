@@ -1,10 +1,12 @@
 package com.magicflix.goog.app.api.Model;
 
-import android.graphics.Bitmap;
 
 public class VideoData {
 	
 	public String filePath;
-	public Bitmap bitmap;
+	public int duration;
+	public int id;
+	public int columnIndex;
+	public String name;
 
 }

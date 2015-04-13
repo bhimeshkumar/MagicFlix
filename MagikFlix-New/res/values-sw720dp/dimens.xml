@@ -174,5 +174,11 @@
     <dimen name="familyProfileDeleteBtnWidthHeight">100dp</dimen>
     <dimen name="marginExtraLargePlus">50dp</dimen>
     <dimen name="marginBottomFavIcon">90dp</dimen>
+    
+     <!-- Local play list dimens -->
+
+    <dimen name="local_play_list_item_width">380dp</dimen>
+    <dimen name="local_play_list_item_height">220dp</dimen>
+    <dimen name="textSizeCameraRollPlaList">20sp</dimen>
 
 </resources>

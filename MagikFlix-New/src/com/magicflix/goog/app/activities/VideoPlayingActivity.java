@@ -16,10 +16,8 @@ import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
-import android.widget.PopupWindow.OnDismissListener;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
@@ -51,7 +49,7 @@ import com.magicflix.goog.broadcasts.AppTimerBroadCastReceiver;
 import com.magicflix.goog.broadcasts.PopUpDismissBroadCastReceiver;
 import com.magicflix.goog.utils.MLogger;
 
-public class VideoPlayingActivity extends BaseActivity implements OnInitializedListener, PlayerStateChangeListener, PlaybackEventListener, OnClickListener, OnDismissListener{
+public class VideoPlayingActivity extends BaseActivity implements OnInitializedListener, PlayerStateChangeListener, PlaybackEventListener, OnClickListener{
 
 	private static String TAG = VideoPlayingActivity.class.getName();
 	private ArrayList<Videos> videosList;
@@ -81,7 +79,7 @@ public class VideoPlayingActivity extends BaseActivity implements OnInitializedL
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-//		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		//		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		setContentView(R.layout.video_playing_screen);
 		init();
 		getVideoLink();
@@ -95,29 +93,51 @@ public class VideoPlayingActivity extends BaseActivity implements OnInitializedL
 		mPlayIV.setOnClickListener(this);
 		mBackToGalleryIV.setOnClickListener(this);
 		mFavIV.setOnClickListener(this);
-		
+
 		mTrialExpiredBroadCastReceiver = new TrialExpiredBroadCastReceiver() {
 			@Override
 			protected void onTrialExpired() {
-				showTimerAlert();
-			}
+				//popupWindow = getTimerAlert();
+				//popupWindow.showAtLocation(popupWindow.getContentView(), Gravity.CENTER, 0, 0);			
+				}
 
 		};
 		mTrialExpireIntent = new IntentFilter(Constants.INTENT_TRIAL_EXPIRED);
 		mAppTimerIntent = new IntentFilter(Constants.INTENT_APP_TIMER_EXPIRED);
-		
-		 mAppTimerBroadCastReceiver = new AppTimerBroadCastReceiver() {
-			
+
+		mAppTimerBroadCastReceiver = new AppTimerBroadCastReceiver() {
+
 			@Override
 			protected void onTimerExpired() {
-				showTimerAlert();
-				
+				showTimerPopUp();
+
 			}
 		};
 	}
 
+	private void showTimerPopUp() {
+		if(YPlayer != null){
+			if(YPlayer.isPlaying()){
+				mTransparentLayout.setVisibility(View.VISIBLE);
+				YPlayer.pause();
+			}
+		}
+		popupWindow = getTimerAlert();
+		popupWindow.showAtLocation(popupWindow.getContentView(), Gravity.CENTER, 0, 0);
+	}
 	private void init() {
 		getActionBar().hide();
+		mAppTimerIntent = new IntentFilter(Constants.INTENT_APP_TIMER_EXPIRED);
+
+		mAppTimerBroadCastReceiver = new AppTimerBroadCastReceiver() {
+
+			@Override
+			protected void onTimerExpired() {
+				popupWindow = getTimerAlert();
+				popupWindow.showAtLocation(popupWindow.getContentView(), Gravity.CENTER, 0, 0);
+
+			}
+		};
 		mPopUpDismissIntent = new IntentFilter(Constants.INTENT_APP_ALERT_DISMISS);
 		mPopUpDismissBroadCastReceiver = new PopUpDismissBroadCastReceiver() {
 
@@ -134,19 +154,7 @@ public class VideoPlayingActivity extends BaseActivity implements OnInitializedL
 		};
 	}
 
-	
-	private void showTimerAlert() {
-		if(YPlayer != null){
-			if(YPlayer.isPlaying()){
-				mTransparentLayout.setVisibility(View.VISIBLE);
-				YPlayer.pause();
-			}
-		}
-		
-		 popupWindow =getTrialExpiredPopUp((Constants.APP_TIMER_VALUE == 0) ? getString(R.string.times_up_txt) : getString(R.string.app_timer_msg));
-		popupWindow.showAtLocation(popupWindow.getContentView(), Gravity.CENTER, 0, 0);
-		popupWindow.setOnDismissListener(this);
-	}
+
 	/*private void showTrialExpiredDialog(String title,String message){
 		AlertDialog.Builder timerBuilder = new AlertDialog.Builder(this);
 		timerBuilder.setTitle(title);
@@ -167,14 +175,19 @@ public class VideoPlayingActivity extends BaseActivity implements OnInitializedL
 	@Override
 	protected void onResume() {
 		super.onResume();
+		((MagikFlix)getApplication()).setIsAppRunningBackground(false);	
 		registerReceiver(mTrialExpiredBroadCastReceiver, mTrialExpireIntent);
 		registerReceiver(mAppTimerBroadCastReceiver, mAppTimerIntent);
 		registerReceiver(mPopUpDismissBroadCastReceiver, mPopUpDismissIntent);
 
 	}
+
 	@Override
 	protected void onPause() {
 		super.onPause();
+		if(!mIsBackbtnPressed){
+			((MagikFlix)getApplication()).setIsAppRunningBackground(true);
+		}
 		unregisterReceiver(mTrialExpiredBroadCastReceiver);
 		unregisterReceiver(mAppTimerBroadCastReceiver);
 		unregisterReceiver(mPopUpDismissBroadCastReceiver);
@@ -221,7 +234,7 @@ public class VideoPlayingActivity extends BaseActivity implements OnInitializedL
 		myYouTubePlayerView.initialize(Constants.YOUTUBE_DEVELOPER_KEY, this);
 		myYouTubePlayerView.setFocusableInTouchMode(false);
 		myYouTubePlayerView.setFocusable(false);
-		
+
 		if(videosList.get(mSelectedPostion).isFavorite){
 			mFavIV.setBackground(VideoPlayingActivity.this.getResources().getDrawable(R.drawable.icon_outline_color_selected));
 		}else{
@@ -342,8 +355,8 @@ public class VideoPlayingActivity extends BaseActivity implements OnInitializedL
 			YPlayer = player;
 			YPlayer.setPlayerStyle(PlayerStyle.CHROMELESS);
 			YPlayer.setFullscreenControlFlags(YouTubePlayer.FULLSCREEN_FLAG_CONTROL_ORIENTATION
-                    | YouTubePlayer.FULLSCREEN_FLAG_CONTROL_SYSTEM_UI
-                    | YouTubePlayer.FULLSCREEN_FLAG_CUSTOM_LAYOUT);
+					| YouTubePlayer.FULLSCREEN_FLAG_CONTROL_SYSTEM_UI
+					| YouTubePlayer.FULLSCREEN_FLAG_CUSTOM_LAYOUT);
 			YPlayer.setFullscreen(true);
 			YPlayer.setShowFullscreenButton(true);
 			//			YPlayer.setOnFullscreenListener(this);
@@ -661,9 +674,5 @@ public class VideoPlayingActivity extends BaseActivity implements OnInitializedL
 
 	}
 
-	@Override
-	public void onDismiss() {
-		Constants.IS_APP_TIMER_SHOWN = true;
-		
-	}
+
 }

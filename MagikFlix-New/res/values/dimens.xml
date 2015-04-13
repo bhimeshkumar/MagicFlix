@@ -178,5 +178,11 @@
     <dimen name="familyScreenTakePictureTxtSize">20sp</dimen>
     <dimen name="marginChildProfileAdapter">20dp</dimen>
     <dimen name="familyProfileDeleteBtnWidthHeight">50dp</dimen>
+    
+     <!-- Local play list dimens -->
+
+    <dimen name="local_play_list_item_width">240dp</dimen>
+    <dimen name="local_play_list_item_height">130dp</dimen>
+    <dimen name="textSizeCameraRollPlaList">16sp</dimen>
 
 </resources>

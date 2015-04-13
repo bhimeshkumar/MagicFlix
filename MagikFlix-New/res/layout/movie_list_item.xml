@@ -5,40 +5,46 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:weightSum="1" >
 
-        <ImageView
-            android:id="@+id/movie_list_thumbnail_iv"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="fitXY" />
+            android:layout_height="0dp"
+            android:layout_weight="0.9" >
 
-        <com.magicflix.goog.app.views.MagicflixTextView
-            android:id="@+id/movie_list_duration_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
-            android:background="@color/transparent_black"
-            android:padding="@dimen/paddingSmall"
-             app:fontName="avenirnext_medium_lt.otf"
-            android:textColor="@color/white" />
+            <ImageView
+                android:id="@+id/movie_list_thumbnail_iv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="fitXY" />
+
+            <com.magicflix.goog.app.views.MagicflixTextView
+                android:id="@+id/movie_list_duration_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:background="@color/transparent_black"
+                android:padding="@dimen/paddingSmall"
+                android:textColor="@color/white"
+                app:fontName="avenirnext_medium_lt.otf" />
+        </RelativeLayout>
 
         <com.magicflix.goog.app.views.MagicflixTextView
             android:id="@+id/movie_list_item_title_tv"
-            android:layout_width="wrap_content"
-            android:layout_toLeftOf="@id/movie_list_duration_tv"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentLeft="true"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:gravity="center"
+            android:layout_weight="0.1"
+            android:background="@color/transparent"
             android:singleLine="true"
-            android:visibility="gone"
             android:textColor="@color/white"
-            android:background="@color/transparent_black"
-            android:padding="@dimen/paddingSmall"
+            android:visibility="gone"
             app:fontName="avenirnext_medium_lt.otf" />
-    </RelativeLayout>
+    </LinearLayout>
 
 </LinearLayout>

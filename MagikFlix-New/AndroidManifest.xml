@@ -61,10 +61,7 @@
             android:name="com.magicflix.goog.app.activities.VideoViewActivity"
             android:screenOrientation="landscape" >
         </activity>
-        <activity
-            android:name="com.magicflix.goog.app.activities.LandingScreen"
-            android:configChanges="orientation|screenSize"
-            android:screenOrientation="landscape" />
+        
         <activity
             android:name="com.magicflix.goog.app.activities.TermsOfUseActivity"
             android:configChanges="orientation|screenSize"
@@ -83,10 +80,6 @@
             android:screenOrientation="landscape" />
         <activity
             android:name="com.magicflix.goog.app.activities.FamilySetUpActivity"
-            android:configChanges="orientation|screenSize"
-            android:screenOrientation="landscape" />
-        <activity
-            android:name="com.magicflix.goog.app.activities.VimeoVideoPlayerActivity"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="landscape" />
         <activity

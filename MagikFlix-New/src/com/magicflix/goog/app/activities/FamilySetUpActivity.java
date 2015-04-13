@@ -45,12 +45,11 @@ import com.magicflix.goog.broadcasts.AppTimerBroadCastReceiver;
 import com.magicflix.goog.broadcasts.PopUpDismissBroadCastReceiver;
 import com.magicflix.goog.utils.MLogger;
 
-public class FamilySetUpActivity extends BaseActivity implements OnClickListener, OnEditorActionListener, OnDismissListener {
+public class FamilySetUpActivity extends BaseActivity implements OnClickListener, OnEditorActionListener {
 
 	public static final int TAKE_PICTURE_REQUEST = 1;
 	public static final String TAG = FamilySetUpActivity.class.getName();
 	private static final String[] AGES = {"2", "3","4","5","6","7","8","9","10","11","12",};
-	//	private ArrayList<UserProfile> mUserProfileList;
 
 	private ImageView mTakePictureIV,mProfileDeteteIV;
 	private HListView mChildProfileList;
@@ -67,8 +66,9 @@ public class FamilySetUpActivity extends BaseActivity implements OnClickListener
 	private boolean blueAdded, greenAdded ,kidAdded ,pinkAdded,purpleAdded;
 	private AppTimerBroadCastReceiver mAppTimerBroadCastReceiver;
 	private PopUpDismissBroadCastReceiver mPopUpDismissBroadCastReceiver;
-	private IntentFilter mTrialExpireIntent,mAppTimerIntent , mPopUpDismissIntent;
+	private IntentFilter mAppTimerIntent , mPopUpDismissIntent;
 	private PopupWindow popupWindow;
+	private boolean mIsBackbtnPressed = false;
 
 	@Override
 	protected void onCreate(Bundle arg0) {
@@ -149,7 +149,8 @@ public class FamilySetUpActivity extends BaseActivity implements OnClickListener
 
 			@Override
 			protected void onTimerExpired() {
-				showTimerAlert();
+				popupWindow = getTimerAlert();
+				popupWindow.showAtLocation(popupWindow.getContentView(), Gravity.CENTER, 0, 0);
 
 			}
 		};
@@ -173,15 +174,11 @@ public class FamilySetUpActivity extends BaseActivity implements OnClickListener
 		};
 	}
 
-	private void showTimerAlert() {
-		popupWindow =getTrialExpiredPopUp((Constants.APP_TIMER_VALUE == 0) ? getString(R.string.times_up_txt) : getString(R.string.app_timer_msg));
-		popupWindow.showAtLocation(popupWindow.getContentView(), Gravity.CENTER, 0, 0);
-		popupWindow.setOnDismissListener(this);
-	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
+		((MagikFlix)getApplication()).setIsAppRunningBackground(false);
 		registerReceiver(mAppTimerBroadCastReceiver, mAppTimerIntent);
 		registerReceiver(mPopUpDismissBroadCastReceiver, mPopUpDismissIntent);
 	}
@@ -189,6 +186,9 @@ public class FamilySetUpActivity extends BaseActivity implements OnClickListener
 	@Override
 	protected void onPause() {
 		super.onPause();
+		if(!mIsBackbtnPressed){
+			((MagikFlix)getApplication()).setIsAppRunningBackground(true);
+		}
 		unregisterReceiver(mAppTimerBroadCastReceiver);
 		unregisterReceiver(mPopUpDismissBroadCastReceiver);
 	}
@@ -556,10 +556,14 @@ public class FamilySetUpActivity extends BaseActivity implements OnClickListener
 		return false;
 	}
 
+	
+	
 	@Override
-	public void onDismiss() {
-		Constants.IS_APP_TIMER_SHOWN = true;
-
+	public void onBackPressed() {
+		mIsBackbtnPressed = true;
+		saveUserProfile(false , true);
+		super.onBackPressed();
+		
 	}
 
 }

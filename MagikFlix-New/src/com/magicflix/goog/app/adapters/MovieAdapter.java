@@ -64,6 +64,11 @@ public class MovieAdapter extends FancyCoverFlowAdapter{
 			//              else
 			customViewGroup.setLayoutParams(new FancyCoverFlow.LayoutParams(mMovieItemWidth, FancyCoverFlow.LayoutParams.MATCH_PARENT));
 		}
+		if(Constants.SHOW_TITLES){
+			customViewGroup.getTitleTextView().setVisibility(View.VISIBLE);
+		}else{
+			customViewGroup.getTitleTextView().setVisibility(View.GONE);
+		}
 		customViewGroup.getDurationTextView().setText(Constants.formatDuration(mVideosList.get(position).duration));
 		customViewGroup.getTitleTextView().setText(mVideosList.get(position).title);
 		if(mVideosList.get(position).thumbnailUrl != null)
@@ -131,6 +136,7 @@ public class MovieAdapter extends FancyCoverFlowAdapter{
 		int dp = (int) (px / (metrics.densityDpi / 160f));
 		return dp;
 	}
+	
 
 
 }
