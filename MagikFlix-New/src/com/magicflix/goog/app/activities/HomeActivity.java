@@ -380,11 +380,11 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 
 	@Override
 	public void onItemClick(it.sephiroth.android.library.widget.AdapterView<?> parent,View view, int position, long id) {
-		//		mLocaliticsAttributes.clear();
-		//		mLocaliticsAttributes.put(Constants.CATEGORY, mSelectedCategoryName);
-		//		mLocaliticsAttributes.put(Constants.INDEX, String.valueOf(position));
-		//		mLocaliticsAttributes.put(Constants.VIDEO_ID, videosList.get(position).videoId);
-		//		mLocalyticsSession.tagEvent(Constants.CATEGORY_VIDEO, mLocaliticsAttributes);
+		mLocaliticsAttributes.clear();
+		mLocaliticsAttributes.put(Constants.CATEGORY, mSelectedCategoryName);
+		mLocaliticsAttributes.put(Constants.INDEX, String.valueOf(position));
+		mLocaliticsAttributes.put(Constants.VIDEO_ID, videosList.get(position).videoId);
+		mLocalyticsSession.tagEvent(Constants.CATEGORY_VIDEO, mLocaliticsAttributes);
 		checkSubscriptionAndNavigate(position,videosList);
 	}
 
@@ -1377,9 +1377,9 @@ public class HomeActivity extends BaseActivity implements OnItemSelectedListener
 		m.what = 0;
 		m.arg1 = pending;
 		mTitleHandler.sendMessageDelayed(m,  1000);
-		
+
 	}
-	
+
 	private void updatePlayListTitle(Message msg) {
 		int pending = msg.arg1 -  1000;
 		Message m = new Message();
