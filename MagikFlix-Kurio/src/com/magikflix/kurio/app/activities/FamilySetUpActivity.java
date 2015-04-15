@@ -34,6 +34,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
+import com.google.android.gms.wearable.internal.ag;
 import com.magikflix.kurio.MagikFlix;
 import com.magikflix.kurio.R;
 import com.magikflix.kurio.app.adapters.ChildProfileAdapter;
@@ -196,8 +197,10 @@ public class FamilySetUpActivity extends BaseActivity implements OnClickListener
 	private PopupWindow getAgeSelectionPopUp(){
 
 		View agePopUpView = getLayoutInflater().inflate(R.layout.age_selection_pop_up, null);
-		PopupWindow popupMessage = new PopupWindow(agePopUpView, LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT);
+		PopupWindow popupMessage = new PopupWindow(agePopUpView, LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT,true);
 		ListView ageListView = (ListView)agePopUpView.findViewById(R.id.age_selection_list_view);
+		ageListView.setFocusable(true);
+		ageListView.setFocusableInTouchMode(true);
 		ageListView.setAdapter(new ArrayAdapter<String>(this, R.layout.age_slection_list_item,AGES));
 		ageListView.setOnItemClickListener(new OnItemClickListener() {
 
